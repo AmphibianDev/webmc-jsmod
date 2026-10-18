@@ -1,0 +1,34 @@
+{
+ "note": "Written by tools/patch-client.mjs: the published client with its compiled internals exposed to the page.",
+ "title": "Minecraft 1.21.11",
+ "client": "Gaius-webmc.html",
+ "gateway": null,
+ "mods": [],
+ "bytes": 112986848,
+ "total": 112986848,
+ "chunk_bytes": 33554432,
+ "sha256": "680bccd3b78533db34541e1773f42f6176a0968ed51e60078d8e314d955e323e",
+ "chunks": [
+  {
+   "path": "data/client.0000",
+   "size": 33554432,
+   "sha256": "e11610098accdb839312f736e9dd82941d20fd647268ba70dc837e78488d51f0"
+  },
+  {
+   "path": "data/client.0001",
+   "size": 33554432,
+   "sha256": "dcdee341a57c32096039890b34c53fa89efba7034815efa2a6e5289d6524c71e"
+  },
+  {
+   "path": "data/client.0002",
+   "size": 33554432,
+   "sha256": "f5d1cbb52ce9b00f2ce0bea1413307356feefc3abc21652a4b8bbf94d4e0759d"
+  },
+  {
+   "path": "data/client.0003",
+   "size": 12323552,
+   "sha256": "fe285d7beeb9cf06d1a6cf5850133126c60d934769decbeeb6dfbce5cb1ad0a6"
+  }
+ ],
+ "provenance": "Patched copy of the published client: `globalThis.__gaiusTeaVM` and `globalThis.__gaiusExports` are assigned at the end of the compiled module. The original whole-client sha256 was 63cba13499f969154e24ea3dbb220ba1a4967ce395fb1731043ad0b6b9d58106."
+}

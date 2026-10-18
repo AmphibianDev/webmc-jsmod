@@ -430,6 +430,7 @@
     watch: watch,
     version: clientInfo.version || "unknown",
     base: clientInfo.base || null,
+    symbolsUrl: clientInfo.symbolsUrl || null,
     trustAll: clientInfo.trustAll === true
   };
   WebMC.__internal.boot = boot;

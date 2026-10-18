@@ -136,6 +136,33 @@ repository's `client-1.21.11` release, verifies every chunk hash and the whole-c
 the runtime's tests, and publishes only if they pass. The Minecraft client bytes are **not** in git
 history; the manifest with the hashes is.
 
+## 2026-10-18 (later) — the internals layer: mixins actually apply
+
+The remaining gap was named in the last entry: a converted mod's mixins had nothing to attach to.
+That is now built and measured.
+
+* **`tools/patch-client.mjs`** rewrites one stream of the published client so its compiled module
+  assigns `globalThis.__gaiusTeaVM` (every class, function and static) — two assignments, nothing
+  else. The patched copy has its own manifest and hashes; `tools/verify-client.mjs` checks it, and
+  the manifest records the original whole-client sha256.
+* **Method naming** is the hard part, and it has three passes: TeaVM's lambda class names give 762
+  exact anchors (`Minecraft.buildInitialScreens`, `KeyMapping.registerMapping`); string-constant
+  alignment adds 1,688 more (`Minecraft.run`, `Minecraft.tick`, `Minecraft.close`,
+  `SoundEngine.play`, `Options.load`); a targeted pass and call-graph propagation add the rest.
+  **2,450 methods in 1,633 classes**, each entry carrying *why* it is believed.
+* **Application**: `@Inject` at HEAD/RETURN wraps the compiled function; `CallbackInfo` is a plain
+  object the transpiled handler can call; `@Redirect`/`@Overwrite` are refused by name because they
+  need call-site rewriting.
+* **Safety**: patches apply once the client is running, wrappers sample call rates (a method hotter
+  than 40/s stays passive), 48 wrapped methods and 200 handler runs/second per method are the
+  ceilings, and one method is wrapped once.
+
+Live client, measured: **Meteor 12 injections across 9 plans applied** (19 have a name anchor of
+327), Gamma Utils 1 of 7, and the client reaches the title screen with 2,128 state updates and no
+suspension. `webmc.selftest().internals` reports classes, named methods, resolutions, misses and the
+refusal reasons; the browser check asserts the apply count so a regression is a red check, not a
+silent one.
+
 ## Next
 
 1. **The internals layer**: a derived client build that exposes its TeaVM class table

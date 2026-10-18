@@ -267,6 +267,10 @@ if (WITH_METEOR) {
   check("the converted Meteor Client hot-loaded at play time", !!meteor && meteor.enabled,
     meteor ? meteor.id + (meteor.enabled ? " enabled" : " disabled") + (meteor.suspended ? " SUSPENDED" : "") +
       (meteor.errors.length ? " — first error: " + meteor.errors[0].text : "") : "not in the list");
+  check("the patched client's internals are available", !!(self && self.internals && self.internals.available),
+    self && self.internals ? (self.internals.available ? self.internals.classes + " classes" : self.internals.reason) : "no internals summary");
+  check("mixin injections actually applied to the running client", !!(self && self.patches && self.patches.applied > 0),
+    self && self.patches ? self.patches.applied + " applied of " + (self.patches.applied + self.patches.planned) + " planned, " + (self.internals ? self.internals.resolutions + " resolutions / " + self.internals.misses + " misses" : "") : "");
   check("Meteor's 171 modules and its mixin plan are registered",
     !!(self && self.modules >= 150 && self.patches && self.patches.plans >= 100),
     self ? self.modules + " modules, " + (self.patches ? self.patches.plans + " patch plans / " + self.patches.injections + " injections" : "no patches") : "no selftest");

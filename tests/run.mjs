@@ -359,6 +359,76 @@ await test("network send is observable and blockable", async () => {
   eq(win.webmc.__internal.net.bridge.sent.length, 1, "the blocked packet never reached the bridge");
 });
 
+/* ------------------------------------------------------------------ internals ---------------- */
+await test("a patched client's internals are found, and a plan is refused with a reason without them", () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const summary = win.webmc.__internal.internals.summary();
+  ok(!summary.available, "unpatched client: internals unavailable");
+  ok(/patch it/.test(summary.reason), "the reason says how to get them");
+  const plan = { targets: ["net.minecraft.client.Minecraft"], injections: [{ kind: "inject", method: ["tick"], at: ["HEAD"], run: () => {} }] };
+  win.webmc.patches.add(plan);
+  const applied = win.webmc.__internal.patches.summary();
+  eq(applied.plans, 1, "the plan is recorded");
+  eq(applied.applied, 0, "but nothing is applied");
+});
+
+await test("a patched client resolves an anchored method and applies an @Inject around it", async () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  // A fake internals object shaped like the real one: a class constructor carrying teavm_meta, and
+  // one function behind it.
+  const meta = Symbol("teavm_meta");
+  const calls = [];
+  const ctor = function MinecraftClass() {};
+  ctor[meta] = { name: "net.minecraft.client.Minecraft" };
+  win.__gaiusTeaVM = {
+    Bsp: ctor,
+    IkAb: function (self) { calls.push(["tick", self && self.name]); return "original"; }
+  };
+  // The symbol map the build ships: TeaVM named the method because the class had a lambda in it.
+  win.webmc.__internal.internals.state.symbols = { Minecraft: { tick: { fn: "IkAb", index: 7, arity: 0 } } };
+  win.webmc.__internal.internals.state.symbolsLoaded = true;
+  const available = win.webmc.__internal.internals.available();
+  ok(available, "internals detect the patched build");
+
+  let injected = 0;
+  win.webmc.patches.add({
+    targets: ["net.minecraft.client.Minecraft"],
+    injections: [{
+      kind: "inject", method: ["tick"], at: ["HEAD"], cancellable: true,
+      run: (target, args, info) => { injected++; info.cancelled = true; info.returnValue = "cancelled"; }
+    }]
+  });
+  const summary = win.webmc.__internal.patches.summary();
+  eq(summary.applied, 1, "the injection applied");
+  // The wrapper samples first: it passes through until it has measured the call rate, so a hot
+  // method is never wrapped. Twenty-five calls is past the sampling window.
+  let result = null;
+  for (let i = 0; i < 25; i++) { result = win.__gaiusTeaVM.IkAb({ name: "the client" }); }
+  ok(injected > 0, "the handler ran once the call rate was known to be low");
+  eq(result, "cancelled", "cancel() short-circuited the original method");
+});
+
+await test("a plan whose method has no anchor is refused, not guessed", () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const meta = Symbol("teavm_meta");
+  const ctor = function GuiClass() {};
+  ctor[meta] = { name: "net.minecraft.client.gui.Gui" };
+  win.__gaiusTeaVM = { X: ctor };
+  win.webmc.__internal.internals.state.symbols = { Gui: { render: { fn: "Missing", index: 1, arity: 0 } } };
+  win.webmc.__internal.internals.state.symbolsLoaded = true;
+  win.webmc.patches.add({
+    targets: ["net.minecraft.client.gui.Gui"],
+    injections: [{ kind: "inject", method: ["render"], at: ["HEAD"], run: () => {} }]
+  });
+  const patches = win.webmc.__internal.patches.summary();
+  eq(patches.applied, 0, "nothing applied");
+  const summary = win.webmc.__internal.internals.summary();
+  ok(summary.refusedReasons.some((why) => /anchor/.test(why)), "the reason names the missing anchor");
+});
+
 /* ------------------------------------------------------------------ report ------------------- */
 console.log("\n" + passed + " passed, " + failed + " failed");
 if (failed) {

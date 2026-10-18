@@ -129,6 +129,7 @@
       },
       frame: { count: internal.frame.count, tick: internal.frame.gameTick, fps: Math.round(internal.frame.fps * 10) / 10 },
       patches: internal.patches ? internal.patches.summary() : null,
+      internals: internal.internals ? internal.internals.summary() : null,
       modules: WebMC.modules.list().length,
       state: (function () {
         var snapshot = internal.state.latest;

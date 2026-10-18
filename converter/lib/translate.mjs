@@ -161,6 +161,21 @@ const NATIVE_SOURCE = [
   ["java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;", "function (api, self, a) { return ''; }"],
   ["java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V", "function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } }"],
   ["java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V", "function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z", "function (api, self) { return !!self.cancellable; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V", "function (api, self) { self.cancelled = true; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z", "function (api, self) { return !!self.cancelled; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.isCancellable()Z", "function (api, self) { return !!self.cancellable; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.cancel()V", "function (api, self) { self.cancelled = true; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.isCancelled()Z", "function (api, self) { return !!self.cancelled; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.getReturnValue()Ljava/lang/Object;", "function (api, self) { return self.returnValue; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.getReturnValueI()I", "function (api, self) { return self.returnValue | 0; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.getReturnValueZ()Z", "function (api, self) { return !!self.returnValue; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.getReturnValueD()D", "function (api, self) { return Number(self.returnValue); }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(Ljava/lang/Object;)V", "function (api, self, a) { self.returnValue = a[0]; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(I)V", "function (api, self, a) { self.returnValue = a[0]; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(Z)V", "function (api, self, a) { self.returnValue = a[0]; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(D)V", "function (api, self, a) { self.returnValue = a[0]; }"],
+  ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(F)V", "function (api, self, a) { self.returnValue = a[0]; }"],
   ["java/lang/Object.<init>()V", "function () {}"],
   ["java/lang/Object.toString()Ljava/lang/String;", "function (api, self) { return String(self); }"],
   ["java/lang/Object.hashCode()I", "function (api, self) { return 0; }"],
@@ -594,20 +609,23 @@ export function translate(analysis, options = {}) {
     push("    if (webmc.patches) {");
     for (const mixin of plan.mixins) {
       if (!mixin.injectionPoints.length && !mixin.accessors.length) { continue; }
-      push("      webmc.patches.add(" + JSON.stringify({
-        modId: fabric.id,
-        mixin: mixin.className,
-        targets: mixin.targets,
-        environment: mixin.environment,
-        injections: mixin.injectionPoints.map((injection) => ({
-          method: injection.target,
-          handler: injection.method,
-          kind: injection.kind,
-          at: injection.at.map((point) => point.value + (point.ordinal != null ? ":" + point.ordinal : "")),
-          cancellable: injection.cancellable
-        })),
-        accessors: mixin.accessors
-      }) + ");");
+      // The plan carries the handler *itself*, not a name: the handler lives in this file's
+      // closure, and the internals layer wraps the game's method with it.
+      push("      webmc.patches.add({");
+      push("        modId: " + JSON.stringify(fabric.id) + ", mixin: " + JSON.stringify(mixin.className) + ",");
+      push("        targets: " + JSON.stringify(mixin.targets) + ", environment: " + JSON.stringify(mixin.environment) + ",");
+      push("        injections: [");
+      for (const injection of mixin.injectionPoints) {
+        push("          { method: " + JSON.stringify(injection.target) +
+             ", handler: " + JSON.stringify(injection.method) +
+             ", kind: " + JSON.stringify(injection.kind) +
+             ", at: " + JSON.stringify(injection.at.map((point) => point.value + (point.ordinal != null ? ":" + point.ordinal : ""))) +
+             ", cancellable: " + (injection.cancellable ? "true" : "false") + ",");
+        push("            run: function (target, args, info) { return RT.method(" + JSON.stringify(mixin.className) + ", " + JSON.stringify(injection.method + injection.descriptor) + ", target, args.concat([info])); } },");
+      }
+      push("        ],");
+      push("        accessors: " + JSON.stringify(mixin.accessors));
+      push("      });");
     }
     push("    }");
     capabilities.add("internals");

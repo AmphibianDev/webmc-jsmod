@@ -1,0 +1,4925 @@
+{
+ "note": "Built by tools/build-symbols.mjs from the compiled client's own lambda class names.",
+ "client": {
+  "bytes": 86076669,
+  "assignments": 189631,
+  "lambdaClasses": 2259
+ },
+ "anchors": {
+  "CompletableFuture": {
+   "supplyAsync": {
+    "fn": "DAI",
+    "index": 4,
+    "arity": null
+   },
+   "allOf": {
+    "fn": "DAI",
+    "index": 7,
+    "arity": null
+   },
+   "thenApplyAsync": {
+    "fn": "EFk",
+    "index": 22,
+    "arity": null
+   },
+   "thenComposeAsync": {
+    "fn": "Cq$",
+    "index": 49,
+    "arity": null
+   },
+   "whenCompleteAsync": {
+    "fn": "AU2",
+    "index": 55,
+    "arity": null
+   },
+   "completeEither": {
+    "fn": "Oye",
+    "index": 68,
+    "arity": null
+   },
+   "exceptionallyComposeAsync": {
+    "fn": "QVG",
+    "index": 59,
+    "arity": null
+   },
+   "exceptionally": {
+    "fn": "AU2",
+    "index": 56,
+    "arity": null
+   },
+   "handleAsync": {
+    "fn": "Dpr",
+    "index": 52,
+    "arity": null
+   },
+   "exceptionallyAsync": {
+    "fn": "PFQ",
+    "index": 58,
+    "arity": null
+   }
+  },
+  "BlockColors": {
+   "createDefault": {
+    "fn": "AAym",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "CauldronInteraction": {
+   "bootStrap": {
+    "fn": "VJJ",
+    "index": 2,
+    "arity": null
+   },
+   "addDefaultInteractions": {
+    "fn": "FlC",
+    "index": 3,
+    "arity": null
+   },
+   "newInteractionMap": {
+    "fn": "EaG",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "DialogScreens": {
+   "bootstrap": {
+    "fn": "VCX",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "GLX": {
+   "_initGlfw": {
+    "fn": "ALb7",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Function": {
+   "identity": {
+    "fn": "BR$",
+    "index": 3,
+    "arity": null
+   },
+   "compose": {
+    "fn": "Mo8",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "InputConstants$Type": {
+   "getOrCreate": {
+    "fn": "Bq4",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "KeyMapping": {
+   "registerMapping": {
+    "fn": "JUQ",
+    "index": 29,
+    "arity": null
+   }
+  },
+  "ByIdMap": {
+   "continuous": {
+    "fn": "LJy",
+    "index": 4,
+    "arity": null
+   },
+   "sparse": {
+    "fn": "LJy",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Comparator": {
+   "comparingInt": {
+    "fn": "Ot8",
+    "index": 14,
+    "arity": null
+   },
+   "thenComparingInt": {
+    "fn": "AP$",
+    "index": 5,
+    "arity": null
+   },
+   "thenComparingDouble": {
+    "fn": "N$Y",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ResourceKey": {
+   "create": {
+    "fn": "Tg6",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "BuiltInRegistries": {
+   "internalRegister": {
+    "fn": "FJr",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "StringRepresentable": {
+   "createNameLookup": {
+    "fn": "JvZ",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "EntityDataSerializer": {
+   "forValueType": {
+    "fn": "AJlk",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "RenderTypes": {
+   "createWeather": {
+    "fn": "JIX",
+    "index": 58,
+    "arity": null
+   }
+  },
+  "Object": {
+   "monitorEnterWait": {
+    "fn": "T3r",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "DeprecatedTranslationsInfo": {
+   "applyToMap": {
+    "fn": "L7i",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "GameLoadTimesEvent": {
+   "beginStep": {
+    "fn": "MZW",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SimpleStreamImpl": {
+   "collect": {
+    "fn": "Mls",
+    "index": 26,
+    "arity": null
+   },
+   "toArray": {
+    "fn": "KW$",
+    "index": 21,
+    "arity": null
+   }
+  },
+  "MappedRegistry": {
+   "register": {
+    "fn": "Btu",
+    "index": 7,
+    "arity": null
+   },
+   "iterator": {
+    "fn": "WtP",
+    "index": 22,
+    "arity": null
+   },
+   "freeze": {
+    "fn": "BeH",
+    "index": 36,
+    "arity": null
+   },
+   "refreshTagsInHolders": {
+    "fn": "NYb",
+    "index": 41,
+    "arity": null
+   },
+   "createIntrusiveHolder": {
+    "fn": "DGU",
+    "index": 37,
+    "arity": null
+   },
+   "getOrCreateTagForRegistration": {
+    "fn": "M46",
+    "index": 30,
+    "arity": null
+   },
+   "entrySet": {
+    "fn": "HS8",
+    "index": 27,
+    "arity": null
+   },
+   "getOrCreateHolderOrThrow": {
+    "fn": "AH9c",
+    "index": 18,
+    "arity": null
+   },
+   "prepareTagReload": {
+    "fn": "HaT",
+    "index": 44,
+    "arity": null
+   }
+  },
+  "EntityAttachments$Builder": {
+   "attach": {
+    "fn": "Dr6",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Util$11": {
+   "apply": {
+    "fn": "Uu",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "IdMapper": {
+   "iterator": {
+    "fn": "Kpw",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "DownloadedPackSource": {
+   "createRepositorySource": {
+    "fn": "Zze",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Dictionary": {
+   "put": {
+    "fn": "AM2H",
+    "index": 1,
+    "arity": null
+   },
+   "getOrCreateEntry": {
+    "fn": "HdO",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "PrimitiveStreamSupport": {
+   "intStream": {
+    "fn": "JaQ",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "WallBlock": {
+   "makeShapes": {
+    "fn": "PLj",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "BigDripleafBlock": {
+   "makeShapes": {
+    "fn": "HAF",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "MultifaceBlock": {
+   "makeShapes": {
+    "fn": "DQz",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "RedStoneWireBlock": {
+   "makeShapes": {
+    "fn": "HB8",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "GrindstoneBlock": {
+   "makeShapes": {
+    "fn": "Hbr",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "PitcherCropBlock": {
+   "makeShapes": {
+    "fn": "I4A",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "LeverBlock": {
+   "makeShapes": {
+    "fn": "Icm",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "VineBlock": {
+   "makeShapes": {
+    "fn": "GXn",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "FireBlock": {
+   "makeShapes": {
+    "fn": "GV_",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "HopperBlock": {
+   "makeShapes": {
+    "fn": "JcG",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ButtonBlock": {
+   "makeShapes": {
+    "fn": "WjI",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "PipeBlock": {
+   "makeShapes": {
+    "fn": "HrI",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "CompoundTag": {
+   "copy": {
+    "fn": "CWF",
+    "index": 53,
+    "arity": null
+   }
+  },
+  "HoeItem": {
+   "changeIntoState": {
+    "fn": "Fq$",
+    "index": 2,
+    "arity": null
+   },
+   "changeIntoStateAndDropItem": {
+    "fn": "AAG9",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "MaterialAssetGroup": {
+   "create": {
+    "fn": "D8Q",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Maps": {
+   "transformValues": {
+    "fn": "GXO",
+    "index": 48,
+    "arity": null
+   },
+   "asEntryToEntryFunction": {
+    "fn": "Rlx",
+    "index": 55,
+    "arity": null
+   }
+  },
+  "RenderSetup$RenderSetupBuilder": {
+   "withTexture": {
+    "fn": "EVu",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "GpuWarnlistManager": {
+   "getAllWarnings": {
+    "fn": "UY1",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "CrossCollisionBlock": {
+   "makeShapes": {
+    "fn": "Huk",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "MossyCarpetBlock": {
+   "makeShapes": {
+    "fn": "GLs",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SegmentableBlock": {
+   "getShapeCalculator": {
+    "fn": "MB8",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "YggdrasilServicesKeyInfo": {
+   "fetch": {
+    "fn": "AKdT",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "FontSet": {
+   "selectProviders": {
+    "fn": "ORC",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "FeatureCountTracker": {
+   "logCounts": {
+    "fn": "ADth",
+    "index": 4,
+    "arity": null
+   },
+   "featurePlaced": {
+    "fn": "AB4M",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "StructuresBecomeConfiguredFix$Conversion": {
+   "unpack": {
+    "fn": "C66",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "DataComponentMap$Builder$SimpleMap": {
+   "iterator": {
+    "fn": "YZc",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "IntSpliterators$CharSpliteratorWrapper": {
+   "forEachRemaining": {
+    "fn": "AD1y",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "FilteringStreamImpl": {
+   "wrap": {
+    "fn": "AHMa",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "MappingStreamImpl": {
+   "wrap": {
+    "fn": "ALMr",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "GlDevice": {
+   "precompilePipeline": {
+    "fn": "EB9",
+    "index": 28,
+    "arity": null
+   },
+   "getOrCompileShader": {
+    "fn": "PYF",
+    "index": 27,
+    "arity": null
+   },
+   "getOrCompilePipeline": {
+    "fn": "WP4",
+    "index": 26,
+    "arity": null
+   }
+  },
+  "ParticleEngine": {
+   "tick": {
+    "fn": "AGdm",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "SoundEngine": {
+   "updateSource": {
+    "fn": "ABvj",
+    "index": 28,
+    "arity": null
+   }
+  },
+  "ScreenNarrationCollector": {
+   "collectNarrationText": {
+    "fn": "O0S",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Predicate": {
+   "negate": {
+    "fn": "QCJ",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ActiveProfiler": {
+   "getCurrentEntry": {
+    "fn": "PGr",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "LocalIoHandler": {
+   "newFactory": {
+    "fn": "AFFa",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ClientTelemetryManager": {
+   "createEventSender": {
+    "fn": "JLB",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "VanillaPackResourcesBuilder": {
+   "pushJarResources": {
+    "fn": "JLh",
+    "index": 4,
+    "arity": null
+   },
+   "pushPathForType": {
+    "fn": "UKm",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "GlTexture": {
+   "getFbo": {
+    "fn": "AALp",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "ImmutableMapValues": {
+   "spliterator": {
+    "fn": "AHfP",
+    "index": 3,
+    "arity": null
+   },
+   "forEach": {
+    "fn": "W$$",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "TracyZoneFiller": {
+   "incrementCounter": {
+    "fn": "AFeR",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "DistinctStreamImpl": {
+   "wrap": {
+    "fn": "AJtj",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "MapDecoder": {
+   "compressedDecode": {
+    "fn": "Tdp",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "GuiRenderer": {
+   "close": {
+    "fn": "AADi",
+    "index": 27,
+    "arity": null
+   }
+  },
+  "Language$1": {
+   "getVisualOrder": {
+    "fn": "XIj",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "ProblemReporter$Collector$ProblemTreeNode": {
+   "child": {
+    "fn": "ALQP",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ActionTypes": {
+   "bootstrap": {
+    "fn": "AGDW",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SocialInteractionsPlayerList": {
+   "updatePlayersFromChatLog": {
+    "fn": "I3D",
+    "index": 8,
+    "arity": null
+   },
+   "addSeenPlayers": {
+    "fn": "I3D",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "PotionContents": {
+   "customEffects": {
+    "fn": "QIQ",
+    "index": 13,
+    "arity": null
+   }
+  },
+  "PlayerTabOverlay": {
+   "renderTablistHearts": {
+    "fn": "ADCS",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "FormattedCharSequence": {
+   "forward": {
+    "fn": "Ql",
+    "index": 2,
+    "arity": null
+   },
+   "fromPair": {
+    "fn": "SCw",
+    "index": 12,
+    "arity": null
+   },
+   "fromList": {
+    "fn": "RmS",
+    "index": 13,
+    "arity": null
+   },
+   "backward": {
+    "fn": "QwM",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "PoiTypes": {
+   "registerBlockStates": {
+    "fn": "TF3",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "PointFreeRule$CompRewrite": {
+   "together": {
+    "fn": "ABid",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "RuleTestType": {
+   "register": {
+    "fn": "B4d",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RuleBlockEntityModifierType": {
+   "register": {
+    "fn": "EUH",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PosRuleTestType": {
+   "register": {
+    "fn": "GmY",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "FloatProviderType": {
+   "register": {
+    "fn": "EP5",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "IntProviderType": {
+   "register": {
+    "fn": "BIs",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "HeightProviderType": {
+   "register": {
+    "fn": "Cat",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "BlockPredicateType": {
+   "register": {
+    "fn": "Ojw",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StructurePlacementType": {
+   "register": {
+    "fn": "LUt",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StructureType": {
+   "register": {
+    "fn": "PlF",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PlacementModifierType": {
+   "register": {
+    "fn": "U_9",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StructureProcessorType": {
+   "register": {
+    "fn": "MO7",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StructurePoolElementType": {
+   "register": {
+    "fn": "DZo",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "DoubleIterable": {
+   "forEach": {
+    "fn": "H5e",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "IntIterable": {
+   "forEach": {
+    "fn": "E82",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "CollectSpliterators$1": {
+   "tryAdvance": {
+    "fn": "Xq_",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "Function5": {
+   "curry2": {
+    "fn": "AKll",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Function7": {
+   "curry3": {
+    "fn": "AKqT",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Function6": {
+   "curry3": {
+    "fn": "AGTN",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Function11": {
+   "curry5": {
+    "fn": "AGPR",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "Function9": {
+   "curry4": {
+    "fn": "AHcn",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Function8": {
+   "curry4": {
+    "fn": "AAZ8",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Schema": {
+   "getType": {
+    "fn": "X4d",
+    "index": 4,
+    "arity": null
+   },
+   "register": {
+    "fn": "EUj",
+    "index": 14,
+    "arity": null
+   },
+   "registerSimple": {
+    "fn": "EUj",
+    "index": 13,
+    "arity": null
+   },
+   "getTypeRaw": {
+    "fn": "X4d",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "V99": {
+   "registerEntities": {
+    "fn": "VWy",
+    "index": 4,
+    "arity": null
+   },
+   "registerBlockEntities": {
+    "fn": "WAb",
+    "index": 5,
+    "arity": null
+   },
+   "registerTypes": {
+    "fn": "ACcJ",
+    "index": 7,
+    "arity": null
+   },
+   "registerThrowableProjectile": {
+    "fn": "BrH",
+    "index": 1,
+    "arity": null
+   },
+   "registerMinecart": {
+    "fn": "F9Z",
+    "index": 2,
+    "arity": null
+   },
+   "registerInventory": {
+    "fn": "BKL",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "V100": {
+   "registerTypes": {
+    "fn": "AJJQ",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V102": {
+   "registerTypes": {
+    "fn": "Znc",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V106": {
+   "registerTypes": {
+    "fn": "AJ99",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V135": {
+   "registerTypes": {
+    "fn": "ABSS",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V703": {
+   "registerEntities": {
+    "fn": "AE9O",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V704": {
+   "registerBlockEntities": {
+    "fn": "AHq1",
+    "index": 2,
+    "arity": null
+   },
+   "registerTypes": {
+    "fn": "AKmT",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "V1022": {
+   "registerTypes": {
+    "fn": "AC3H",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3685": {
+   "registerEntities": {
+    "fn": "ADdW",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V3938": {
+   "registerEntities": {
+    "fn": "AD8y",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V3081": {
+   "registerEntities": {
+    "fn": "ALLx",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4306": {
+   "registerEntities": {
+    "fn": "AEE6",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3325": {
+   "registerEntities": {
+    "fn": "ABXG",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3083": {
+   "registerEntities": {
+    "fn": "AIkz",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3825": {
+   "registerEntities": {
+    "fn": "ZLQ",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V2505": {
+   "registerEntities": {
+    "fn": "AIDA",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3683": {
+   "registerEntities": {
+    "fn": "ACha",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3807": {
+   "registerBlockEntities": {
+    "fn": "ZNs",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3439": {
+   "registerBlockEntities": {
+    "fn": "ZJP",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3682": {
+   "registerBlockEntities": {
+    "fn": "AE6P",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1460": {
+   "registerBlockEntities": {
+    "fn": "AITA",
+    "index": 4,
+    "arity": null
+   },
+   "registerTypes": {
+    "fn": "Y2D",
+    "index": 5,
+    "arity": null
+   },
+   "registerInventory": {
+    "fn": "P_",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V1466": {
+   "registerBlockEntities": {
+    "fn": "AHPy",
+    "index": 2,
+    "arity": null
+   },
+   "registerTypes": {
+    "fn": "W5J",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V2100": {
+   "registerBlockEntities": {
+    "fn": "WD5",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "V1458": {
+   "registerBlockEntities": {
+    "fn": "Wd0",
+    "index": 2,
+    "arity": null
+   },
+   "registerTypes": {
+    "fn": "ADF5",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3818": {
+   "registerBlockEntities": {
+    "fn": "AEhy",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3202": {
+   "registerBlockEntities": {
+    "fn": "AKf3",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V2684": {
+   "registerBlockEntities": {
+    "fn": "AGaY",
+    "index": 2,
+    "arity": null
+   },
+   "registerTypes": {
+    "fn": "Z4e",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4302": {
+   "registerBlockEntities": {
+    "fn": "AE3r",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1909": {
+   "registerBlockEntities": {
+    "fn": "AJxD",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3327": {
+   "registerBlockEntities": {
+    "fn": "ABH3",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3078": {
+   "registerBlockEntities": {
+    "fn": "AHHf",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "V3448": {
+   "registerBlockEntities": {
+    "fn": "YJy",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1488": {
+   "registerBlockEntities": {
+    "fn": "AAkv",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1451": {
+   "registerBlockEntities": {
+    "fn": "AHSy",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3204": {
+   "registerBlockEntities": {
+    "fn": "ZYm",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3689": {
+   "registerBlockEntities": {
+    "fn": "AHnX",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V4533": {
+   "registerBlockEntities": {
+    "fn": "ALd2",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4292": {
+   "registerTypes": {
+    "fn": "ZXw",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V2551": {
+   "registerTypes": {
+    "fn": "AIRs",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4301": {
+   "registerTypes": {
+    "fn": "AFzF",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3813": {
+   "registerTypes": {
+    "fn": "AF6R",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4059": {
+   "registerTypes": {
+    "fn": "VRW",
+    "index": 2,
+    "arity": null
+   },
+   "components": {
+    "fn": "Qac",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V705": {
+   "registerTypes": {
+    "fn": "WU9",
+    "index": 4,
+    "arity": null
+   },
+   "registerThrowableProjectile": {
+    "fn": "ATq",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V2831": {
+   "registerTypes": {
+    "fn": "Ye5",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4312": {
+   "registerTypes": {
+    "fn": "AFvo",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V2842": {
+   "registerTypes": {
+    "fn": "Yas",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4307": {
+   "registerTypes": {
+    "fn": "ACOo",
+    "index": 3,
+    "arity": null
+   },
+   "components": {
+    "fn": "Vwj",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V4290": {
+   "registerTypes": {
+    "fn": "AKJU",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1125": {
+   "registerTypes": {
+    "fn": "Zum",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V2832": {
+   "registerTypes": {
+    "fn": "ABc1",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1451_1": {
+   "registerTypes": {
+    "fn": "Zgc",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1451_3": {
+   "registerEntities": {
+    "fn": "WG5",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1451_4": {
+   "registerTypes": {
+    "fn": "AEeG",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "JdkBackedImmutableMap": {
+   "forEach": {
+    "fn": "Yoz",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "XorCodec": {
+   "decode": {
+    "fn": "AA2x",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3439_1": {
+   "registerBlockEntities": {
+    "fn": "AGpw",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3818_4": {
+   "registerTypes": {
+    "fn": "AC8i",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1451_6": {
+   "registerTypes": {
+    "fn": "AJ5_",
+    "index": 1,
+    "arity": null
+   },
+   "createCriterionTypes": {
+    "fn": "KCS",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V3818_3": {
+   "registerTypes": {
+    "fn": "Z5k",
+    "index": 2,
+    "arity": null
+   },
+   "components": {
+    "fn": "TpR",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V3818_5": {
+   "registerTypes": {
+    "fn": "AGfK",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StatType": {
+   "get": {
+    "fn": "TZy",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "ChannelAccess": {
+   "createHandle": {
+    "fn": "WPP",
+    "index": 1,
+    "arity": null
+   },
+   "scheduleTick": {
+    "fn": "RFb",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "SoundBufferLibrary": {
+   "getCompleteBuffer": {
+    "fn": "Ltt",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "CompressorHolder": {
+   "compressor": {
+    "fn": "OV9",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ImmutableMapKeySet": {
+   "forEach": {
+    "fn": "WJY",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "JavaOps": {
+   "getList": {
+    "fn": "AGMZ",
+    "index": 30,
+    "arity": null
+   },
+   "createMap": {
+    "fn": "ADi_",
+    "index": 26,
+    "arity": null
+   },
+   "mapLikeToMap": {
+    "fn": "SPR",
+    "index": 21,
+    "arity": null
+   },
+   "getMapEntries": {
+    "fn": "AH4I",
+    "index": 25,
+    "arity": null
+   }
+  },
+  "GlTextureView": {
+   "getFbo": {
+    "fn": "CSn",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "V2501": {
+   "registerFurnace": {
+    "fn": "GI5",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V808": {
+   "registerInventory": {
+    "fn": "AJEc",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "V1906": {
+   "registerInventory": {
+    "fn": "Hah",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "V1920": {
+   "registerInventory": {
+    "fn": "ADnx",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "FilledProfileResults": {
+   "appendCounters": {
+    "fn": "ZG1",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "EnvironmentAttributeMap": {
+   "filterSyncable": {
+    "fn": "R21",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "SectionOcclusionGraph": {
+   "runUpdates": {
+    "fn": "OKF",
+    "index": 13,
+    "arity": null
+   }
+  },
+  "StructurePoolElement": {
+   "single": {
+    "fn": "AKGG",
+    "index": 15,
+    "arity": null
+   },
+   "legacy": {
+    "fn": "AKGG",
+    "index": 12,
+    "arity": null
+   },
+   "list": {
+    "fn": "Ir8",
+    "index": 19,
+    "arity": null
+   },
+   "empty": {
+    "fn": "AKGG",
+    "index": 11,
+    "arity": null
+   },
+   "feature": {
+    "fn": "AKGG",
+    "index": 18,
+    "arity": null
+   }
+  },
+  "Minecraft": {
+   "buildInitialScreens": {
+    "fn": "TIg",
+    "index": 7,
+    "arity": null
+   },
+   "addInitialScreens": {
+    "fn": "TIg",
+    "index": 8,
+    "arity": null
+   },
+   "triggerResourcePackRecovery": {
+    "fn": "FuS",
+    "index": 19,
+    "arity": null
+   }
+  },
+  "ItemContainerContents": {
+   "nonEmptyItems": {
+    "fn": "FOO",
+    "index": 11,
+    "arity": null
+   },
+   "nonEmptyItemsCopy": {
+    "fn": "AHI5",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "Util": {
+   "allOf": {
+    "fn": "BS6",
+    "index": 23,
+    "arity": null
+   },
+   "anyOf": {
+    "fn": "EmW",
+    "index": 31,
+    "arity": null
+   }
+  },
+  "ChatScreen": {
+   "init": {
+    "fn": "NHy",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "IntSpliterator": {
+   "tryAdvance": {
+    "fn": "GQk",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "FloatIterable": {
+   "forEach": {
+    "fn": "H4V",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "DataFixerUpper": {
+   "getRule": {
+    "fn": "LFj",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "SubmitNodeStorage": {
+   "order": {
+    "fn": "AGDt",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ImmutableMap": {
+   "keySpliterator": {
+    "fn": "ABRg",
+    "index": 46,
+    "arity": null
+   }
+  },
+  "JsonOps": {
+   "getList": {
+    "fn": "Xju",
+    "index": 20,
+    "arity": null
+   },
+   "mergeToList": {
+    "fn": "AF$I",
+    "index": 12,
+    "arity": null
+   },
+   "getMapEntries": {
+    "fn": "Zj6",
+    "index": 16,
+    "arity": null
+   }
+  },
+  "EitherMapCodec": {
+   "decode": {
+    "fn": "ALle",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "NbtOps": {
+   "getList": {
+    "fn": "AD2D",
+    "index": 26,
+    "arity": null
+   },
+   "getMapEntries": {
+    "fn": "Ytg",
+    "index": 22,
+    "arity": null
+   }
+  },
+  "DebugScreenOverlay$1": {
+   "addToGroup": {
+    "fn": "SNw",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "GhostSlots": {
+   "render": {
+    "fn": "AH41",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "FeatureFlagRegistry": {
+   "toNames": {
+    "fn": "CEi",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "MobSpawnSettings$Builder": {
+   "build": {
+    "fn": "CDP",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "LongIterable": {
+   "forEach": {
+    "fn": "Fb_",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Enchantment$Builder": {
+   "getEffectsList": {
+    "fn": "FOa",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "SurfaceRules$Bandlands": {
+   "apply": {
+    "fn": "AJx1",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "RecursiveTypeFamily": {
+   "apply": {
+    "fn": "EI1",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "EnvironmentAttributeMap$Entry": {
+   "createCodec": {
+    "fn": "AG83",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AttributeTrack": {
+   "createCodec": {
+    "fn": "AKcM",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RandomState": {
+   "getOrCreateNoise": {
+    "fn": "LtD",
+    "index": 3,
+    "arity": null
+   },
+   "getOrCreateRandomFactory": {
+    "fn": "OU9",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Timeline": {
+   "filterSyncableTracks": {
+    "fn": "OpX",
+    "index": 0,
+    "arity": null
+   },
+   "validateInternal": {
+    "fn": "V9c",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "PatternModernSupport": {
+   "asPredicate": {
+    "fn": "TC_",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "NoiseBasedChunkGenerator": {
+   "createFluidPicker": {
+    "fn": "Xmm",
+    "index": 1,
+    "arity": null
+   },
+   "applyCarvers": {
+    "fn": "AH7S",
+    "index": 14,
+    "arity": null
+   }
+  },
+  "FeatureSorter": {
+   "buildFeaturesPerStep": {
+    "fn": "T1Y",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ListPoolElement": {
+   "setProjectionOnEachElement": {
+    "fn": "Ofg",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "ListBuilder$Builder": {
+   "add": {
+    "fn": "AI26",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "JsonOps$ArrayBuilder": {
+   "add": {
+    "fn": "AE4J",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "RegularImmutableBiMap$Inverse": {
+   "forEach": {
+    "fn": "AE4i",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "HashBiMap$Inverse": {
+   "forEach": {
+    "fn": "AAef",
+    "index": 13,
+    "arity": null
+   }
+  },
+  "RecordBuilder$AbstractStringBuilder": {
+   "add": {
+    "fn": "IZ6",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "RecordCodecBuilder$Instance$4": {
+   "encode": {
+    "fn": "AH9Z",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RecordCodecBuilder$Instance$6": {
+   "encode": {
+    "fn": "WLa",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RecordCodecBuilder$Instance$8": {
+   "encode": {
+    "fn": "Yux",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RecordCodecBuilder$Instance$2": {
+   "encode": {
+    "fn": "ADQN",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PostPass": {
+   "addToFrame": {
+    "fn": "HuE",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PathAllowList": {
+   "getForFileSystem": {
+    "fn": "AEvW",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SimpleReloadInstance$1": {
+   "wait": {
+    "fn": "Rv",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ScreenNarrationCollector$Output": {
+   "add": {
+    "fn": "O1Z",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RegistrySetBuilder$UniversalLookup": {
+   "getOrCreate": {
+    "fn": "TVM",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ChannelAccess$ChannelHandle": {
+   "execute": {
+    "fn": "BhS",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Function14": {
+   "curry7": {
+    "fn": "ACNG",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "SpatialAttributeInterpolator": {
+   "accumulate": {
+    "fn": "ALtC",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Maps$TransformedEntriesMap": {
+   "forEach": {
+    "fn": "ACuc",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "LongRunningTask": {
+   "setScreen": {
+    "fn": "A_c",
+    "index": 2,
+    "arity": null
+   },
+   "error": {
+    "fn": "DX$",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "MapTextureManager": {
+   "getOrCreateMapInstance": {
+    "fn": "TOP",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "VanillaPackResources": {
+   "openClasspathResource": {
+    "fn": "Rrx",
+    "index": 14,
+    "arity": null
+   }
+  },
+  "RecipeManager": {
+   "forSingleInput": {
+    "fn": "E54",
+    "index": 21,
+    "arity": null
+   },
+   "prepare": {
+    "fn": "AJUU",
+    "index": 1,
+    "arity": null
+   },
+   "finalizeRecipeLoading": {
+    "fn": "Uwy",
+    "index": 3,
+    "arity": null
+   },
+   "unpackRecipeInfo": {
+    "fn": "Uwy",
+    "index": 20,
+    "arity": null
+   },
+   "listDisplaysForRecipe": {
+    "fn": "ITS",
+    "index": 17,
+    "arity": null
+   }
+  },
+  "RegistryDataLoader": {
+   "load": {
+    "fn": "U9y",
+    "index": 3,
+    "arity": null
+   },
+   "createContext": {
+    "fn": "U9y",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "LocalCache$Segment": {
+   "loadAsync": {
+    "fn": "WZ$",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "RecordBuilder$AbstractUniversalBuilder": {
+   "add": {
+    "fn": "ACY4",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "LocalCache$LoadingValueReference": {
+   "loadFuture": {
+    "fn": "YYh",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "Function10": {
+   "curry5": {
+    "fn": "Zop",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "Maps$KeySet": {
+   "forEach": {
+    "fn": "AG7J",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "SectionRenderDispatcher": {
+   "schedule": {
+    "fn": "T6G",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Function12": {
+   "curry6": {
+    "fn": "W$s",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Function13": {
+   "curry6": {
+    "fn": "ZFu",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "RegistryOps$HolderLookupAdapter": {
+   "lookup": {
+    "fn": "VoH",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ScoreHolderArgument": {
+   "parse": {
+    "fn": "Tig",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "OperationArgument": {
+   "getOperation": {
+    "fn": "AAj8",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "GameProfileArgument": {
+   "parse": {
+    "fn": "Obj",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "EntitySelectorParser": {
+   "finalizePredicates": {
+    "fn": "Ep",
+    "index": 5,
+    "arity": null
+   },
+   "createRotationPredicate": {
+    "fn": "RO7",
+    "index": 6,
+    "arity": null
+   },
+   "parseSelector": {
+    "fn": "AD9t",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "BrowserResourceReloadScheduler": {
+   "schedulePump": {
+    "fn": "CP",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "ExtraCodecs$StrictUnboundedMapCodec": {
+   "decode": {
+    "fn": "AJq0",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "LocalDate": {
+   "parse": {
+    "fn": "ACCU",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "FieldTree": {
+   "addEntry": {
+    "fn": "IIh",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "ConnectScreen$1": {
+   "run": {
+    "fn": "AEJ0",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StatsScreen": {
+   "repositionElements": {
+    "fn": "Gda",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Function4": {
+   "curry2": {
+    "fn": "ALyP",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Function3": {
+   "curry": {
+    "fn": "ALLy",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "Collections2$FilteredCollection": {
+   "forEach": {
+    "fn": "AEw8",
+    "index": 10,
+    "arity": null
+   },
+   "removeIf": {
+    "fn": "ACrm",
+    "index": 14,
+    "arity": null
+   }
+  },
+  "DownloadedPackSource$5": {
+   "run": {
+    "fn": "Vk",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AbstractContainerMenu": {
+   "broadcastChanges": {
+    "fn": "Zut",
+    "index": 17,
+    "arity": null
+   }
+  },
+  "ListCodec$DecoderState": {
+   "accept": {
+    "fn": "AJ6E",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "Function15": {
+   "curry7": {
+    "fn": "ABdW",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ItemEnchantments$Mutable": {
+   "upgrade": {
+    "fn": "ByZ",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "IoSupplier": {
+   "create": {
+    "fn": "B3X",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "RenderRegionCache": {
+   "getSectionDataCopy": {
+    "fn": "AD_4",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Sheets": {
+   "getShieldMaterial": {
+    "fn": "Iyk",
+    "index": 24,
+    "arity": null
+   },
+   "getBannerMaterial": {
+    "fn": "KrQ",
+    "index": 23,
+    "arity": null
+   }
+  },
+  "FontManager": {
+   "resolveProviders": {
+    "fn": "ADAn",
+    "index": 6,
+    "arity": null
+   },
+   "finalizeProviderLoading": {
+    "fn": "AC6h",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ModelGroupCollector": {
+   "build": {
+    "fn": "ACU3",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "LevelStorageSource$LevelStorageAccess": {
+   "getLevelPath": {
+    "fn": "RR",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ParallelMapTransform$SplitterBase": {
+   "scheduleTasks": {
+    "fn": "ALfr",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SpriteSourceList": {
+   "list": {
+    "fn": "ADjV",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AbstractMapBasedMultimap$AsMap$AsMapEntries": {
+   "spliterator": {
+    "fn": "AGdK",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "BooleanCollection": {
+   "removeIf": {
+    "fn": "BdB",
+    "index": 14,
+    "arity": null
+   }
+  },
+  "BooleanIterable": {
+   "forEach": {
+    "fn": "ZG",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "ByteIterable": {
+   "forEach": {
+    "fn": "JAJ",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "ReloadableServerResources": {
+   "updateStaticRegistryTags": {
+    "fn": "Q_U",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "CustomFeatureRenderer$Storage": {
+   "add": {
+    "fn": "Ifq",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "Type": {
+   "rewrite": {
+    "fn": "Lyq",
+    "index": 22,
+    "arity": null
+   },
+   "everywhere": {
+    "fn": "RUp",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "EntityRenameFix": {
+   "makeRule": {
+    "fn": "AJjg",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "IntCollection": {
+   "removeIf": {
+    "fn": "E82",
+    "index": 16,
+    "arity": null
+   }
+  },
+  "LongCollection": {
+   "removeIf": {
+    "fn": "ALUU",
+    "index": 16,
+    "arity": null
+   }
+  },
+  "Function16": {
+   "curry8": {
+    "fn": "Zui",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "TagLoader": {
+   "load": {
+    "fn": "YDh",
+    "index": 1,
+    "arity": null
+   },
+   "build": {
+    "fn": "GAn",
+    "index": 3,
+    "arity": null
+   },
+   "tryBuildTag": {
+    "fn": "WOB",
+    "index": 2,
+    "arity": null
+   },
+   "loadTagsFromNetwork": {
+    "fn": "ADji",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "ServerSelectionList$OnlineServerEntry": {
+   "renderContent": {
+    "fn": "AEkx",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "Connection": {
+   "initiateServerboundConnection": {
+    "fn": "Hbs",
+    "index": 14,
+    "arity": null
+   },
+   "send": {
+    "fn": "RHL",
+    "index": 17,
+    "arity": null
+   },
+   "sendPacket": {
+    "fn": "HBm",
+    "index": 19,
+    "arity": null
+   },
+   "flushChannel": {
+    "fn": "ZMi",
+    "index": 21,
+    "arity": null
+   },
+   "flush": {
+    "fn": "UR5",
+    "index": 22,
+    "arity": null
+   }
+  },
+  "TelemetryPropertyMap$1": {
+   "decodeProperty": {
+    "fn": "ACwS",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "ChargedProjectiles": {
+   "getItems": {
+    "fn": "S9b",
+    "index": 4,
+    "arity": null
+   },
+   "of": {
+    "fn": "QCZ",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "DSL": {
+   "taggedChoiceType": {
+    "fn": "B1P",
+    "index": 38,
+    "arity": null
+   }
+  },
+  "Multisets": {
+   "spliteratorImpl": {
+    "fn": "D4R",
+    "index": 26,
+    "arity": null
+   }
+  },
+  "AtlasManager": {
+   "updateSpriteMaps": {
+    "fn": "VFb",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "BlockModelDefinition$SimpleModelSelectors": {
+   "instantiate": {
+    "fn": "AFMi",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ModelManager": {
+   "createBlockStateToModelDispatch": {
+    "fn": "Vf4",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "DispatchedMapCodec": {
+   "parseEntry": {
+    "fn": "Wvt",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Selector": {
+   "instantiate": {
+    "fn": "AHet",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "DefaultChannelPipeline": {
+   "fireChannelReadComplete": {
+    "fn": "EsG",
+    "index": 71,
+    "arity": null
+   },
+   "fireExceptionCaught": {
+    "fn": "EDL",
+    "index": 68,
+    "arity": null
+   },
+   "fireChannelRead": {
+    "fn": "ECY",
+    "index": 70,
+    "arity": null
+   },
+   "fireChannelActive": {
+    "fn": "CW_",
+    "index": 66,
+    "arity": null
+   },
+   "fireChannelWritabilityChanged": {
+    "fn": "Jq0",
+    "index": 72,
+    "arity": null
+   },
+   "fireChannelInactive": {
+    "fn": "EDL",
+    "index": 67,
+    "arity": null
+   },
+   "fireChannelUnregistered": {
+    "fn": "EhW",
+    "index": 62,
+    "arity": null
+   },
+   "fireChannelRegistered": {
+    "fn": "IPp",
+    "index": 61,
+    "arity": null
+   },
+   "fireUserEventTriggered": {
+    "fn": "JUx",
+    "index": 69,
+    "arity": null
+   }
+  },
+  "DataComponentMap": {
+   "iterator": {
+    "fn": "Sp$",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "FilledProfileResults$CounterCollector": {
+   "addValue": {
+    "fn": "JIa",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "UnihexProvider$Definition": {
+   "unpack": {
+    "fn": "AKiz",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SpaceProvider$Definition": {
+   "unpack": {
+    "fn": "ACEX",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "BitmapProvider$Definition": {
+   "unpack": {
+    "fn": "AE_j",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "TrueTypeGlyphProviderDefinition": {
+   "unpack": {
+    "fn": "YvC",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "RealmsConnect$1": {
+   "run": {
+    "fn": "AABf",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "EntitySelector": {
+   "getPredicate": {
+    "fn": "IyJ",
+    "index": 14,
+    "arity": null
+   }
+  },
+  "EditGameRulesScreen$RuleList$1": {
+   "addEntry": {
+    "fn": "KuY",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "ModelDiscovery$ModelWrapper": {
+   "bakeTopGeometry": {
+    "fn": "H2J",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "MappedRegistry$3": {
+   "apply": {
+    "fn": "FW5",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "AbstractChannelHandlerContext": {
+   "fireExceptionCaught": {
+    "fn": "AFJh",
+    "index": 10,
+    "arity": null
+   },
+   "fireChannelRead": {
+    "fn": "DoE",
+    "index": 13,
+    "arity": null
+   },
+   "fireChannelActive": {
+    "fn": "D9V",
+    "index": 8,
+    "arity": null
+   },
+   "fireChannelInactive": {
+    "fn": "I0",
+    "index": 9,
+    "arity": null
+   },
+   "fireChannelUnregistered": {
+    "fn": "C8T",
+    "index": 7,
+    "arity": null
+   },
+   "fireChannelRegistered": {
+    "fn": "CeD",
+    "index": 6,
+    "arity": null
+   },
+   "fireUserEventTriggered": {
+    "fn": "DoE",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "DataComponentMap$3": {
+   "keySet": {
+    "fn": "AEyK",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ModelFeatureRenderer$Storage": {
+   "add": {
+    "fn": "GGb",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RangeSelectItemModel$Unbaked": {
+   "resolveDependencies": {
+    "fn": "AHPB",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "MultiPartModel$Unbaked": {
+   "resolveDependencies": {
+    "fn": "AEre",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ServerAdvancementManager": {
+   "apply": {
+    "fn": "ADUt",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "TagEntry": {
+   "createItemStack": {
+    "fn": "AA4o",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "DirectoryLister": {
+   "run": {
+    "fn": "XC4",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PalettedPermutations": {
+   "run": {
+    "fn": "Ww8",
+    "index": 2,
+    "arity": null
+   },
+   "createPaletteMapping": {
+    "fn": "AGEq",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "TagLoader$SortingEntry": {
+   "visitOptionalDependencies": {
+    "fn": "AHB9",
+    "index": 2,
+    "arity": null
+   },
+   "visitRequiredDependencies": {
+    "fn": "ADe_",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "OptionsList$Entry": {
+   "narratables": {
+    "fn": "Y1R",
+    "index": 7,
+    "arity": null
+   },
+   "children": {
+    "fn": "YB6",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "OpenServerTask": {
+   "run": {
+    "fn": "AGd9",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ItemPredicateArgument$Context": {
+   "forElementType": {
+    "fn": "YzX",
+    "index": 1,
+    "arity": null
+   },
+   "forTagType": {
+    "fn": "AAmz",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SpriteSource$Output": {
+   "add": {
+    "fn": "UDq",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "RealmsResetWorldScreen$1": {
+   "run": {
+    "fn": "AJgy",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "TelemetryEventLog": {
+   "logger": {
+    "fn": "YIW",
+    "index": 1,
+    "arity": null
+   },
+   "close": {
+    "fn": "ALgC",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "RealmsBackupScreen$1": {
+   "run": {
+    "fn": "XGe",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PacketSendListener": {
+   "thenRun": {
+    "fn": "A5F",
+    "index": 1,
+    "arity": null
+   },
+   "exceptionallySend": {
+    "fn": "PeQ",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "MultiPartModel$SharedBakedState": {
+   "selectModels": {
+    "fn": "ADg4",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ItemPredicateArgument$ComponentWrapper": {
+   "create": {
+    "fn": "VjP",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "UnconfiguredPipelineHandler": {
+   "setupInboundHandler": {
+    "fn": "NjD",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Advancement": {
+   "validate": {
+    "fn": "ADFz",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "UnconfiguredPipelineHandler$InboundConfigurationTask": {
+   "andThen": {
+    "fn": "NjD",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "UnconfiguredPipelineHandler$OutboundConfigurationTask": {
+   "andThen": {
+    "fn": "H5X",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AnimationDefinition$Builder": {
+   "addAnimation": {
+    "fn": "Ps9",
+    "index": 3,
+    "arity": 0
+   }
+  },
+  "KeyValueCondition": {
+   "instantiate": {
+    "fn": "ViG",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "CombinedCondition": {
+   "instantiate": {
+    "fn": "AH2$",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "TextureSlots$Resolver": {
+   "resolve": {
+    "fn": "Ww7",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "RealmsMainScreen$1": {
+   "run": {
+    "fn": "AGGC",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "IntegratedServer": {
+   "warnOnLowDiskSpace": {
+    "fn": "ICH",
+    "index": 32,
+    "arity": null
+   },
+   "reportChunkSaveFailure": {
+    "fn": "FcD",
+    "index": 34,
+    "arity": null
+   },
+   "reportChunkLoadFailure": {
+    "fn": "CLG",
+    "index": 33,
+    "arity": null
+   }
+  },
+  "Entity": {
+   "setRemoved": {
+    "fn": "ALWl",
+    "index": 475,
+    "arity": null
+   }
+  },
+  "SlotCollection": {
+   "concat": {
+    "fn": "PDp",
+    "index": 6,
+    "arity": null
+   },
+   "of": {
+    "fn": "WcH",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "LegacyStructureDataHandler": {
+   "getLegacyTagFixer": {
+    "fn": "R7l",
+    "index": 9,
+    "arity": null
+   },
+   "populateCaches": {
+    "fn": "ABAR",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "BlockInWorld": {
+   "hasState": {
+    "fn": "V9H",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "StructureTemplateManager": {
+   "get": {
+    "fn": "APP",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ProfunctorTransformer": {
+   "eval": {
+    "fn": "ACtc",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "PartDefinition": {
+   "bake": {
+    "fn": "J6W",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ServerScoreboard": {
+   "load": {
+    "fn": "AIee",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "CustomBossEvents": {
+   "load": {
+    "fn": "AIee",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ServerDebugSubscribers": {
+   "tick": {
+    "fn": "AGaI",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "TaggedChoice$TaggedChoiceType$RewriteFunc": {
+   "apply": {
+    "fn": "YrX",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PlaceholderLookupProvider$UniversalLookup": {
+   "getOrCreate": {
+    "fn": "NIf",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "ServerLevel": {
+   "wakeUpAllPlayers": {
+    "fn": "AIgM",
+    "index": 12,
+    "arity": null
+   },
+   "onStructureStartsAvailable": {
+    "fn": "NSu",
+    "index": 131,
+    "arity": null
+   }
+  },
+  "ItemPredicateArgument": {
+   "createComponentExistencePredicate": {
+    "fn": "AINT",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "Stopwatches": {
+   "unpack": {
+    "fn": "ACtR",
+    "index": 1,
+    "arity": null
+   },
+   "update": {
+    "fn": "X5S",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "WeatherAttributes": {
+   "addLayer": {
+    "fn": "PmX",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ModelPart": {
+   "visit": {
+    "fn": "QDK",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "KeyValueCondition$Terms": {
+   "instantiate": {
+    "fn": "ZoQ",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Optic$CompositionOptic": {
+   "eval": {
+    "fn": "WG9",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "VillagerProfessionLayer": {
+   "getHatData": {
+    "fn": "U$U",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "ModelPartFeatureRenderer$Storage": {
+   "add": {
+    "fn": "ADde",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "BooleanPredicate": {
+   "negate": {
+    "fn": "AD6l",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "RandomState$1": {
+   "apply": {
+    "fn": "XQG",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "RandomState$1NoiseWiringHelper": {
+   "apply": {
+    "fn": "AEir",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "PersistentEntitySectionManager": {
+   "autoSave": {
+    "fn": "J5i",
+    "index": 24,
+    "arity": null
+   },
+   "saveAll": {
+    "fn": "S0I",
+    "index": 25,
+    "arity": null
+   },
+   "processUnloads": {
+    "fn": "ALMu",
+    "index": 20,
+    "arity": null
+   },
+   "processChunkUnload": {
+    "fn": "GGo",
+    "index": 18,
+    "arity": null
+   }
+  },
+  "LocalChannel": {
+   "doRegister": {
+    "fn": "AA2W",
+    "index": 13,
+    "arity": null
+   }
+  },
+  "LocalServerChannel": {
+   "doRegister": {
+    "fn": "AAOp",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "PeriodicNotificationManager$NotificationTask": {
+   "run": {
+    "fn": "Y4O",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "EnvironmentAttributeSystem$Builder": {
+   "addConstantEntry": {
+    "fn": "PmX",
+    "index": 3,
+    "arity": null
+   },
+   "addLayer": {
+    "fn": "BJJ",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "TicketStorage": {
+   "fromPacked": {
+    "fn": "AACC",
+    "index": 2,
+    "arity": null
+   },
+   "removeTicketIf": {
+    "fn": "TW4",
+    "index": 28,
+    "arity": null
+   },
+   "getOrCreateTickets": {
+    "fn": "CMV",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "PackSelectionScreen": {
+   "getPackIcon": {
+    "fn": "AEBL",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "CustomBossEvent": {
+   "load": {
+    "fn": "AAQz",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "HttpUtil": {
+   "downloadFile": {
+    "fn": "AHn1",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "EnvironmentAttributeSystem": {
+   "addBiomeLayerForAttribute": {
+    "fn": "W9R",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Types$ParameterizedTypeImpl": {
+   "toString": {
+    "fn": "AGp0",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Adapter": {
+   "eval": {
+    "fn": "SBC",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Prism": {
+   "eval": {
+    "fn": "AFg8",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Lens": {
+   "eval": {
+    "fn": "ADKq",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "Traversal": {
+   "eval": {
+    "fn": "Z6L",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SingleThreadIoEventLoop": {
+   "register": {
+    "fn": "QGV",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "ThreadedLevelLightEngine": {
+   "tryScheduleUpdate": {
+    "fn": "Kxp",
+    "index": 14,
+    "arity": null
+   },
+   "addTask": {
+    "fn": "DK1",
+    "index": 10,
+    "arity": null
+   },
+   "updateChunkStatus": {
+    "fn": "ZrJ",
+    "index": 4,
+    "arity": null
+   },
+   "initializeLight": {
+    "fn": "KJx",
+    "index": 12,
+    "arity": null
+   },
+   "lightChunk": {
+    "fn": "T5u",
+    "index": 13,
+    "arity": null
+   },
+   "retainData": {
+    "fn": "AB5H",
+    "index": 11,
+    "arity": null
+   },
+   "queueSectionData": {
+    "fn": "IdG",
+    "index": 8,
+    "arity": null
+   },
+   "checkBlock": {
+    "fn": "Tti",
+    "index": 3,
+    "arity": null
+   },
+   "updateSectionStatus": {
+    "fn": "ADtr",
+    "index": 5,
+    "arity": null
+   },
+   "setLightEnabled": {
+    "fn": "AKSg",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "EntitySectionStorage": {
+   "getAllChunksWithExistingSections": {
+    "fn": "KNs",
+    "index": 9,
+    "arity": null
+   },
+   "getOrCreateSection": {
+    "fn": "EaI",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "ChunkGeneratorStructureState": {
+   "generatePositions": {
+    "fn": "IeM",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "WeightedList": {
+   "map": {
+    "fn": "AEMD",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "DistanceManager$PlayerTicketTracker": {
+   "onLevelChange": {
+    "fn": "U4y",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Scoreboard": {
+   "getOrCreatePlayerInfo": {
+    "fn": "Kzg",
+    "index": 4,
+    "arity": null
+   },
+   "addObjective": {
+    "fn": "Hsb",
+    "index": 2,
+    "arity": null
+   },
+   "forAllObjectives": {
+    "fn": "BdH",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "DownloadedPackSource$3": {
+   "updateToast": {
+    "fn": "I9U",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "TarArchiveOutputStream": {
+   "encodeExtendedPaxHeadersContents": {
+    "fn": "TQT",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "FunctionType": {
+   "create": {
+    "fn": "BTh",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "Typed": {
+   "getOptional": {
+    "fn": "NHI",
+    "index": 4,
+    "arity": null
+   },
+   "getOptionalTyped": {
+    "fn": "Vu",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "Optics": {
+   "forgetOpt": {
+    "fn": "BBu",
+    "index": 16,
+    "arity": null
+   },
+   "forget": {
+    "fn": "FRA",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "NbtUtils": {
+   "unpackStructureTemplate": {
+    "fn": "Zmz",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "StructureManager": {
+   "getStructureWithPieceAt": {
+    "fn": "Sly",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "SectionStorage": {
+   "flushAll": {
+    "fn": "PeE",
+    "index": 3,
+    "arity": null
+   },
+   "unpackChunk": {
+    "fn": "X8L",
+    "index": 10,
+    "arity": null
+   },
+   "prefetch": {
+    "fn": "AJTY",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "LocalMobCapCalculator": {
+   "addMob": {
+    "fn": "TXK",
+    "index": 2,
+    "arity": null
+   },
+   "getPlayersNear": {
+    "fn": "T3G",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ContainerComponentManipulator": {
+   "getSlots": {
+    "fn": "ACUD",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "SerializableChunkData": {
+   "write": {
+    "fn": "AJ2k",
+    "index": 5,
+    "arity": null
+   },
+   "unpackStructureReferences": {
+    "fn": "VbW",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "MacroFunction": {
+   "lookupValues": {
+    "fn": "AD00",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "ItemStackComponentizationFix$ItemStackData": {
+   "read": {
+    "fn": "AF1C",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "PeekingStreamImpl": {
+   "wrap": {
+    "fn": "AJS9",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "Forget$Instance": {
+   "first": {
+    "fn": "AJ1$",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ShortIterable": {
+   "forEach": {
+    "fn": "H$c",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Iterables$4": {
+   "forEach": {
+    "fn": "Na3",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ChunkGenerator": {
+   "findNearestMapStructure": {
+    "fn": "Lpr",
+    "index": 8,
+    "arity": null
+   },
+   "createStructures": {
+    "fn": "AEu2",
+    "index": 21,
+    "arity": null
+   },
+   "applyBiomeDecoration": {
+    "fn": "ALnN",
+    "index": 13,
+    "arity": null
+   }
+  },
+  "RandomSequences": {
+   "get": {
+    "fn": "Nqe",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ShulkerBoxBlock": {
+   "getDrops": {
+    "fn": "AGQe",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "DecoratedPotBlock": {
+   "getDrops": {
+    "fn": "WwO",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "FunctionType$Instance": {
+   "right": {
+    "fn": "AFhk",
+    "index": 8,
+    "arity": null
+   },
+   "first": {
+    "fn": "ZJ$",
+    "index": 4,
+    "arity": null
+   },
+   "wander": {
+    "fn": "AFdA",
+    "index": 6,
+    "arity": null
+   },
+   "left": {
+    "fn": "AEnL",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ForgetOpt$Instance": {
+   "right": {
+    "fn": "ALnc",
+    "index": 5,
+    "arity": null
+   },
+   "first": {
+    "fn": "AIce",
+    "index": 2,
+    "arity": null
+   },
+   "left": {
+    "fn": "Y0c",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "RedstoneTorchBlock": {
+   "isToggledTooFrequently": {
+    "fn": "NpZ",
+    "index": 13,
+    "arity": null
+   }
+  },
+  "ChunkMap": {
+   "runGenerationTask": {
+    "fn": "UPn",
+    "index": 35,
+    "arity": null
+   },
+   "applyStep": {
+    "fn": "AAVu",
+    "index": 33,
+    "arity": null
+   },
+   "resendBiomesForChunks": {
+    "fn": "Lok",
+    "index": 81,
+    "arity": null
+   }
+  },
+  "ItemStackComponentizationFix": {
+   "fixItemStack": {
+    "fn": "AK7X",
+    "index": 1,
+    "arity": null
+   },
+   "parseEnchantment": {
+    "fn": "YU3",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "CopperGolemAi": {
+   "onReachedTargetInteraction": {
+    "fn": "Ejj",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "TriggerGate": {
+   "triggerGate": {
+    "fn": "Eyy",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SheepColorSpawnRules": {
+   "single": {
+    "fn": "ERw",
+    "index": 5,
+    "arity": null
+   },
+   "weighted": {
+    "fn": "ERw",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Sum": {
+   "hmap": {
+    "fn": "AI7w",
+    "index": 6,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "Vvt",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "RecursivePoint": {
+   "hmap": {
+    "fn": "AGE3",
+    "index": 5,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "XMF",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "TaggedChoice": {
+   "hmap": {
+    "fn": "AH2q",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "Const": {
+   "hmap": {
+    "fn": "AFfU",
+    "index": 6,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "AFPQ",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Named": {
+   "hmap": {
+    "fn": "AIbw",
+    "index": 5,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "AKJG",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Hook": {
+   "hmap": {
+    "fn": "ABBL",
+    "index": 5,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "X7g",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Product": {
+   "hmap": {
+    "fn": "AHok",
+    "index": 6,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "AA3s",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Check": {
+   "hmap": {
+    "fn": "WAR",
+    "index": 5,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "WOc",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "CompoundList": {
+   "hmap": {
+    "fn": "ADnX",
+    "index": 6,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "VQ2",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "List": {
+   "hmap": {
+    "fn": "AJg9",
+    "index": 6,
+    "arity": null
+   },
+   "applyO": {
+    "fn": "ZOw",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "BiPredicate": {
+   "negate": {
+    "fn": "ALyq",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "StandardTable$Row": {
+   "entrySpliterator": {
+    "fn": "AIHH",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "LocalMobCapCalculator$MobCounts": {
+   "add": {
+    "fn": "TXK",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "LocalIoHandler$LocalIoRegistration": {
+   "cancel": {
+    "fn": "OeO",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Raid": {
+   "addWaveMob": {
+    "fn": "Nw2",
+    "index": 41,
+    "arity": null
+   }
+  },
+  "CollisionGetter": {
+   "getBlockCollisionsFromContext": {
+    "fn": "BuJ",
+    "index": 18,
+    "arity": null
+   }
+  },
+  "AbstractExecutorService": {
+   "submit": {
+    "fn": "N7e",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "BlockEntitySignDoubleSidedEditableTextFix": {
+   "fixFrontTextTag": {
+    "fn": "AIEK",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ExperimentalRedstoneWireEvaluator": {
+   "setPower": {
+    "fn": "DLJ",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "GossipContainer": {
+   "getOrCreate": {
+    "fn": "FTd",
+    "index": 6,
+    "arity": null
+   },
+   "add": {
+    "fn": "DIi",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "SideChainPartBlock$Neighbors": {
+   "getOrCreateNeighbor": {
+    "fn": "ShP",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "StructuresBecomeConfiguredFix": {
+   "updateStarts": {
+    "fn": "ACF$",
+    "index": 3,
+    "arity": null
+   },
+   "updateReferences": {
+    "fn": "ADoD",
+    "index": 4,
+    "arity": null
+   },
+   "guessConfiguration": {
+    "fn": "PlL",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "TagValueInput$ListWrapper": {
+   "stream": {
+    "fn": "XOh",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Brain": {
+   "addActivityAndRemoveMemoriesWhenStopped": {
+    "fn": "Fc_",
+    "index": 35,
+    "arity": null
+   }
+  },
+  "TreeFeature": {
+   "place": {
+    "fn": "ABZ$",
+    "index": 8,
+    "arity": null
+   },
+   "doPlace": {
+    "fn": "AIpE",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "FossilFeature": {
+   "place": {
+    "fn": "AKSf",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AttributeMap": {
+   "getInstance": {
+    "fn": "Gke",
+    "index": 5,
+    "arity": 0
+   },
+   "addTransientAttributeModifiers": {
+    "fn": "Zgp",
+    "index": 11,
+    "arity": null
+   },
+   "removeAttributeModifiers": {
+    "fn": "Xsd",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "StructureCheck": {
+   "incrementReference": {
+    "fn": "OyQ",
+    "index": 9,
+    "arity": null
+   },
+   "checkStart": {
+    "fn": "OyQ",
+    "index": 1,
+    "arity": null
+   },
+   "loadStructures": {
+    "fn": "OyQ",
+    "index": 4,
+    "arity": null
+   },
+   "onStructureLoad": {
+    "fn": "AFgJ",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "ServerChunkCache": {
+   "onLightUpdate": {
+    "fn": "VGm",
+    "index": 31,
+    "arity": null
+   }
+  },
+  "FlowingFluid$SpreadContext": {
+   "isHole": {
+    "fn": "SE1",
+    "index": 3,
+    "arity": null
+   },
+   "getBlockState": {
+    "fn": "SS5",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ServerWaypointManager": {
+   "untrackWaypoint": {
+    "fn": "B_r",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "AttributeInstance": {
+   "getModifiers": {
+    "fn": "CBS",
+    "index": 4,
+    "arity": null
+   },
+   "replaceFrom": {
+    "fn": "N28",
+    "index": 22,
+    "arity": null
+   }
+  },
+  "ChunkTaskPriorityQueue": {
+   "submit": {
+    "fn": "X5N",
+    "index": 2,
+    "arity": null
+   },
+   "resortChunkTasks": {
+    "fn": "ZfM",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AbstractCandleBlock": {
+   "extinguish": {
+    "fn": "Dvh",
+    "index": 8,
+    "arity": null
+   },
+   "animateTick": {
+    "fn": "AA8p",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "PoiSection": {
+   "add": {
+    "fn": "Gh2",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "FallenTreeFeature": {
+   "decorateLogs": {
+    "fn": "Tsr",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "FallingBlockEntity": {
+   "tick": {
+    "fn": "Yav",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "SculkSpreader": {
+   "updateCursors": {
+    "fn": "ZvX",
+    "index": 15,
+    "arity": null
+   },
+   "load": {
+    "fn": "AFt$",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "LivingEntity": {
+   "handleEquipmentChanges": {
+    "fn": "Fre",
+    "index": 247,
+    "arity": null
+   },
+   "activeLocationDependentEnchantments": {
+    "fn": "T65",
+    "index": 129,
+    "arity": null
+   }
+  },
+  "WitherSkullBlock": {
+   "getOrCreateWitherBase": {
+    "fn": "AH5O",
+    "index": 7,
+    "arity": null
+   },
+   "getOrCreateWitherFull": {
+    "fn": "PZv",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Streams": {
+   "concat": {
+    "fn": "VLz",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "BulkSectionAccess": {
+   "getSection": {
+    "fn": "J9c",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ChunkHolder": {
+   "broadcast": {
+    "fn": "Ekx",
+    "index": 17,
+    "arity": null
+   }
+  },
+  "PiglinAi": {
+   "broadcastAngerTarget": {
+    "fn": "HRr",
+    "index": 49,
+    "arity": null
+   },
+   "broadcastUniversalAnger": {
+    "fn": "O1O",
+    "index": 50,
+    "arity": null
+   }
+  },
+  "Enchantment": {
+   "runLocationChangedEffects": {
+    "fn": "TMT",
+    "index": 56,
+    "arity": null
+   }
+  },
+  "HoglinAi": {
+   "broadcastAttackTarget": {
+    "fn": "L9h",
+    "index": 19,
+    "arity": null
+   },
+   "broadcastRetreat": {
+    "fn": "AIWU",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "DataComponentPatch": {
+   "split": {
+    "fn": "G_0",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "IntSpliterators$ShortSpliteratorWrapper": {
+   "forEachRemaining": {
+    "fn": "AJnf",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "MapItemSavedData": {
+   "tickCarriedBy": {
+    "fn": "Myp",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "DistanceManager": {
+   "addPlayer": {
+    "fn": "NgD",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "BaseFireBlock": {
+   "entityInside": {
+    "fn": "VV6",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "LavaCauldronBlock": {
+   "entityInside": {
+    "fn": "ACMs",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "PowderSnowBlock": {
+   "entityInside": {
+    "fn": "AKBB",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "LayeredCauldronBlock": {
+   "entityInside": {
+    "fn": "AG_2",
+    "index": 7,
+    "arity": null
+   }
+  },
+  "BaseSpawner": {
+   "serverTick": {
+    "fn": "Orc",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "TaggedChoice$TaggedChoiceType": {
+   "findTypeInChildren": {
+    "fn": "AGse",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "Villager": {
+   "tellWitnessesThatIWasMurdered": {
+    "fn": "AEmg",
+    "index": 43,
+    "arity": null
+   }
+  },
+  "Consumable": {
+   "onConsume": {
+    "fn": "O9Z",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "TypedEntityData": {
+   "loadInto": {
+    "fn": "AJCi",
+    "index": 11,
+    "arity": null
+   }
+  },
+  "DropInvalidSignDataFix": {
+   "fixText": {
+    "fn": "Lou",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "AngerManagement": {
+   "increaseAnger": {
+    "fn": "EfY",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "Allay": {
+   "dropEquipment": {
+    "fn": "Zhw",
+    "index": 41,
+    "arity": null
+   }
+  },
+  "Piglin": {
+   "dropCustomDeathLoot": {
+    "fn": "Vg$",
+    "index": 4,
+    "arity": null
+   },
+   "finishConversion": {
+    "fn": "AKrk",
+    "index": 26,
+    "arity": null
+   }
+  },
+  "Fox": {
+   "readAdditionalSaveData": {
+    "fn": "AB7Q",
+    "index": 25,
+    "arity": null
+   }
+  },
+  "Maps$Values": {
+   "forEach": {
+    "fn": "ADxi",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "LavaFluid": {
+   "entityInside": {
+    "fn": "AAOa",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "ItemUtils": {
+   "onContainerDestroyed": {
+    "fn": "MdV",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "BundleContents": {
+   "itemsCopy": {
+    "fn": "YAG",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "BrowserMultiplayerRecovery": {
+   "maybeReconnect": {
+    "fn": "QOA",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ClientboundCommandsPacket": {
+   "validateEntries": {
+    "fn": "QJF",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Iterables$5": {
+   "forEach": {
+    "fn": "ABe$",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "Affine": {
+   "eval": {
+    "fn": "AIq1",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "BuriedTreasureStructure": {
+   "findGenerationPoint": {
+    "fn": "ADLp",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SinglePieceStructure": {
+   "findGenerationPoint": {
+    "fn": "AFSD",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "EndCityStructure": {
+   "findGenerationPoint": {
+    "fn": "AJzT",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "NetherFortressStructure": {
+   "findGenerationPoint": {
+    "fn": "AIZE",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "IglooStructure": {
+   "findGenerationPoint": {
+    "fn": "AHY$",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "NetherFossilStructure": {
+   "findGenerationPoint": {
+    "fn": "AISH",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "OceanMonumentStructure": {
+   "findGenerationPoint": {
+    "fn": "ABnc",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "OceanRuinStructure": {
+   "findGenerationPoint": {
+    "fn": "AKk0",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "RuinedPortalStructure": {
+   "findGenerationPoint": {
+    "fn": "ZUL",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ShipwreckStructure": {
+   "findGenerationPoint": {
+    "fn": "AEo1",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "StrongholdStructure": {
+   "findGenerationPoint": {
+    "fn": "AH6C",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SwampHutStructure": {
+   "findGenerationPoint": {
+    "fn": "AK76",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "WoodlandMansionStructure": {
+   "findGenerationPoint": {
+    "fn": "Wpl",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "FlowingFluid": {
+   "getShape": {
+    "fn": "AC0o",
+    "index": 35,
+    "arity": null
+   }
+  },
+  "TaskScheduler": {
+   "scheduleWithResult": {
+    "fn": "Wnx",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "PoolAliasLookup": {
+   "create": {
+    "fn": "Xc_",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "JigsawPlacement": {
+   "addPieces": {
+    "fn": "KvD",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "AbstractMapBasedMultimap": {
+   "valueSpliterator": {
+    "fn": "AJjj",
+    "index": 24,
+    "arity": null
+   }
+  },
+  "NodeEvaluator": {
+   "getNode": {
+    "fn": "AMh",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "WalkNodeEvaluator": {
+   "getCachedPathType": {
+    "fn": "IZN",
+    "index": 25,
+    "arity": null
+   },
+   "hasCollisions": {
+    "fn": "UxA",
+    "index": 24,
+    "arity": null
+   }
+  },
+  "FlyNodeEvaluator": {
+   "getCachedPathType": {
+    "fn": "Gd3",
+    "index": 10,
+    "arity": null
+   }
+  },
+  "ClientCommonPacketListenerImpl": {
+   "fillListenerSpecificCrashDetails": {
+    "fn": "W7a",
+    "index": 29,
+    "arity": null
+   }
+  },
+  "ClassInstanceMultiMap": {
+   "find": {
+    "fn": "AAse",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "Tag": {
+   "applyO": {
+    "fn": "Y__",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "TypeFamily": {
+   "familyOptic": {
+    "fn": "Vmc",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "InfestedBlock": {
+   "getNewStateWithProperties": {
+    "fn": "RPe",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "OreVeinifier": {
+   "create": {
+    "fn": "GAT",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SequencedPriorityIterator": {
+   "add": {
+    "fn": "ABjM",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "NearestVisibleLivingEntities": {
+   "findAll": {
+    "fn": "ENg",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "SwimNodeEvaluator": {
+   "getCachedBlockType": {
+    "fn": "Rmx",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "IntPredicate": {
+   "negate": {
+    "fn": "Wy0",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "SearchTree": {
+   "empty": {
+    "fn": "Ev8",
+    "index": 0,
+    "arity": null
+   }
+  },
+  "NoiseChunk": {
+   "wrap": {
+    "fn": "AH4",
+    "index": 26,
+    "arity": null
+   },
+   "preliminarySurfaceLevel": {
+    "fn": "Bjb",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "ClientPacketListener": {
+   "handleLightUpdatePacket": {
+    "fn": "AGz7",
+    "index": 127,
+    "arity": null
+   },
+   "handleUpdateTags": {
+    "fn": "AEyV",
+    "index": 84,
+    "arity": null
+   },
+   "handleRemoveEntities": {
+    "fn": "ABym",
+    "index": 20,
+    "arity": null
+   },
+   "queueLightRemoval": {
+    "fn": "AFYC",
+    "index": 30,
+    "arity": null
+   },
+   "handleLevelChunkWithLight": {
+    "fn": "Yv_",
+    "index": 25,
+    "arity": null
+   }
+  },
+  "ByteBufCodecs$25": {
+   "encode": {
+    "fn": "RHK",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "FriendlyByteBuf": {
+   "writeIntIdList": {
+    "fn": "KXn",
+    "index": 11,
+    "arity": null
+   },
+   "writeMap": {
+    "fn": "E4p",
+    "index": 14,
+    "arity": null
+   }
+  },
+  "StructureTemplate$Palette": {
+   "blocks": {
+    "fn": "PzZ",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "Blender": {
+   "makeOldChunkDistanceGetter": {
+    "fn": "WND",
+    "index": 14,
+    "arity": null
+   },
+   "makeOffsetOldChunkDistanceGetter": {
+    "fn": "TV$",
+    "index": 15,
+    "arity": null
+   }
+  },
+  "AbstractListBuilder": {
+   "add": {
+    "fn": "ABpl",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "ChunkAccess": {
+   "getOrCreateHeightmapUnprimed": {
+    "fn": "H9r",
+    "index": 14,
+    "arity": null
+   },
+   "addReferenceForStructure": {
+    "fn": "Xsl",
+    "index": 23,
+    "arity": null
+   }
+  },
+  "RegistryDataCollector": {
+   "appendTags": {
+    "fn": "Xif",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "SessionSearchTrees": {
+   "updateCreativeTags": {
+    "fn": "PHA",
+    "index": 6,
+    "arity": null
+   },
+   "updateRecipes": {
+    "fn": "GfY",
+    "index": 4,
+    "arity": null
+   },
+   "updateCreativeTooltips": {
+    "fn": "ItH",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "ServerList": {
+   "saveSingleServer": {
+    "fn": "Jrq",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "ClientDebugSubscriber": {
+   "initializeSubscriptions": {
+    "fn": "Kqd",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "ForceLoadCommand": {
+   "removeAll": {
+    "fn": "AJgN",
+    "index": 4,
+    "arity": null
+   }
+  },
+  "SummonCommand": {
+   "createEntity": {
+    "fn": "Uv$",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "RegistryDataCollector$ContentsCollector": {
+   "append": {
+    "fn": "AIjO",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "SurfaceSystem": {
+   "buildSurface": {
+    "fn": "AGFn",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "LevelChunk": {
+   "getListenerRegistry": {
+    "fn": "ED$",
+    "index": 8,
+    "arity": null
+   },
+   "updateBlockEntityTicker": {
+    "fn": "I8s",
+    "index": 45,
+    "arity": null
+   },
+   "replaceWithPacketData": {
+    "fn": "LXd",
+    "index": 28,
+    "arity": null
+   }
+  },
+  "PlayerScores": {
+   "getOrCreate": {
+    "fn": "IUL",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "ShufflingList": {
+   "iterator": {
+    "fn": "AJST",
+    "index": 6,
+    "arity": null
+   }
+  },
+  "TestFinder$Builder": {
+   "byResourceSelection": {
+    "fn": "DN3",
+    "index": 10,
+    "arity": null
+   },
+   "nearest": {
+    "fn": "IrD",
+    "index": 6,
+    "arity": null
+   },
+   "allNearby": {
+    "fn": "FXt",
+    "index": 7,
+    "arity": null
+   },
+   "lookedAt": {
+    "fn": "FcX",
+    "index": 8,
+    "arity": null
+   },
+   "radius": {
+    "fn": "Uuo",
+    "index": 5,
+    "arity": null
+   },
+   "build": {
+    "fn": "Cg6",
+    "index": 4,
+    "arity": null
+   },
+   "failedTests": {
+    "fn": "NqG",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "PlayerList": {
+   "getPlayerStats": {
+    "fn": "I$Q",
+    "index": 53,
+    "arity": null
+   }
+  },
+  "ServerPlayer": {
+   "respawnEntityOnShoulder": {
+    "fn": "AFCa",
+    "index": 28,
+    "arity": null
+   },
+   "loadAndSpawnParentVehicle": {
+    "fn": "VNm",
+    "index": 5,
+    "arity": null
+   },
+   "loadAndSpawnEnderPearl": {
+    "fn": "ALEM",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "TagNetworkSerialization": {
+   "deserializeTagsFromNetwork": {
+    "fn": "GgX",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "BlockInput": {
+   "place": {
+    "fn": "ZW0",
+    "index": 5,
+    "arity": null
+   }
+  },
+  "ServerGamePacketListenerImpl": {
+   "handleSignedChatCommand": {
+    "fn": "AEI3",
+    "index": 65,
+    "arity": null
+   },
+   "handleChat": {
+    "fn": "AD_r",
+    "index": 62,
+    "arity": null
+   },
+   "handleChatCommand": {
+    "fn": "AEwA",
+    "index": 63,
+    "arity": null
+   }
+  },
+  "PalettedContainer": {
+   "getAll": {
+    "fn": "AJlN",
+    "index": 17,
+    "arity": null
+   }
+  },
+  "SimpleCriterionTrigger": {
+   "addPlayerListener": {
+    "fn": "Y5V",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ClientLevel": {
+   "addEnvironmentAttributeLayers": {
+    "fn": "JwK",
+    "index": 8,
+    "arity": null
+   },
+   "onChunkLoaded": {
+    "fn": "PWD",
+    "index": 22,
+    "arity": null
+   },
+   "clearTintCaches": {
+    "fn": "HYx",
+    "index": 24,
+    "arity": null
+   }
+  },
+  "BeehiveBlockEntity": {
+   "loadAdditional": {
+    "fn": "AKIf",
+    "index": 16,
+    "arity": null
+   },
+   "applyImplicitComponents": {
+    "fn": "ZOn",
+    "index": 18,
+    "arity": null
+   }
+  },
+  "TagValueInput$CompoundListWrapper": {
+   "stream": {
+    "fn": "AJ$T",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "NullOps": {
+   "getList": {
+    "fn": "AHes",
+    "index": 26,
+    "arity": null
+   },
+   "getMapEntries": {
+    "fn": "Wu3",
+    "index": 23,
+    "arity": null
+   }
+  },
+  "SinglePoolElement": {
+   "getSettings": {
+    "fn": "Mf8",
+    "index": 12,
+    "arity": null
+   }
+  },
+  "WrittenBookContent": {
+   "getPages": {
+    "fn": "S0h",
+    "index": 9,
+    "arity": null
+   }
+  },
+  "BlockBasedTestInstance": {
+   "run": {
+    "fn": "Wfg",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "BlockStatePredictionHandler": {
+   "retainKnownServerState": {
+    "fn": "ALGA",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "LevelRenderer": {
+   "destroyBlockProgress": {
+    "fn": "CMw",
+    "index": 61,
+    "arity": null
+   }
+  },
+  "TestEnvironmentDefinition$AllOf": {
+   "setup": {
+    "fn": "W6J",
+    "index": 2,
+    "arity": null
+   },
+   "teardown": {
+    "fn": "AJBG",
+    "index": 3,
+    "arity": null
+   }
+  },
+  "BiomeAmbientSoundsHandler": {
+   "tick": {
+    "fn": "AEG_",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "GameTestRunner$1": {
+   "testFailed": {
+    "fn": "AK2Y",
+    "index": 4,
+    "arity": null
+   },
+   "testCompleted": {
+    "fn": "K6m",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "ClientRecipeBook": {
+   "categorizeAndGroupRecipes": {
+    "fn": "GfY",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "Painting": {
+   "create": {
+    "fn": "XmI",
+    "index": 8,
+    "arity": null
+   }
+  },
+  "Action$ValueGetter": {
+   "getAsTemplateSubstitutions": {
+    "fn": "AFaR",
+    "index": 2,
+    "arity": null
+   }
+  },
+  "TrialSpawner": {
+   "spawnMob": {
+    "fn": "WhP",
+    "index": 18,
+    "arity": null
+   }
+  },
+  "BlockTintCache$CacheData": {
+   "getLayer": {
+    "fn": "ZDX",
+    "index": 1,
+    "arity": null
+   }
+  },
+  "QuadParticleRenderState": {
+   "add": {
+    "fn": "AGpb",
+    "index": 1,
+    "arity": null
+   }
+  }
+ },
+ "stats": {
+  "anchoredMethods": 762
+ }
+}

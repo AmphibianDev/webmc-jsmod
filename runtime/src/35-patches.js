@@ -39,11 +39,55 @@
     var result = tryApply(record);
     record.state = result.ok ? "applied" : "planned";
     record.why = result.why || null;
-    if (result.ok) { applied++; } else { refused++; }
+    recount();
     internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
     bus.emit("plan", record);
     return record;
   }
+
+  function recount() {
+    applied = 0;
+    for (var i = 0; i < plans.length; i++) { if (plans[i].state === "applied") { applied++; } }
+    refused = plans.length - applied;
+  }
+
+  /** The internals appear after the compiled module runs, which is later than mod loading. When
+   * they do, every plan that was refused for lack of a name anchor is tried again. */
+  function retry() {
+    if (!internal.internals || !internal.internals.bus) { return; }
+    internal.internals.bus.on("ready", function () {
+      // Patches go in once the client is *running*: wrapping a method during the client's own
+      // start-up is how a mod platform bricks a client, and the client says when it is up.
+      waitForRunning(function () { applyPlans(); });
+    });
+  }
+
+  function waitForRunning(then) {
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries++;
+      var running = !!(internal.state && internal.state.latest);
+      if (running || tries > 120) { clearInterval(timer); then(); }
+    }, 500);
+  }
+
+  function applyPlans() {
+    {
+      var changed = 0;
+      for (var i = 0; i < plans.length; i++) {
+        var record = plans[i];
+        if (record.state === "applied") { continue; }
+        var result = tryApply(record);
+        if (result.ok) { record.state = "applied"; record.why = null; changed++; }
+      }
+      if (changed) {
+        recount();
+        internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+        internal.toast("applied " + changed + " mixin plan(s) from converted mods (" + applied + " of " + plans.length + ")");
+      }
+    }
+  }
+  retry();
 
   function tryApply(record) {
     var internals = internal.internals;

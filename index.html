@@ -131,7 +131,10 @@
   "use strict";
 
   var BASE = new URL(".", location.href).href;
-  var version = "1.21.11";
+  // ?client=<dir> picks a build by hand. Without it, the internals-patched build is used when it is
+  // there (it is the same client with two assignments added at the end of its compiled module), and
+  // the pristine one otherwise.
+  var version = new URLSearchParams(location.search).get("client") || "1.21.11-internals";
   var frame = document.getElementById("frame");
   var boot = document.getElementById("boot");
   var bar = document.getElementById("bar");
@@ -290,7 +293,8 @@
       bootstrap.push("  base: " + JSON.stringify(BASE) + ",");
       bootstrap.push("  version: " + JSON.stringify(manifest.title || version) + ",");
       bootstrap.push("  manifest: " + JSON.stringify({ sha256: manifest.sha256, bytes: manifest.bytes || manifest.total }) + ",");
-      bootstrap.push("  trustAll: " + (new URLSearchParams(location.search).get("consent") === "all"));
+      bootstrap.push("  trustAll: " + (new URLSearchParams(location.search).get("consent") === "all") + ",");
+      bootstrap.push("  symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json"));
       bootstrap.push("};");
       bootstrap.push("globalThis.__webmcMods = [");
       for (var k = 0; k < good.length; k++) {
