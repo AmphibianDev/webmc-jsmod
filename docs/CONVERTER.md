@@ -80,6 +80,16 @@ accessor descriptions — all named through the mappings. The plan is emitted in
 `webmc.patches.add(...)`. It is a record until the client-internals layer exists; see the honesty
 note at the end.
 
+## Pruning to what runs
+
+A converted mod only ever runs from its own entry points: entrypoints, Fabric API event handlers and
+module callbacks. The converter builds the call graph out of the classes' own bytecode (direct calls
+and `invokedynamic` lambdas) and emits only what is reachable from those roots — Meteor's package
+drops from 33 MB to 11.8 MB that way, and Fabric API's by more. A method whose dynamic call cannot
+be resolved is a blind spot, so its whole class is kept rather than guessed away. `--no-trim` emits
+everything; the report prints `reachableMethods`, `prunedMethods` and the number of roots so the
+number is never a mystery.
+
 ## The transpiler
 
 Handler bodies are real Java methods, so they are compiled: each method becomes a small stack
@@ -158,6 +168,13 @@ The internals layer is the next milestone: a derived client build that exposes i
 to the page, so a plan can be applied as a wrapper around the real method. The converter is already
 written for it — `capabilities: ["internals"]`, the patch plan, and the report's list of calls that
 need it.
+
+## The hosted site
+
+`https://amphibiandev.github.io/webmc-jsmod/` is this folder, deployed by
+`.github/workflows/pages.yml`: the workflow downloads the client pack from the repository's
+`client-1.21.11` release, verifies every chunk hash and the whole-client sha256, runs the runtime's
+tests, and publishes only if they pass. The Minecraft client bytes are not in git history.
 
 ## Tooling
 

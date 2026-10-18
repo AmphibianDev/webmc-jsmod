@@ -1,5 +1,9 @@
 # webmc-jsmod — a JavaScript modding platform for the browser client
 
+**Live: <https://amphibiandev.github.io/webmc-jsmod/>** — press Play. The Mods panel has a
+**Load now** button for the converted **Meteor Client** (171 modules, 327 planned mixin injections,
+11.8 MB, loaded in the running game).
+
 Fabric at play time is gone: the compiled client that lives in a browser has no class loader, so a
 Fabric jar cannot be loaded the way Fabric loads it, and a build-time bake cannot do what a runtime
 loader does. This folder is the other route, self-contained:
@@ -39,7 +43,14 @@ A real-browser check (headless Chrome, the real client, a real key injected into
 
 ```sh
 node tools/browser-check.mjs
+node tools/live-check.mjs --with-meteor     # the deployed site, in a real browser
 ```
+
+**Meteor Client works here** — the real `meteor-client-1.21.11-86.jar`, converted, hot-loaded into a
+running client: 171 modules registered, 191 patch plans / 334 injections recorded, 0 errors. The
+injections themselves are *planned*, not applied: the compiled client does not expose its internals
+to the page yet, so the runtime reports `applied: 0` rather than pretending. Everything Meteor does
+through the module system, keys and config is the part that runs today.
 
 It proves, with the bytes it actually ran: the runtime is installed inside the client **before the
 client's first script**, the input hook sees a real key, the client publishes state, and mods from

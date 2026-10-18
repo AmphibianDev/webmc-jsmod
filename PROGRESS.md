@@ -98,6 +98,44 @@ internals and the published build does not expose them. Those mixins are a **nam
 `webmc.patches.add(...)`; `webmc.selftest().patches` reports `applied: 0` and why. Nothing pretends
 otherwise anywhere in the stack.
 
+## 2026-10-18 — Meteor Client, at play time
+
+The real `~/Downloads/meteor-client-1.21.11-86.jar` was converted and played with, in the real
+browser, on the deployed site:
+
+```sh
+node converter/convert.mjs ~/Downloads/meteor-client-1.21.11-86.jar --out dist-converted
+#   classes   2590, methods 17551
+#   reachable   3134 of 17551 methods, from 24 entry points (pruned 1628 as unreachable)
+#   translated 3134 methods, 1628 left out
+#   modules 171, mixins 236 classes / 327 injections, verdict runs-partial
+```
+
+| check (live site, headless Chrome) | result |
+| --- | --- |
+| the converted Meteor Client hot-loaded at play time | ok — 11.8 MB, fetched on demand, loaded in ~365 ms of JS |
+| Meteor's modules registered | ok — 171 (173 with the examples) |
+| Meteor's mixin plan registered | ok — 191 plans / 334 injections, `applied: 0` |
+| no mod suspended by its own errors | ok |
+| the game kept running | ok — frames and state snapshots continue |
+
+The new `tools/live-check.mjs` is how the deployed site is checked without a server to POST to: the
+client runs in a same-origin blob frame, so the page's own `webmc.selftest()` is read over CDP.
+
+Two things made Meteor practical: **reachability pruning** (the package went 33 MB → 11.8 MB by
+emitting only what an entry point can reach) and **lazy loading** (an optional mod is a button in
+the Mods panel, not 12 MB in every page load).
+
+## The repository and the site
+
+* <https://github.com/AmphibianDev/webmc-jsmod>
+* <https://amphibiandev.github.io/webmc-jsmod/>
+
+Pages is built by `.github/workflows/pages.yml`: the workflow downloads the client pack from the
+repository's `client-1.21.11` release, verifies every chunk hash and the whole-client sha256, runs
+the runtime's tests, and publishes only if they pass. The Minecraft client bytes are **not** in git
+history; the manifest with the hashes is.
+
 ## Next
 
 1. **The internals layer**: a derived client build that exposes its TeaVM class table

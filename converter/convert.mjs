@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Convert a Fabric mod jar into a .jsmod package that runs in this project's client.
  *
- *     node converter/convert.mjs <mod.jar> [--out dist-converted] [--name <id>] [--no-internals]
+ *     node converter/convert.mjs <mod.jar> [--out dist-converted] [--no-internals] [--no-trim]
  *     node converter/convert.mjs <mod.jar> --json          # the report only, for a script
  *     node converter/convert.mjs --all                     # every jar in converter/jars/
  *
@@ -50,6 +50,7 @@ export function convertJar(path, options = {}) {
     jarName: basename(path),
     sha256,
     internals: options.internals !== false,
+    trim: options.trim !== false,
     mappings
   });
   return { ok: true, analysis, ...result, sha256, bytes: bytes.length };
@@ -81,6 +82,7 @@ function summary(result, packageFile) {
   lines.push(`${result.manifest.id} ${result.manifest.version}  —  ${result.manifest.name}`);
   lines.push(`  file      ${report.source} (${(result.bytes / 1024).toFixed(0)} KB, sha256 ${result.sha256.slice(0, 12)}…)`);
   lines.push(`  classes   ${report.stats.classCount}, methods ${report.stats.methodCount}`);
+  lines.push(`  reachable   ${report.reachableMethods} of ${report.stats.methodCount} methods, from ${report.roots} entry points (${report.prunedMethods || 0} pruned as unreachable)`);
   lines.push(`  translated ${report.translatedMethods} methods, ${report.skippedMethods} left out`);
   lines.push(`  entrypoints ${report.entrypoints.length} (${report.entrypoints.filter((e) => e.translated).length} translated)`);
   lines.push(`  events      ${report.events.length} (${report.events.filter((e) => e.translated).length} handlers translated)`);
@@ -112,7 +114,7 @@ function main() {
     for (const name of readdirSync(jarsDir).filter((n) => n.endsWith(".jar"))) {
       const path = join(jarsDir, name);
       try {
-        const result = convertJar(path, { internals: !args.includes("--no-internals"), mappings });
+        const result = convertJar(path, { internals: !args.includes("--no-internals"), trim: !args.includes("--no-trim"), mappings });
         if (!result.ok) { console.error(`${name}: ${result.error}`); failed++; continue; }
         const written = writePackage(result, outDir);
         console.log(summary(result, written.packageFile) + "\n");
@@ -129,7 +131,7 @@ function main() {
     console.error("usage: node converter/convert.mjs <mod.jar> [--out dist-converted] [--json] [--no-internals]");
     process.exit(1);
   }
-  const result = convertJar(resolve(jar), { internals: !args.includes("--no-internals") });
+  const result = convertJar(resolve(jar), { internals: !args.includes("--no-internals"), trim: !args.includes("--no-trim") });
   if (!result.ok) { console.error(result.error); process.exit(1); }
   if (args.includes("--json")) { console.log(JSON.stringify(result.report, null, 2)); return; }
   const written = writePackage(result, outDir);

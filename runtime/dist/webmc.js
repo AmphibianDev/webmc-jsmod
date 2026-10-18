@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610181059";
+  WebMC.build = "202610181116";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
