@@ -1,0 +1,38 @@
+{
+  "name": "WebMC JS mod index",
+  "note": "Each entry is fetched by the loader and shipped inside the client's bootstrap, so a mod loads at play time without another network request from the game's document.",
+  "mods": [
+    {
+      "id": "example.hello",
+      "entry": "examples/hello/index.js",
+      "description": "HUD text, a keybind and a command \u2014 the smallest useful mod."
+    },
+    {
+      "id": "example.status",
+      "entry": "examples/status/index.js",
+      "description": "A live HUD from the client's state snapshot: position, screen, fps, chunk count."
+    },
+    {
+      "id": "example.modules",
+      "entry": "examples/modules/index.js",
+      "description": "The Meteor shape: toggleable modules with settings and a keybind."
+    },
+    {
+      "id": "hello-fabric",
+      "entry": "converted/hello-fabric.js",
+      "description": "A real Fabric mod jar, converted by converter/convert.mjs (verdict: runs)."
+    },
+    {
+      "id": "gammautils",
+      "entry": "converted/gammautils.js",
+      "description": "Gamma Utils, converted from its Modrinth jar: 11 Fabric events, 8 keybinds, 7 mixin patches planned."
+    },
+    {
+      "id": "meteor-client",
+      "entry": "converted/meteor.js",
+      "optional": true,
+      "name": "Meteor Client 1.21.11-86 (converted)",
+      "description": "The real Meteor Client jar, converted by converter/convert.mjs. Optional because its package is 11.8 MB: click Load now in the Mods panel. Registers 171 modules and a 327-injection patch plan; the injections themselves need the client internals."
+    }
+  ]
+}

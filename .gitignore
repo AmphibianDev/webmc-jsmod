@@ -1,0 +1,18 @@
+# fetched mod jars: for this machine, not for the repository
+converter/jars/*.jar
+
+# the client chunks are a release asset, not a commit; the manifest (with the hashes) is committed
+client/*/data/
+client/*/*.tar.gz
+
+# Mojang mappings (not redistributable) and Fabric's intermediary for the same version
+converter/mappings/
+
+# outputs
+dist-converted/
+checks/
+converted-out/
+
+# build noise
+node_modules/
+.DS_Store

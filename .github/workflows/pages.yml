@@ -1,0 +1,72 @@
+name: pages
+
+# The site is static: the loader, the runtime, the mods and the docs are all in the repository.
+# The Minecraft client bytes are not: they are a release asset (`client-1.21.11`) and this job
+# downloads them into `client/1.21.11/`, checks every chunk hash and the whole-client sha256 with
+# tools/verify-client.mjs, and only then publishes. A corrupted or substituted asset fails the
+# deploy instead of shipping.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: fetch the client pack (release asset)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p client/1.21.11
+          gh release download client-1.21.11 \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern 'packed-1.21.11.tar.gz' \
+            --dir /tmp/pack --clobber
+          tar -xzf /tmp/pack/packed-1.21.11.tar.gz -C client/1.21.11
+          ls -la client/1.21.11 client/1.21.11/data | head -20
+
+      - name: verify the client bytes
+        run: node tools/verify-client.mjs
+
+      - name: build the runtime
+        run: node runtime/build.mjs
+
+      - name: the runtime's own tests
+        run: node tests/run.mjs
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
