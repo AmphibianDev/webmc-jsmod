@@ -159,7 +159,8 @@ That is now built and measured.
 
 Live client, measured: **Meteor 12 injections across 9 plans applied** (19 have a name anchor of
 327), Gamma Utils 1 of 7, and the client reaches the title screen with 2,128 state updates and no
-suspension. `webmc.selftest().internals` reports classes, named methods, resolutions, misses and the
+suspension. The same result on the deployed site (`tools/live-check.mjs --with-meteor`): 11/11
+checks, 9 applied / 182 planned, 2,450 methods named, 9,855 classes exposed. `webmc.selftest().internals` reports classes, named methods, resolutions, misses and the
 refusal reasons; the browser check asserts the apply count so a regression is a red check, not a
 silent one.
 

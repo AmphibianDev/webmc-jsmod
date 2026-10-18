@@ -156,7 +156,10 @@ check("the converted Fabric jar and Modrinth mod are loaded", mods.some((m) => m
 if (WITH_METEOR) {
   const meteor = mods.find((m) => m.id === "meteor-client");
   check("the converted Meteor Client hot-loaded from the live site", !!meteor && meteor.enabled, meteor ? meteor.id + (meteor.suspended ? " SUSPENDED" : "") + (meteor.errors.length ? " errors: " + meteor.errors.length : "") : "not listed");
-  check("Meteor's modules and its named mixin plan registered", !!(self && self.modules >= 150 && self.patches && self.patches.plans >= 100), self && self.modules + " modules, " + (self.patches && self.patches.plans) + " patch plans / " + (self.patches && self.patches.injections) + " injections, applied " + (self.patches && self.patches.applied));
+  check("Meteor's modules and its named mixin plan registered", !!(self && self.modules >= 150 && self.patches && self.patches.plans >= 100), self && self.modules + " modules, " + (self.patches && self.patches.plans) + " patch plans / " + (self.patches && self.patches.injections) + " injections");
+  check("mixin injections actually applied inside the live client",
+    !!(self && self.patches && self.patches.applied > 0),
+    self ? self.patches.applied + " applied / " + self.patches.planned + " planned" + (self.internals ? ", " + self.internals.namedMethods + " methods named, " + self.internals.classes + " classes exposed" : "") : "");
 }
 check("no mod is suspended by its own errors", mods.every((m) => !m.suspended), mods.filter((m) => m.suspended).map((m) => m.id).join(", ") || "none");
 writeFileSync(join(SHOTS, "live.json"), JSON.stringify({ at: new Date().toISOString(), url: URL_TO_CHECK, checks, selftest: self, browserLogTail: log.split("\n").slice(-20) }, null, 2));
