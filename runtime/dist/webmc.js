@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610190502";
+  WebMC.build = "202610190558";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -583,6 +583,7 @@
     base: clientInfo.base || null,
     symbolsUrl: clientInfo.symbolsUrl || null,
     internals: clientInfo.internals === false ? false : true,
+    patchCap: clientInfo.patchCap || null,
     trustAll: clientInfo.trustAll === true
   };
   WebMC.__internal.boot = boot;
@@ -766,8 +767,10 @@
   var applied = [];
   var refused = [];
   var rolledBack = 0;
+  var allHandles = [];
   // Tuning knobs, exposed through the internals object so a test (or a mod author) can change them.
-  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256 };
+  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256, maxPlans: 32 };
+  if (internal.boot && internal.boot.patchCap) { limits.maxPlans = Math.max(0, Number(internal.boot.patchCap) || limits.maxPlans); }
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
   function applyPatch(plan) {
@@ -925,6 +928,7 @@
   /** Undo a wave: every wrapper it installed is replaced by the function it wrapped. */
   function rollback(handles) {
     var undone = 0;
+    var keep = [];
     for (var i = 0; i < (handles || []).length; i++) {
       var handle = handles[i];
       if (!handle || !handle.fn) { continue; }
@@ -932,6 +936,11 @@
       wrappedBy.delete(handle.fn);
       undone++;
     }
+    var removed = {};
+    for (var r = 0; r < (handles || []).length; r++) { if (handles[r] && handles[r].fn) { removed[handles[r].fn] = true; } }
+    for (var a = 0; a < allHandles.length; a++) { if (!removed[allHandles[a].fn]) { keep.push(allHandles[a]); } }
+    allHandles.length = 0;
+    for (var k = 0; k < keep.length; k++) { allHandles.push(keep[k]); }
     return undone;
   }
 
@@ -988,6 +997,7 @@
     bus: readyBus,
     limits: limits,
     noteRollback: function (count) { rolledBack += count; },
+    handles: function () { return allHandles.slice(); },
     available: function () { if (!state.available) { detect(); } return state.available; },
     classes: function () { buildRegistry(); return state.classes ? Array.from(state.classes.keys()) : []; },
     detect: detect,
@@ -2519,65 +2529,55 @@
     }, 30000);
   }
 
-  /** Apply in waves, with a watchdog.
+  /** Apply, verify, and bisect when a batch hurts the client.
    *
-   * The client publishes a state snapshot while it runs; that is a liveness signal the page can
-   * read. Waves are applied a few plans at a time, and a watchdog watches the signal for the whole
-   * session: if the client stops publishing while it is still drawing frames, the most recent wave
-   * is rolled back — a wrapper at a time, because they are property assignments — and the reason is
-   * recorded. The player keeps a working client; the panel keeps the names of what was undone.
+   * The client publishes a state snapshot while it runs — a liveness signal the page can read. A
+   * batch is applied, then the signal is checked: if it stopped while the page kept drawing, the
+   * batch is rolled back (wrappers are property assignments, so undo is exact) and each half is
+   * tried on its own. The client keeps every method it tolerates, and the ones it does not are
+   * named in the panel instead of taking the whole set down.
    */
-  var waves = [];
-  var watchdog = { running: false, lastUpdates: 0, lastFrames: 0, lastProgressAt: 0, rolls: 0 };
+  var watchdog = { running: false, lastUpdates: 0, lastFrames: 0, lastProgressAt: 0 };
 
   function applyPlans() {
     var pending = plans.filter(function (record) { return record.state !== "applied" && record.state !== "rolled-back"; });
     if (!pending.length) { return; }
-    applyNextWave(pending);
-
-    if (!watchdog.running) {
-      watchdog.running = true;
-      watchdog.lastUpdates = internal.state ? internal.state.updates : 0;
-      watchdog.lastFrames = internal.frame ? internal.frame.count : 0;
-      watchdog.lastProgressAt = Date.now();
-      setInterval(function () {
-        var updates = internal.state ? internal.state.updates : 0;
-        var frames = internal.frame ? internal.frame.count : 0;
-        if (updates !== watchdog.lastUpdates) {
-          watchdog.lastUpdates = updates;
-          watchdog.lastProgressAt = Date.now();
-          return;
-        }
-        var drawing = frames - watchdog.lastFrames > 120;
-        watchdog.lastFrames = frames;
-        if (!drawing || Date.now() - watchdog.lastProgressAt < 20000) { return; }
-        // Frozen while drawing: undo the most recent wave and say so.
-        var wave = waves.pop();
-        if (!wave || !wave.handles.length) { return; }
-        var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(wave.handles) : 0;
-        watchdog.rolls++;
-        if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
-        for (var i = 0; i < wave.records.length; i++) {
-          wave.records[i].state = "rolled-back";
-          wave.records[i].why = "rolled back: the client stopped publishing state after this wave";
-        }
-        internal.toast("rolled back " + undone + " patch(es): the client stopped responding after that wave");
-        recount();
-        internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused, rolls: watchdog.rolls });
-        watchdog.lastProgressAt = Date.now() + 8000;   // give the client time to come back
-      }, 4000);
+    // A conservative default: the first N methods, in plan order, and then stop. A browser tab
+    // tolerates a few dozen wrappers comfortably; the number is tunable and reported.
+    var cap = (internal.internals && internal.internals.limits ? internal.internals.limits.maxPlans : 32) || 32;
+    var queue = pending.slice(0, cap);
+    var chain = Promise.resolve();
+    function step() {
+      if (!queue.length) { return chain; }
+      var batch = queue.splice(0, 6);
+      return chain.then(function () { return tryBatch(batch); }).then(step);
     }
+    step();
+    startWatchdog();
   }
 
-  function applyNextWave(pending) {
-    var batch = pending.slice(0, 4);
-    if (!batch.length) { return; }
+  function liveCheck() {
+    var before = internal.state ? internal.state.updates : 0;
+    var framesBefore = internal.frame ? internal.frame.count : 0;
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        var updates = internal.state ? internal.state.updates : 0;
+        var frames = internal.frame ? internal.frame.count : 0;
+        // A window in which the page barely drew (loading, a background tab) cannot judge.
+        resolve(updates > before || frames - framesBefore < 120);
+      }, 3500);
+    });
+  }
+
+  function tryBatch(batch) {
     var handles = [];
+    var appliedRecords = [];
     for (var i = 0; i < batch.length; i++) {
       var result = tryApply(batch[i]);
       if (result.ok) {
         batch[i].state = "applied";
         batch[i].why = null;
+        appliedRecords.push(batch[i]);
         var list = result.results || [];
         for (var k = 0; k < list.length; k++) { if (list[k] && list[k].rollback) { handles.push(list[k].rollback); } }
       } else {
@@ -2585,40 +2585,67 @@
         batch[i].why = result.why || batch[i].why;
       }
     }
-    if (handles.length) { waves.push({ handles: handles, records: batch }); }
     recount();
     internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
-    var rest = pending.slice(4);
-    if (!rest.length) { return; }
-    // One wave, then a check. A client that stops publishing state after a wave will not be asked
-    // to take another: that wave is rolled back and the rest stay plans.
-    var before = internal.state ? internal.state.updates : 0;
-    var framesBefore = internal.frame ? internal.frame.count : 0;
-    setTimeout(function () {
+    if (!handles.length) { return Promise.resolve(); }
+    return liveCheck().then(function (alive) {
+      if (alive) { return; }
+      var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(handles) : 0;
+      for (var i = 0; i < appliedRecords.length; i++) {
+        appliedRecords[i].state = "rolled-back";
+        appliedRecords[i].why = "rolled back: the client stopped publishing state after this batch";
+      }
+      if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
+      recount();
+      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+      // Which half is responsible? Try each on its own.
+      var half = Math.ceil(appliedRecords.length / 2);
+      var halves = [appliedRecords.slice(0, half), appliedRecords.slice(half)];
+      var chain = Promise.resolve();
+      for (var h = 0; h < halves.length; h++) {
+        (function (part) {
+          if (!part.length) { return; }
+          chain = chain.then(function () {
+            for (var i = 0; i < part.length; i++) { part[i].state = "planned"; part[i].why = null; }
+            return tryBatch(part);
+          });
+        })(halves[h]);
+      }
+      return chain;
+    });
+  }
+
+  function startWatchdog() {
+    if (watchdog.running) { return; }
+    watchdog.running = true;
+    watchdog.lastUpdates = internal.state ? internal.state.updates : 0;
+    watchdog.lastFrames = internal.frame ? internal.frame.count : 0;
+    watchdog.lastProgressAt = Date.now();
+    setInterval(function () {
       var updates = internal.state ? internal.state.updates : 0;
       var frames = internal.frame ? internal.frame.count : 0;
-      // Alive means "still publishing". A window in which the page barely drew (loading, a
-      // background tab) cannot judge, so it counts as alive.
-      var alive = updates > before || frames - framesBefore < 120;
-      if (!alive && handles.length) {
-        var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(handles) : 0;
-        if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
-        for (var i = 0; i < batch.length; i++) {
-          if (batch[i].state === "applied") {
-            batch[i].state = "rolled-back";
-            batch[i].why = "rolled back: the client stopped publishing state after this wave";
-          }
-        }
-        for (var r = 0; r < rest.length; r++) {
-          if (rest[r].state === "planned") { rest[r].why = "not applied: an earlier wave made the client stop responding"; }
-        }
-        recount();
-        internal.toast("rolled back " + undone + " patch(es); no further waves will be applied");
-        internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+      if (updates !== watchdog.lastUpdates) {
+        watchdog.lastUpdates = updates;
+        watchdog.lastProgressAt = Date.now();
         return;
       }
-      applyNextWave(rest);
-    }, 6000);
+      var drawing = frames - watchdog.lastFrames > 120;
+      watchdog.lastFrames = frames;
+      if (!drawing || Date.now() - watchdog.lastProgressAt < 25000) { return; }
+      internal.toast("the client stopped publishing state; patches are being rolled back");
+      var handles = internal.internals && internal.internals.handles ? internal.internals.handles() : [];
+      var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(handles) : 0;
+      if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
+      for (var i = 0; i < plans.length; i++) {
+        if (plans[i].state === "applied") {
+          plans[i].state = "rolled-back";
+          plans[i].why = "rolled back: the client stopped publishing state";
+        }
+      }
+      recount();
+      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+      watchdog.lastProgressAt = Date.now() + 10000;
+    }, 5000);
   }
 
   function oldApplyPlans() {
@@ -2679,6 +2706,11 @@
   }
 
   WebMC.patches = {
+    /** How many plans may be applied before the runtime stops and leaves the rest as records. */
+    setCap: function (value) {
+      if (internal.internals && internal.internals.limits) { internal.internals.limits.maxPlans = Math.max(0, Number(value) || 0); }
+      return { cap: internal.internals && internal.internals.limits ? internal.internals.limits.maxPlans : null };
+    },
     setEnabled: function (value) {
       WebMC.__internal.internalsDisabled = !value;
       return { enabled: !!value, applied: applied, planned: refused };

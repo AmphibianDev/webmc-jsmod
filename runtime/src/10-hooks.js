@@ -432,6 +432,7 @@
     base: clientInfo.base || null,
     symbolsUrl: clientInfo.symbolsUrl || null,
     internals: clientInfo.internals === false ? false : true,
+    patchCap: clientInfo.patchCap || null,
     trustAll: clientInfo.trustAll === true
   };
   WebMC.__internal.boot = boot;

@@ -154,8 +154,10 @@
   var applied = [];
   var refused = [];
   var rolledBack = 0;
+  var allHandles = [];
   // Tuning knobs, exposed through the internals object so a test (or a mod author) can change them.
-  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256 };
+  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256, maxPlans: 32 };
+  if (internal.boot && internal.boot.patchCap) { limits.maxPlans = Math.max(0, Number(internal.boot.patchCap) || limits.maxPlans); }
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
   function applyPatch(plan) {
@@ -313,6 +315,7 @@
   /** Undo a wave: every wrapper it installed is replaced by the function it wrapped. */
   function rollback(handles) {
     var undone = 0;
+    var keep = [];
     for (var i = 0; i < (handles || []).length; i++) {
       var handle = handles[i];
       if (!handle || !handle.fn) { continue; }
@@ -320,6 +323,11 @@
       wrappedBy.delete(handle.fn);
       undone++;
     }
+    var removed = {};
+    for (var r = 0; r < (handles || []).length; r++) { if (handles[r] && handles[r].fn) { removed[handles[r].fn] = true; } }
+    for (var a = 0; a < allHandles.length; a++) { if (!removed[allHandles[a].fn]) { keep.push(allHandles[a]); } }
+    allHandles.length = 0;
+    for (var k = 0; k < keep.length; k++) { allHandles.push(keep[k]); }
     return undone;
   }
 
@@ -376,6 +384,7 @@
     bus: readyBus,
     limits: limits,
     noteRollback: function (count) { rolledBack += count; },
+    handles: function () { return allHandles.slice(); },
     available: function () { if (!state.available) { detect(); } return state.available; },
     classes: function () { buildRegistry(); return state.classes ? Array.from(state.classes.keys()) : []; },
     detect: detect,

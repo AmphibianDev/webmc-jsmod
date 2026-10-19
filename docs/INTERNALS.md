@@ -109,8 +109,21 @@ Learned the hard way, in this order:
    again. `?internals=off` switches the whole layer off, and `webmc.patches.setEnabled(false)` does
    it at run time.
 
-Measured: with patches applied the client kept publishing state (2,140–2,532 snapshots in three
-minutes); before these valves, the same client froze after ~120 wrappers and stayed frozen.
+8. **A conservative cap, and bisection.** At most 32 plans are applied; the rest stay records
+   (`webmc.patches.setCap(n)`, or `?patches=200` to raise it). A batch that hurts the client is
+   rolled back and re-tried in halves, so one bad wrapper costs its own plan rather than the set.
+
+Measured, with a controlled comparison on the same page and the same mod:
+
+| configuration | state snapshots in ~3 min | plans applied |
+| --- | --- | --- |
+| internals off (control) | 2,027 | 0 |
+| capped at 32 plans | **2,674** | 16 |
+| uncapped (~120–147 wrappers) | frozen after ~60 s | 70 |
+
+Before these valves the uncapped client froze; with them the capped client publishes state at the
+same rate as the control. The cap is the price of a client that stays alive, and it is a number
+rather than a promise.
 
 ## What applies today, measured
 
