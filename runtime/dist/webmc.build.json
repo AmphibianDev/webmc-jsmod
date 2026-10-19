@@ -1,6 +1,6 @@
 {
   "name": "webmc-jsmod-runtime",
-  "builtAt": "2026-10-19T04:59:56.724Z",
+  "builtAt": "2026-10-19T05:01:18.403Z",
   "sources": [
     "00-core.js",
     "10-hooks.js",
@@ -12,6 +12,6 @@
     "40-mods.js",
     "50-boot.js"
   ],
-  "bytes": 138088,
-  "sha256": "00a66e1ed3c8d2bd2943ef7b84e75cbb699564f46a08d33fb431f13918660325"
+  "bytes": 138386,
+  "sha256": "7d8052ae215623a9e1d351fb836a29101f28c107bdd3a40372716c02e8516847"
 }

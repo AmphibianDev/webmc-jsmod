@@ -400,6 +400,9 @@ await test("a patched client resolves an anchored method and applies an @Inject 
       run: (target, args, info) => { injected++; info.cancelled = true; info.returnValue = "cancelled"; }
     }]
   });
+  // A test calls in a tight loop, which any method would look hot under; the thresholds are
+  // tunable for exactly this.
+  win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
   // Patches wait for the client to be *running*: one state snapshot is that signal.
   win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
   await settle();

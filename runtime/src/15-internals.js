@@ -154,6 +154,8 @@
   var applied = [];
   var refused = [];
   var rolledBack = 0;
+  // Tuning knobs, exposed through the internals object so a test (or a mod author) can change them.
+  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256 };
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
   function applyPatch(plan) {
@@ -209,8 +211,8 @@
     for (var i = 0; i < targets.length; i++) {
       var resolved = resolve(plan.targets[0], targets[i]);
       if (!resolved) { continue; }
-      if (wrappedBy.size >= 256) {
-        return { ok: false, kind: kind, target: targets[i], why: "the live-patch budget (256 methods) is full" };
+      if (wrappedBy.size >= limits.maxWrapped) {
+        return { ok: false, kind: kind, target: targets[i], why: "the live-patch budget (" + limits.maxWrapped + " methods) is full" };
       }
       if (wrappedBy.has(resolved.fn)) {
         // A method is wrapped once. A second plan for the same method is refused by name rather
@@ -245,8 +247,8 @@
     var sampleStartedAt = Date.now();
     var sampling = true;
     var handlerFailures = 0;
-    var SAMPLE_CALLS = 20;
-    var HOT_PER_SECOND = 40;
+    var SAMPLE_CALLS = limits.sampleCalls;
+    var HOT_PER_SECOND = limits.hotPerSecond;
     return function (self) {
       if (disabled) { return original.apply(this, arguments); }
       if (sampling) {
@@ -266,7 +268,7 @@
       }
       var now = Date.now();
       if (now - windowStart > 1000) { windowStart = now; callsInWindow = 0; }
-      if (++callsInWindow > 200) {
+      if (++callsInWindow > limits.runsPerSecond) {
         disabled = true;
         internal.toast("patch paused: " + options.label + " is called too often to wrap safely");
         return original.apply(this, arguments);
@@ -372,6 +374,7 @@
     state: state,
     detect: detect,
     bus: readyBus,
+    limits: limits,
     noteRollback: function (count) { rolledBack += count; },
     available: function () { if (!state.available) { detect(); } return state.available; },
     classes: function () { buildRegistry(); return state.classes ? Array.from(state.classes.keys()) : []; },
