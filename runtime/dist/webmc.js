@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610190630";
+  WebMC.build = "202610190713";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -2464,12 +2464,15 @@
     plans.push(record);
     byId.set(id, record);
     // A plan can be applied straight away when the client internals are available.
-    var result = tryApply(record);
-    record.state = result.ok ? "applied" : "planned";
-    record.why = result.why || null;
+    // A plan is only *recorded* here. Application is the capped, wave-by-wave, liveness-checked
+    // path in applyPlans(); applying at add time bypassed every valve (which is exactly how the
+    // deployed site froze when Meteor was hot-loaded after boot).
+    record.state = "planned";
+    record.why = null;
     recount();
     internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
     bus.emit("plan", record);
+    scheduleApply();
     return record;
   }
 
@@ -2481,9 +2484,24 @@
 
   /** The internals appear after the compiled module runs, which is later than mod loading. When
    * they do, every plan that was refused for lack of a name anchor is tried again. */
+  /** Coalesce a burst of plans (a hot-loaded mod brings hundreds) into one apply pass. */
+  var applyTimer = null;
+  function scheduleApply() {
+    if (applyTimer) { return; }
+    applyTimer = setTimeout(function () {
+      applyTimer = null;
+      if (!ready) { return; }             // the internals announcement will start it instead
+      var latest = internal.state && internal.state.latest;
+      if (!(latest && (latest.screen || latest.level))) { return; }
+      applyPlans();
+    }, 1500);
+  }
+
+  var ready = false;
   function retry() {
     if (!internal.internals || !internal.internals.bus) { return; }
     internal.internals.bus.on("ready", function () {
+      ready = true;
       // Patches go in once the client is *running*: wrapping a method during the client's own
       // start-up is how a mod platform bricks a client, and the client says when it is up.
       waitForRunning(function () {

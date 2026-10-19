@@ -72,7 +72,12 @@ export function makeWindow(options = {}) {
     location: { href: "http://localhost:8099/index.html", search: "" },
     navigator: { userAgent: "node" },
     console,
-    setTimeout, clearTimeout, setInterval: () => 0, clearInterval: () => {},
+    setTimeout, clearTimeout,
+    // Real timers: the runtime's schedulers (patch application, internals polling) are part of what
+    // is under test, and a stub hides them.
+    setInterval: (fn, ms) => setInterval(fn, ms),
+    clearInterval: (id) => clearInterval(id),
+    queueMicrotask: (fn) => queueMicrotask(fn),
     Uint8Array, TextDecoder, JSON, Math, Date, Promise, Object, Array, Number, String, Boolean, Error, Map, Set, Symbol,
     Image: function Image() { this.complete = false; },
     requestAnimationFrame(fn) { window.__rafCount = (window.__rafCount || 0) + 1; if (options.autotick) { setTimeout(() => fn(window.performance.now()), 1); } return window.__rafCount; },

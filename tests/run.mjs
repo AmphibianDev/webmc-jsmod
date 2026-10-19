@@ -403,9 +403,10 @@ await test("a patched client resolves an anchored method and applies an @Inject 
       run: (target, args, info) => { injected++; info.cancelled = true; info.returnValue = "cancelled"; }
     }]
   });
-  // Patches wait for the client to be *running*: one state snapshot is that signal.
+  // Patches wait for the client to be *running* (a screen or a level), and application is
+  // coalesced, so give the scheduler its moment.
   win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
-  await settle();
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   const summary = win.webmc.__internal.patches.summary();
   eq(summary.applied, 1, "the injection applied once the client was running");
   // The wrapper samples first: it passes through until it has measured the call rate, so a hot
@@ -418,7 +419,7 @@ await test("a patched client resolves an anchored method and applies an @Inject 
   eq(result, "original", "the original method still ran even though the handler cancelled");
 });
 
-await test("a plan whose method has no anchor is refused, not guessed", () => {
+await test("a plan whose method has no anchor is refused, not guessed", async () => {
   const win = loadRuntime({ trustAll: true });
   win.__installClient();
   const meta = Symbol("teavm_meta");
@@ -431,10 +432,14 @@ await test("a plan whose method has no anchor is refused, not guessed", () => {
     targets: ["net.minecraft.client.gui.Gui"],
     injections: [{ kind: "inject", method: ["render"], at: ["HEAD"], run: () => {} }]
   });
+  // Application is scheduled now, so the refusal appears after the scheduler has run.
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   const patches = win.webmc.__internal.patches.summary();
   eq(patches.applied, 0, "nothing applied");
-  const summary = win.webmc.__internal.internals.summary();
-  ok(summary.refusedReasons.some((why) => /anchor/.test(why)), "the reason names the missing anchor");
+  const record = win.webmc.__internal.patches.plans[0];
+  ok(/anchor/.test(String(record.why || "")) || win.webmc.__internal.internals.summary().refusedReasons.some((why) => /anchor/.test(why)),
+    "the reason names the missing anchor (got: " + (record.why || "none") + ")");
 });
 
 /* ------------------------------------------------------------------ report ------------------- */
@@ -443,3 +448,5 @@ if (failed) {
   for (const failure of failures) { console.log("\n" + failure.name + "\n" + (failure.error && failure.error.stack || failure.error)); }
   process.exit(1);
 }
+// The runtime keeps intervals of its own; the suite says its piece and leaves.
+process.exit(0);

@@ -179,6 +179,13 @@ alignment using field ownership read from constructors.
 **Applying (9 → ~100 injections, ~40 plans).** The map names 220 of Meteor's 327 injections; the
 runtime applies about 100 of them and the client stays healthy. The gap is policy, not capability.
 
+**The last root cause, and it was the important one.** `webmc.patches.add()` applied each plan the
+moment it arrived — so a mod hot-loaded *after* boot (Meteor, from the Mods panel) bypassed the cap,
+the waves and every liveness check. That is why the deployed site froze while the local one looked
+fine: locally Meteor was hot-loaded into a fresh page, on the site the plan burst arrived while the
+game was already running. `add()` now only *records*; application is the capped, wave-by-wave,
+liveness-checked path, scheduled once per burst.
+
 **Safety, learned by breaking the client several times.** A wave of patches that froze the client
 was rolled back; a handler that cancelled a tick left the client frozen with nothing to undo; 147
 handlers failing on every invocation flooded the console and stalled the tab. The rules now:
@@ -192,6 +199,22 @@ calls (a method is no longer refused because one exotic call inside it has no tr
 more JDK natives, and a narrower pruning rule. Meteor: 3,134 → **4,468 methods translated**, 7,961
 unreachable methods pruned, 1,662 call sites deferred to the internals layer instead of refusing the
 method, and the verdict now says which.
+
+## 2026-10-19 (later) — the safety policy, and the number it settles on
+
+Every valve now has a measured reason to exist, and the shipped configuration is the conservative
+one:
+
+| configuration (same page, same mod) | state snapshots in ~4 min | plans applied |
+| --- | --- | --- |
+| internals off (control) | ~2,000 | 0 |
+| **shipped: cap 32 plans, waves of 6, bisect on failure** | **3,302** | **16** |
+| uncapped (before `add()` was fixed) | frozen | 66–147 |
+
+The client now publishes state at the control rate with patches applied. `?patches=200` or
+`webmc.patches.setCap(200)` raises the cap; `?internals=off` or `webmc.patches.setEnabled(false)`
+turns the layer off. The panel lists every plan with its state — applied, planned, rolled-back — and
+the reason.
 
 ## Next
 
