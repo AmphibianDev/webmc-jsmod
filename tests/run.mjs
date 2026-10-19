@@ -400,8 +400,11 @@ await test("a patched client resolves an anchored method and applies an @Inject 
       run: (target, args, info) => { injected++; info.cancelled = true; info.returnValue = "cancelled"; }
     }]
   });
+  // Patches wait for the client to be *running*: one state snapshot is that signal.
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+  await settle();
   const summary = win.webmc.__internal.patches.summary();
-  eq(summary.applied, 1, "the injection applied");
+  eq(summary.applied, 1, "the injection applied once the client was running");
   // The wrapper samples first: it passes through until it has measured the call rate, so a hot
   // method is never wrapped. Twenty-five calls is past the sampling window.
   let result = null;
