@@ -77,8 +77,10 @@ jobs:
             if (named < 1000) { throw new Error('the symbol map is missing or too small'); }
           "
 
-      - name: build the runtime
-        run: node runtime/build.mjs
+      - name: build the runtime and the gallery index
+        run: |
+          node runtime/build.mjs
+          node tools/build-gallery.mjs
 
       - name: the runtime's own tests
         run: node tests/run.mjs

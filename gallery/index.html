@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WebMC Mods — JavaScript mods for the browser client</title>
+<style>
+  :root { --bg:#0b0d10; --panel:#14181d; --panel2:#1b2027; --line:#2a313a; --text:#e8eaed; --dim:#9aa3ae;
+          --accent:#7ab8ff; --ok:#6ee7a8; --warn:#ffcc66; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:15px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  a { color:var(--accent); text-decoration:none; }
+  header { border-bottom:1px solid var(--line); padding:22px 26px; background:linear-gradient(180deg,#111823,#0b0d10); }
+  header h1 { margin:0 0 4px; font-size:22px; }
+  header p { margin:0; color:var(--dim); max-width:70ch; }
+  .wrap { display:grid; grid-template-columns:240px 1fr; gap:0; min-height:calc(100vh - 96px); }
+  @media (max-width:820px) { .wrap { grid-template-columns:1fr; } aside { border-right:0!important; border-bottom:1px solid var(--line); } }
+  aside { border-right:1px solid var(--line); padding:18px; }
+  aside h2 { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); margin:0 0 8px; }
+  .chip { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:3px 10px; margin:0 6px 6px 0;
+          font-size:13px; color:var(--dim); cursor:pointer; user-select:none; }
+  .chip.on { color:var(--accent); border-color:#2a4a6a; background:#101a24; }
+  input[type=search] { width:100%; background:#0d1116; border:1px solid var(--line); border-radius:8px;
+                       color:var(--text); padding:9px 11px; font:inherit; margin-bottom:14px; }
+  main { padding:18px 22px 60px; }
+  .count { color:var(--dim); font-size:13px; margin-bottom:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:8px; }
+  .card h3 { margin:0; font-size:16px; }
+  .card .meta { color:var(--dim); font-size:12px; }
+  .card p { margin:0; color:#c8cdd4; font-size:14px; }
+  .card .caps { display:flex; gap:5px; flex-wrap:wrap; }
+  .cap { font-size:11px; border:1px solid var(--line); border-radius:999px; padding:2px 7px; color:var(--dim); }
+  .cap.converted { color:var(--warn); border-color:#4a402c; }
+  .actions { margin-top:auto; display:flex; gap:8px; align-items:center; }
+  button { background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:8px;
+           padding:7px 12px; font:inherit; cursor:pointer; }
+  button.primary { background:#2563eb; border-color:#2563eb; font-weight:600; }
+  button.primary:hover { background:#1d4ed8; }
+  dialog { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:14px;
+           max-width:640px; width:92vw; padding:22px; }
+  dialog::backdrop { background:rgba(0,0,0,.6); }
+  dialog h2 { margin:0 0 4px; }
+  dialog .meta { color:var(--dim); font-size:13px; margin-bottom:12px; }
+  pre { background:#0d1116; border:1px solid var(--line); border-radius:10px; padding:12px; overflow:auto; font-size:13px; }
+  footer { border-top:1px solid var(--line); padding:18px 26px; color:var(--dim); font-size:13px; }
+  code { background:#0d1116; border:1px solid var(--line); border-radius:5px; padding:1px 5px; font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>WebMC Mods</h1>
+  <p>JavaScript mods for the browser client. They load at play time — no rebuild, no installer, and a
+     mod that misbehaves is switched off instead of taking the game with it.
+     <a href="../index.html">Play the client →</a> · <a href="../docs/API.md">Write a mod →</a></p>
+</header>
+<div class="wrap">
+  <aside>
+    <h2>Search</h2>
+    <input type="search" id="q" placeholder="gamma, hud, schematic…" />
+    <h2>Categories</h2>
+    <div id="cats"></div>
+    <h2>Show</h2>
+    <div class="chip on" id="onlyRunnable">everything</div>
+    <div class="chip" id="onlyOptional">load-on-demand only</div>
+  </aside>
+  <main>
+    <div class="count" id="count"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+<footer>
+  A mod here is a <code>.jsmod</code> package or a plain JS file plus a manifest. The converter turns a
+  Fabric jar into one; <a href="../docs/API.md">docs/API.md</a> is the API a hand-written mod uses.
+</footer>
+<dialog id="detail"></dialog>
+
+<script>
+(function () {
+  "use strict";
+  var state = { mods: [], query: "", categories: new Set(), optionalOnly: false };
+  var grid = document.getElementById("grid");
+  var cats = document.getElementById("cats");
+
+  function el(tag, text) { var e = document.createElement(tag); if (text != null) { e.textContent = text; } return e; }
+  function fmt(bytes) { return bytes == null ? "" : (bytes / 1048576 < 1 ? Math.round(bytes / 1024) + " KB" : (bytes / 1048576).toFixed(1) + " MB"); }
+
+  function visible() {
+    return state.mods.filter(function (mod) {
+      if (state.optionalOnly && !mod.optional) { return false; }
+      if (state.categories.size && !mod.categories.some(function (c) { return state.categories.has(c); })) { return false; }
+      var q = state.query.trim().toLowerCase();
+      if (!q) { return true; }
+      return (mod.name + " " + mod.id + " " + mod.summary + " " + mod.categories.join(" ")).toLowerCase().indexOf(q) >= 0;
+    });
+  }
+
+  function renderCategories() {
+    var all = new Set();
+    state.mods.forEach(function (mod) { mod.categories.forEach(function (c) { all.add(c); }); });
+    cats.innerHTML = "";
+    Array.from(all).sort().forEach(function (name) {
+      var chip = el("span", name);
+      chip.className = "chip" + (state.categories.has(name) ? " on" : "");
+      chip.onclick = function () {
+        if (state.categories.has(name)) { state.categories.delete(name); } else { state.categories.add(name); }
+        renderCategories(); render();
+      };
+      cats.appendChild(chip);
+    });
+  }
+
+  function install(mod) {
+    // The package is served next to this page; the client's loader takes it from there.
+    var url = "../mods/" + String(mod.entry || "").replace(/^\.?\//, "");
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = mod.id + ".jsmod";
+    a.click();
+  }
+
+  function detail(mod) {
+    var dialog = document.getElementById("detail");
+    dialog.innerHTML = "";
+    dialog.appendChild(el("h2", mod.name));
+    var meta = el("div", mod.id + (mod.version ? " · v" + mod.version : "") +
+      (mod.authors && mod.authors.length ? " · " + mod.authors.join(", ") : "") +
+      (mod.bytes ? " · " + fmt(mod.bytes) : ""));
+    meta.className = "meta";
+    dialog.appendChild(meta);
+    dialog.appendChild(el("p", mod.summary));
+    var caps = el("div", "");
+    caps.className = "caps";
+    mod.categories.forEach(function (c) { var chip = el("span", c); chip.className = "cap"; caps.appendChild(chip); });
+    if (mod.converted) { var chip2 = el("span", "converted from a Fabric jar"); chip2.className = "cap converted"; caps.appendChild(chip2); }
+    dialog.appendChild(caps);
+    var how = el("p", "");
+    how.innerHTML = "Add it from the client's <strong>Mods</strong> panel with “Load now”, or drop the file " +
+      "on the panel. Mods are JavaScript; the panel shows every capability they ask for.";
+    dialog.appendChild(how);
+    var pre = el("pre", "open  https://amphibiandev.github.io/webmc-jsmod/?load=" + mod.id + "\n" +
+      "install  drag " + mod.id + ".jsmod onto the Mods panel");
+    dialog.appendChild(pre);
+    var actions = el("div", "");
+    actions.style.cssText = "display:flex;gap:8px;margin-top:12px";
+    var play = el("button", "Play with it");
+    play.className = "primary";
+    play.onclick = function () { location.href = "../index.html?load=" + encodeURIComponent(mod.id); };
+    var get = el("button", "Download package");
+    get.onclick = function () { install(mod); };
+    var copy = el("button", "Copy link");
+    copy.onclick = function () { try { navigator.clipboard.writeText(location.origin + location.pathname + "#" + mod.id); } catch (e) {} };
+    actions.appendChild(play); actions.appendChild(get); actions.appendChild(copy);
+    dialog.appendChild(actions);
+    dialog.showModal();
+  }
+
+  function render() {
+    var list = visible();
+    document.getElementById("count").textContent = list.length + " of " + state.mods.length + " mods";
+    grid.innerHTML = "";
+    list.forEach(function (mod) {
+      var card = el("div", "");
+      card.className = "card";
+      card.appendChild(el("h3", mod.name));
+      var meta = el("div", mod.id + (mod.version ? " · v" + mod.version : "") + (mod.bytes ? " · " + fmt(mod.bytes) : ""));
+      meta.className = "meta";
+      card.appendChild(meta);
+      card.appendChild(el("p", mod.summary));
+      var caps = el("div", "");
+      caps.className = "caps";
+      mod.categories.forEach(function (c) { var chip = el("span", c); chip.className = "cap"; caps.appendChild(chip); });
+      if (mod.converted) { var chip2 = el("span", "converted"); chip2.className = "cap converted"; caps.appendChild(chip2); }
+      card.appendChild(caps);
+      var actions = el("div", "");
+      actions.className = "actions";
+      var open = el("button", "Details");
+      open.onclick = function () { detail(mod); };
+      var play = el("button", "Play with it");
+      play.className = "primary";
+      play.onclick = function () { location.href = "../index.html?load=" + encodeURIComponent(mod.id); };
+      actions.appendChild(open); actions.appendChild(play);
+      card.appendChild(actions);
+      grid.appendChild(card);
+    });
+    if (!list.length) { grid.appendChild(el("p", "Nothing matches. Clear the search or the category chips.")); }
+  }
+
+  document.getElementById("q").addEventListener("input", function (event) { state.query = event.target.value; render(); });
+  document.getElementById("onlyOptional").addEventListener("click", function (event) {
+    state.optionalOnly = !state.optionalOnly;
+    event.target.classList.toggle("on", state.optionalOnly);
+    event.target.textContent = state.optionalOnly ? "load-on-demand only" : "everything";
+    render();
+  });
+
+  fetch("mods.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (data) {
+    state.mods = data.mods || [];
+    renderCategories();
+    render();
+    if (location.hash) {
+      var wanted = state.mods.filter(function (m) { return m.id === location.hash.slice(1); })[0];
+      if (wanted) { detail(wanted); }
+    }
+  }).catch(function (error) {
+    grid.appendChild(el("p", "Could not read mods.json: " + error.message));
+  });
+})();
+</script>
+</body>
+</html>

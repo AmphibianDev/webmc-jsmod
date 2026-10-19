@@ -1,0 +1,219 @@
+{
+ "note": "Written by tools/build-gallery.mjs. The gallery page reads this file.",
+ "count": 12,
+ "mods": [
+  {
+   "id": "appleskin",
+   "name": "AppleSkin",
+   "version": "3.0.8",
+   "authors": [
+    "squeek502"
+   ],
+   "categories": [
+    "HUD",
+    "Information"
+   ],
+   "summary": "Food and hunger information, converted.",
+   "entry": "converted/appleskin.js",
+   "optional": true,
+   "bytes": 314300,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "gammautils",
+   "name": "Gamma Utils",
+   "version": "2.5.10",
+   "authors": [
+    "Sjouwer"
+   ],
+   "categories": [
+    "Utility",
+    "Render"
+   ],
+   "summary": "Gamma and night-vision controls. 11/11 Fabric events and 8 keybinds translated; converted from Modrinth.",
+   "entry": "converted/gammautils.js",
+   "optional": false,
+   "bytes": 419993,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "example.hello",
+   "name": "Hello",
+   "version": "1.0.0",
+   "authors": [
+    "WebMC"
+   ],
+   "categories": [
+    "Demo"
+   ],
+   "summary": "HUD line, a keybind and a command — the smallest useful mod.",
+   "entry": "examples/hello/index.js",
+   "optional": false,
+   "bytes": null,
+   "converted": false,
+   "install": "index"
+  },
+  {
+   "id": "hello-fabric",
+   "name": "Hello Fabric",
+   "version": "1.0.0",
+   "authors": [
+    "WebMC"
+   ],
+   "categories": [
+    "Demo"
+   ],
+   "summary": "A real Fabric jar converted by converter/convert.mjs — proof of the whole chain.",
+   "entry": "converted/hello-fabric.js",
+   "optional": false,
+   "bytes": 40350,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "jade",
+   "name": "Jade",
+   "version": "21.1.6",
+   "authors": [
+    "Snownee"
+   ],
+   "categories": [
+    "HUD",
+    "Information"
+   ],
+   "summary": "What am I looking at: 11 Fabric events and its keybind translated.",
+   "entry": "converted/jade.js",
+   "optional": true,
+   "bytes": 2157904,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "jei",
+   "name": "JEI",
+   "version": "27.53.0.108",
+   "authors": [
+    "mezz"
+   ],
+   "categories": [
+    "Recipe",
+    "UI"
+   ],
+   "summary": "Item and recipe viewer, converted; 11 Fabric events translated.",
+   "entry": "converted/jei.js",
+   "optional": true,
+   "bytes": 19304750,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "litematica",
+   "name": "Litematica",
+   "version": "0.26.16",
+   "authors": [
+    "masa"
+   ],
+   "categories": [
+    "Building",
+    "Schematic"
+   ],
+   "summary": "Schematic mod, converted: all of its plans apply (25 injections + 20 accessors).",
+   "entry": "converted/litematica.js",
+   "optional": true,
+   "bytes": 10914173,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "meteor-client",
+   "name": "Meteor Client",
+   "version": "1.21.11-86",
+   "authors": [
+    "MeteorDevelopment"
+   ],
+   "categories": [
+    "Utility",
+    "Modules"
+   ],
+   "summary": "The real Meteor Client, converted: 171 modules, 191 patch plans, accessors live. Heavy mixin behaviour is partial.",
+   "entry": "converted/meteor.js",
+   "optional": true,
+   "bytes": 21655584,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "example.modules",
+   "name": "Modules demo",
+   "version": "1.0.0",
+   "authors": [
+    "WebMC"
+   ],
+   "categories": [
+    "Demo",
+    "Utility"
+   ],
+   "summary": "The Meteor shape in JS: modules with categories, settings and toggle keys.",
+   "entry": "examples/modules/index.js",
+   "optional": false,
+   "bytes": null,
+   "converted": false,
+   "install": "index"
+  },
+  {
+   "id": "shulkerboxtooltip",
+   "name": "Shulker Box Tooltip",
+   "version": "5.2.16",
+   "authors": [
+    "MisterPeModder"
+   ],
+   "categories": [
+    "UI",
+    "Information"
+   ],
+   "summary": "Shulker contents in the tooltip, converted.",
+   "entry": "converted/shulkerboxtooltip.js",
+   "optional": true,
+   "bytes": 823673,
+   "converted": true,
+   "install": "index"
+  },
+  {
+   "id": "example.status",
+   "name": "Status",
+   "version": "1.0.0",
+   "authors": [
+    "WebMC"
+   ],
+   "categories": [
+    "HUD"
+   ],
+   "summary": "FPS, position, chunks and the current screen, live from the client's state.",
+   "entry": "examples/status/index.js",
+   "optional": false,
+   "bytes": null,
+   "converted": false,
+   "install": "index"
+  },
+  {
+   "id": "zoomify",
+   "name": "Zoomify",
+   "version": "2.15.2",
+   "authors": [
+    "isXander"
+   ],
+   "categories": [
+    "Utility",
+    "Camera"
+   ],
+   "summary": "Zoom keybind and smooth camera, converted; its FOV hook applies.",
+   "entry": "converted/zoomify.js",
+   "optional": true,
+   "bytes": 946715,
+   "converted": true,
+   "install": "index"
+  }
+ ]
+}
