@@ -132,6 +132,21 @@
   function applyPlans() {
     var pending = plans.filter(function (record) { return record.state !== "applied" && record.state !== "rolled-back"; });
     if (!pending.length) { return; }
+    // Accessor and invoker plans install a table entry; they wrap nothing, so they cost the client
+    // nothing and are not subject to the wrapper budget. They are where a converted mod's field
+    // reads and writes come from, and there are usually dozens of them.
+    var accessorOnly = pending.filter(function (record) { return (record.accessors || []).length && !(record.injections || []).length; });
+    if (accessorOnly.length) {
+      var installed = 0;
+      for (var i = 0; i < accessorOnly.length; i++) {
+        var result = tryApply(accessorOnly[i]);
+        if (result.ok) { accessorOnly[i].state = "applied"; accessorOnly[i].why = null; installed++; }
+        else { accessorOnly[i].why = result.why || accessorOnly[i].why; }
+      }
+      recount();
+      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+    }
+    pending = pending.filter(function (record) { return !(record.accessors || []).length || (record.injections || []).length; });
     // A conservative default: the first N methods, in plan order, and then stop. A browser tab
     // tolerates a few dozen wrappers comfortably; the number is tunable and reported.
     var cap = (internal.internals && internal.internals.limits ? internal.internals.limits.maxPlans : 32) || 32;

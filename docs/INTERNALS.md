@@ -69,6 +69,18 @@ propagation step — so a wrong entry can be argued with:
 "Minecraft": { "tick": { "fn": "AEEo", "arity": 1, "why": "19 literal(s) shared, rarest in 1 Java method(s), arity 1", "score": 2.35 } }
 ```
 
+## Fields, accessors and invokers
+
+The per-class pass also emits a **field map** (`fields` in `symbols.json`, 7,588 fields in 2,948
+classes): Java field name -> the compiled object's own property, aligned by declaration order and
+type kind. That makes `internals.getField/putField` real, and it makes `@Accessor`/`@Invoker` plans
+real: Fabric *generates* those methods, so the plan installs a table entry — an accessor reads or
+writes its field on the target object, an invoker calls the method it names. They wrap nothing, so
+they are applied outside the wrapper budget.
+
+For Meteor that is the difference between 16 and **69 of its 191 plans** on the running client, with
+83 accessors installed and the client still publishing state at the control rate.
+
 ## Applying a plan
 
 `@Inject` at `HEAD` or `RETURN`/`TAIL` is a wrapper around the target function. TeaVM calls methods
@@ -109,7 +121,10 @@ Learned the hard way, in this order:
    again. `?internals=off` switches the whole layer off, and `webmc.patches.setEnabled(false)` does
    it at run time.
 
-8. **A conservative cap, and bisection.** At most 32 plans are applied; the rest stay records
+8. **Accessors are free.** A plan that only installs accessors/invokers writes a table entry and
+   wraps nothing, so it is applied outside the wrapper budget; a converted mod's field reads and
+   writes depend on them.
+9. **A conservative cap, and bisection.** At most 32 plans are applied; the rest stay records
    (`webmc.patches.setCap(n)`, or `?patches=200` to raise it). A batch that hurts the client is
    rolled back and re-tried in halves, so one bad wrapper costs its own plan rather than the set.
 

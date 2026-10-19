@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610190713";
+  WebMC.build = "202610191243";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -646,11 +646,18 @@
     classes: null,          // name -> constructor
     bySimple: null,         // simple name -> [name]
     symbols: null,          // the anchor map, loaded lazily
+    fields: null,           // Java field name -> compiled field token, per class
+    accessors: null,        // accessor/invoker methods installed by converted mods
     symbolsUrl: null,
     symbolsLoaded: false,
     resolutions: 0,
     misses: 0
   };
+
+  /** `net/minecraft/client/Minecraft` and `net.minecraft.client.Minecraft` both name `Minecraft`. */
+  function simpleName(className) {
+    return String(className || "").replace(/\/+$/, "").split(/[.\/]/).pop().split("$").pop();
+  }
 
   function detect() {
     if (state.available) { return true; }
@@ -707,7 +714,9 @@
       request.open("GET", state.symbolsUrl, false);   // synchronous on purpose: mods apply patches at init
       request.send(null);
       if (request.status >= 200 && request.status < 300) {
-        state.symbols = JSON.parse(request.responseText).anchors || {};
+        var parsed = JSON.parse(request.responseText);
+        state.symbols = parsed.anchors || {};
+        state.fields = parsed.fields || {};
       } else {
         state.symbols = {};
         internal.reportError("internals:symbols", new Error("HTTP " + request.status + " for " + state.symbolsUrl));
@@ -740,7 +749,7 @@
     if (!symbols) { return null; }
     // A caller may name a class the way the converter does (`net/minecraft/client/Minecraft`) or
     // with dots; the map is keyed by TeaVM's simple names (`Minecraft`).
-    var simple = String(className || "").replace(/\/+$/, "").split(/[./]/).pop().split("$").pop();
+    var simple = simpleName(className);
     var table = symbols[simple] || symbols[className] || null;
     var entry = table ? (table[methodName] || null) : null;
     if (!entry || !entry.fn) { state.misses++; return null; }
@@ -753,6 +762,61 @@
     }
     state.resolutions++;
     return { fn: entry.fn, callable: fn, arity: entry.arity, index: entry.index };
+  }
+
+  /** Java field name -> the compiled object's own property. */
+  function fieldToken(className, fieldName) {
+    if (!state.available) { detect(); }
+    var fields = state.fields || loadSymbols() && state.fields;
+    if (!fields) { return null; }
+    var simple = simpleName(className);
+    var table = fields[simple] || fields[className];
+    if (!table) { return null; }
+    return table[fieldName] || null;
+  }
+
+  function getField(className, fieldName, self) {
+    var token = fieldToken(className, fieldName);
+    if (!token || !self) { return undefined; }
+    return self[token];
+  }
+  function putField(className, fieldName, self, value) {
+    var token = fieldToken(className, fieldName);
+    if (!token || !self) { return false; }
+    self[token] = value;
+    return true;
+  }
+
+  /** `@Accessor`/`@Invoker` methods are not compiled: Fabric generates them. A converted mod calls
+   * them, so the plan installs them here — an accessor reads or writes the field, an invoker calls
+   * the method it names. */
+  function installAccessors(plan) {
+    if (!plan || !plan.accessors || !plan.accessors.length) { return 0; }
+    var target = simpleName((plan.targets || [])[0] || "");
+    if (!target) { return 0; }
+    state.accessors = state.accessors || {};
+    state.accessors[target] = state.accessors[target] || {};
+    var installed = 0;
+    for (var i = 0; i < plan.accessors.length; i++) {
+      var accessor = plan.accessors[i];
+      if (!accessor || !accessor.method) { continue; }
+      state.accessors[target][accessor.method] = {
+        kind: accessor.kind === "invoker" ? "invoker" : "accessor",
+        target: accessor.name,          // the field (accessor) or the method (invoker) it names
+        descriptor: accessor.descriptor || null,
+        mod: plan.modId || null,
+        mixin: plan.mixin || null
+      };
+      installed++;
+    }
+    return installed;
+  }
+
+  function accessorFor(className, methodName) {
+    if (!state.accessors) { return null; }
+    var simple = simpleName(className);
+    var table = state.accessors[simple] || state.accessors[className];
+    return table ? (table[methodName] || null) : null;
   }
 
   function unresolved(className, methodName, why) {
@@ -785,8 +849,14 @@
       var injection = plan.injections[i];
       results.push(applyInjection(plan, injection));
     }
-    for (var a = 0; a < (plan.accessors || []).length; a++) {
-      results.push({ ok: false, why: "accessors need a field-name map, which this build does not carry yet", injection: plan.accessors[a].name });
+    // Accessors and invokers are not compiled methods: Fabric generates them, and the plan names
+    // the field (or the method, for an invoker) each one stands for. Installing them is a table
+    // entry, so unlike a wrapper it cannot hurt the client.
+    if ((plan.accessors || []).length) {
+      var installedAccessors = installAccessors(plan);
+      results.push(installedAccessors
+        ? { ok: true, kind: "accessors", installed: installedAccessors, mixin: plan.mixin }
+        : { ok: false, why: "no field-map entry for these accessors", injection: (plan.accessors[0] || {}).name });
     }
     var appliedHere = results.filter(function (r) { return r.ok; }).length;
     var wrapped = results.filter(function (r) { return r.ok && r.rollback; }).map(function (r) { return r.rollback; });
@@ -957,6 +1027,8 @@
       resolutions: state.resolutions,
       misses: state.misses,
       appliedInjections: applied.reduce(function (total, record) { return total + record.applied; }, 0),
+      fieldsMapped: state.fields ? Object.keys(state.fields).reduce(function (total, cls) { return total + Object.keys(state.fields[cls]).length; }, 0) : 0,
+      accessorsInstalled: state.accessors ? Object.keys(state.accessors).reduce(function (total, cls) { return total + Object.keys(state.accessors[cls]).length; }, 0) : 0,
       rolledBack: rolledBack,
       appliedPlans: applied.length,
       refusedPlans: refused.length,
@@ -994,6 +1066,11 @@
   internal.internals = {
     state: state,
     detect: detect,
+    getField: getField,
+    putField: putField,
+    fieldToken: fieldToken,
+    installAccessors: installAccessors,
+    accessorFor: accessorFor,
     bus: readyBus,
     limits: limits,
     noteRollback: function (count) { rolledBack += count; },
@@ -1016,15 +1093,29 @@
         findClass: findClass,
         resolve: function (className, methodName) { return resolve(className, methodName); },
         invoke: function (className, methodName, self, args) {
+          var accessor = accessorFor(className, methodName);
+          if (accessor) {
+            if (accessor.kind === "accessor") {
+              if ((args || []).length >= 1) { return putField(className, accessor.target, self, args[0]); }
+              return getField(className, accessor.target, self);
+            }
+            var target = resolve(className, accessor.target);
+            if (target) { return target.callable.apply(null, [self].concat(args || [])); }
+          }
           var found = resolve(className, methodName);
           if (!found) { throw new Error("webmc: no anchor for " + className + "." + methodName); }
           return found.callable.apply(null, [self].concat(args || []));
         },
-        getField: function (className, name) { throw new Error("webmc: field " + className + "." + name + " is not in this build's map"); },
-        putField: function () { throw new Error("webmc: fields are not writable through this build's map"); },
+        getField: function (className, name, self) { return getField(className, name, self); },
+        putField: function (className, name, self, value) { return putField(className, name, self, value); },
         getStatic: function () { return undefined; },
         putStatic: function () { },
         invokeStatic: function (className, methodName, args) {
+          var accessor = accessorFor(className, methodName);
+          if (accessor && accessor.kind === "invoker") {
+            var target = resolve(className, accessor.target);
+            if (target) { return target.callable.apply(null, [null].concat(args || [])); }
+          }
           var found = resolve(className, methodName);
           if (!found) { throw new Error("webmc: no anchor for " + className + "." + methodName); }
           return found.callable.apply(null, args || []);
@@ -2560,6 +2651,21 @@
   function applyPlans() {
     var pending = plans.filter(function (record) { return record.state !== "applied" && record.state !== "rolled-back"; });
     if (!pending.length) { return; }
+    // Accessor and invoker plans install a table entry; they wrap nothing, so they cost the client
+    // nothing and are not subject to the wrapper budget. They are where a converted mod's field
+    // reads and writes come from, and there are usually dozens of them.
+    var accessorOnly = pending.filter(function (record) { return (record.accessors || []).length && !(record.injections || []).length; });
+    if (accessorOnly.length) {
+      var installed = 0;
+      for (var i = 0; i < accessorOnly.length; i++) {
+        var result = tryApply(accessorOnly[i]);
+        if (result.ok) { accessorOnly[i].state = "applied"; accessorOnly[i].why = null; installed++; }
+        else { accessorOnly[i].why = result.why || accessorOnly[i].why; }
+      }
+      recount();
+      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+    }
+    pending = pending.filter(function (record) { return !(record.accessors || []).length || (record.injections || []).length; });
     // A conservative default: the first N methods, in plan order, and then stop. A browser tab
     // tolerates a few dozen wrappers comfortably; the number is tunable and reported.
     var cap = (internal.internals && internal.internals.limits ? internal.internals.limits.maxPlans : 32) || 32;

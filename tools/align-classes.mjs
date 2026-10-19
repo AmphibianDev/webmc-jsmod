@@ -636,6 +636,21 @@ while (round < 3) {
   if (!newThisRound) { break; }
 }
 
+// The field map: Java field name -> compiled field token, per class. This is what turns an
+// `@Accessor` into real read/write support at run time.
+const fieldMaps = {};
+for (const [ctor, simpleName] of tuples) {
+  const javaFields = java.classFieldIndex.get(obfForSimple.get(simpleName)) || null;
+  const jsFields = fieldOrderByCtor.get(ctor) || [];
+  if (!javaFields || !jsFields.length) { continue; }
+  const table = tokenByFieldFor(ctor, javaFields, jsFields);
+  if (!table.size) { continue; }
+  const out = {};
+  table.forEach((token, name) => { out[name] = token; });
+  fieldMaps[simpleName] = Object.assign(fieldMaps[simpleName] || {}, out);
+}
+console.log(`  ${Object.keys(fieldMaps).length} classes with a field map (${Object.values(fieldMaps).reduce((total, map) => total + Object.keys(map).length, 0)} fields)`);
+
 const totalMethods = Object.keys(merged).reduce((total, cls) => total + Object.keys(merged[cls]).length, 0);
 writeFileSync(outFile, JSON.stringify({
   note: (symbols.note || "") + " Plus tools/align-classes.mjs: per-class alignment using constructor field ownership.",
@@ -644,9 +659,11 @@ writeFileSync(outFile, JSON.stringify({
     classesNamed: Object.keys(merged).length,
     methodsNamed: totalMethods,
     classAlignment: stats,
+    fieldsMapped: Object.values(fieldMaps).reduce((total, map) => total + Object.keys(map).length, 0),
     classesWithFieldBuckets: bucket.size,
     fieldTokens: fieldOwner.size
   }),
-  anchors: merged
+  anchors: merged,
+  fields: fieldMaps
 }, null, 1) + "\n");
 console.log(`wrote ${outFile}: ${totalMethods} methods in ${Object.keys(merged).length} classes (+${totalNew} from the per-class pass)`);
