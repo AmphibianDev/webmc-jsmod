@@ -294,6 +294,27 @@ control rate. The wall is no longer mixin kinds — it is **naming**: 76 of Mete
 targets (and most of Flashback's) have no function yet, and a redirect needs *both* sides named.
 Everything else is policy, and the policy is what keeps the client alive.
 
+## 2026-10-19 (final for now) — the deployed site, measured
+
+Live check with **Meteor + Litematica + Jade + Zoomify** loaded together
+(`tools/live-check.mjs --full --url ".../?load=meteor-client,litematica,jade,zoomify"`):
+
+| | |
+| --- | --- |
+| plans applied | **240** |
+| modules registered (Meteor) | 173 |
+| state snapshots in 4 minutes | **3,173** (the client never stopped) |
+| suspended mods | 0 |
+| checks | 8/8 |
+
+The Mods panel is the interface: anything optional loads on demand, every plan is listed with its
+state and its reason, and the whole thing can be switched off with `?internals=off`.
+
+**The mod gallery is live**: <https://amphibiandev.github.io/webmc-jsmod/gallery/> — 12 mods with
+categories, sizes, search, a details dialog, "Play with it" (`?load=<id>`) and
+`gallery/AUTHORING.md` for anyone writing their own. `tools/build-gallery.mjs` builds its index from
+what the site actually ships, and the Pages workflow runs it on every deploy.
+
 ## Next
 
 1. **The internals layer**: a derived client build that exposes its TeaVM class table
