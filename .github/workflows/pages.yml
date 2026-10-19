@@ -55,7 +55,7 @@ jobs:
       - name: patch the client (its compiled internals reachable from the page)
         run: node tools/patch-client.mjs --in client/1.21.11 --out client/1.21.11-internals
 
-      - name: rebuild the symbol map (only when asked: it is the slow alignment work)
+      - name: "rebuild the symbol map (only when asked)"
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.rebuild_symbols }}
         run: |
           curl -sSL --retry 3 -o /tmp/client.jar https://piston-data.mojang.com/v1/objects/ba2df812c2d12e0219c489c4cd9a5e1f0760f5bd/client.jar
