@@ -30,6 +30,9 @@ const flag = (name, fallback) => {
 const all = (name) => args.reduce((list, value, index) => (value === "--" + name && args[index + 1] ? list.concat([args[index + 1]]) : list), []);
 
 const source = resolve(flag("in", join(root, "client", "1.21.11")));
+const jar = flag("jar", join(root, "..", "webmc-port", "work", "client", "1.21.11-j17.jar"));
+const mappings = flag("mappings", join(root, "converter", "mappings", "1.21.11"));
+const jsDir = flag("js", source);
 const patched = resolve(flag("out", join(root, "client", "1.21.11-internals")));
 const rounds = Number(flag("rounds", 4));
 const wantedFiles = all("wanted").length ? all("wanted") : [join(root, "mods", "converted", "meteor.js"), join(root, "mods", "converted", "gammautils.js")];
@@ -70,9 +73,11 @@ let current = anchorsFile;
 let previous = 0;
 for (let round = 1; round <= rounds; round++) {
   const globalOut = join(patched, "symbols.global" + round + ".json");
-  run("align-methods.mjs", ["--anchors", anchorsFile, "--merge", current, "--wanted", combined, "--out", globalOut]);
+  run("align-methods.mjs", ["--anchors", anchorsFile, "--merge", current, "--wanted", combined,
+    "--jar", jar, "--mappings", mappings, "--js", jsDir, "--out", globalOut]);
   const classOut = round === rounds ? symbolsFile : join(patched, "symbols.class" + round + ".json");
-  run("align-classes.mjs", ["--symbols", globalOut, "--wanted", combined, "--out", classOut]);
+  run("align-classes.mjs", ["--symbols", globalOut, "--wanted", combined,
+    "--jar", jar, "--mappings", mappings, "--js", jsDir, "--out", classOut]);
   current = classOut;
   const stats = JSON.parse(readFileSync(classOut, "utf8")).stats || {};
   const named = stats.methodsNamed || 0;
