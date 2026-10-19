@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610190501";
+  WebMC.build = "202610190502";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -2501,10 +2501,16 @@
       internal.stateBus.on("state", function () { /* running; the interval below has already fired */ }, { once: true });
       then();
     }
+    // "Running" means the client has a screen or a level: its very first snapshot is published
+    // while it is still starting, and that is exactly the moment patches must not land.
+    function running() {
+      var latest = internal.state && internal.state.latest;
+      return !!(latest && (latest.screen || latest.level));
+    }
     var timer = setInterval(function () {
-      if (internal.state && internal.state.latest) { clearInterval(timer); go(); }
+      if (running()) { clearInterval(timer); go(); }
     }, 500);
-    internal.stateBus.on("state", function () { clearInterval(timer); go(); });
+    internal.stateBus.on("state", function () { if (running()) { clearInterval(timer); go(); } });
     // The panel can say why nothing has applied yet.
     setTimeout(function () {
       if (!started) {
