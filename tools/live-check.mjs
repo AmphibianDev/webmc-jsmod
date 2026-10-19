@@ -127,15 +127,22 @@ while (Date.now() < deadline) {
           ", patches " + (selftest.patches ? selftest.patches.plans : 0) +
           (selftest.state.screen ? "  screen " + String(selftest.state.screen).split(".").pop() : ""));
       }
-      // Stop early once the interesting conditions are all true.
+      // Stop early once the interesting conditions are all true — including the client's own hooks,
+      // which appear later than the runtime's.
       const meteorOk = !WITH_METEOR || selftest.mods.some((m) => m.id === "meteor-client" && m.enabled);
-      if (selftest.frame.count > 60 && selftest.hooks.stateUpdates > 0 && selftest.mods.length >= 5 && meteorOk) { break; }
+      if (selftest.frame.count > 60 && selftest.hooks.input && selftest.hooks.state && selftest.hooks.stateUpdates > 10 &&
+          selftest.mods.length >= 5 && meteorOk && selftest.patches.applied > 0) { break; }
     }
   } catch (error) {
     /* the frame is not ready yet */
   }
 }
 
+// One last reading, after the loop: the verdict must describe the end state, not a moment mid-boot.
+try {
+  const final = await evalIn(`JSON.stringify(document.getElementById('frame').contentWindow.webmc.selftest())`, false);
+  if (final) { selftest = JSON.parse(final); }
+} catch (error) { /* keep the last reading */ }
 try {
   const shot = await cdp.send("Page.captureScreenshot", { format: "png" });
   writeFileSync(join(SHOTS, "live.png"), Buffer.from(shot.data, "base64"));

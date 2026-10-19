@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610190414";
+  WebMC.build = "202610190459";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -2486,13 +2486,28 @@
     });
   }
 
+  /** Patches go in only when the client is *actually running* — it has published a state snapshot.
+   * There is no timeout that applies them anyway: on a slow connection the client is still booting
+   * minutes in, and wrapping methods during start-up is exactly how a client gets bricked (this is
+   * how the deployed site broke once, locally unreproducible because the boot was fast). */
   function waitForRunning(then) {
-    var tries = 0;
+    var started = false;
+    function go() {
+      if (started) { return; }
+      started = true;
+      internal.stateBus.on("state", function () { /* running; the interval below has already fired */ }, { once: true });
+      then();
+    }
     var timer = setInterval(function () {
-      tries++;
-      var running = !!(internal.state && internal.state.latest);
-      if (running || tries > 120) { clearInterval(timer); then(); }
+      if (internal.state && internal.state.latest) { clearInterval(timer); go(); }
     }, 500);
+    internal.stateBus.on("state", function () { clearInterval(timer); go(); });
+    // The panel can say why nothing has applied yet.
+    setTimeout(function () {
+      if (!started) {
+        internal.notifyPanel({ kind: "webmc:patches-waiting", text: "waiting for the client to start before applying patches" });
+      }
+    }, 30000);
   }
 
   /** Apply in waves, with a watchdog.
