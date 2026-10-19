@@ -261,6 +261,17 @@ const wantedKeys = new Set(wanted.map((entry) => (entry.className || "").split("
 /** Map a class's Java fields to its compiled field tokens: both lists are walked in order, matched
  * where the types agree. The order is not guaranteed identical, so this is a longest-common-
  * subsequence over kinds — right far more often than not, and it only ever *adds* evidence. */
+const tokenByFieldCache = new Map();
+function tokenByFieldFor(ctor, javaFields, jsFields) {
+  if (tokenByFieldCache.has(ctor)) { return tokenByFieldCache.get(ctor); }
+  let table = new Map();
+  if (javaFields && jsFields.length && javaFields.fields.length * jsFields.length <= 400000) {
+    table = alignFields(javaFields.fields, jsFields);
+  }
+  tokenByFieldCache.set(ctor, table);
+  return table;
+}
+
 function alignFields(javaFields, jsFields) {
   const kindOf = (descriptor) => {
     if (!descriptor) { return "object"; }
@@ -525,7 +536,9 @@ while (round < 3) {
     // Java field name -> compiled field token for this class.
     const javaFields = java.classFieldIndex.get(obfForSimple.get(simpleName)) || null;
     const jsFields = (ctor && fieldOrderByCtor.get(ctor)) || [];
-    const tokenByField = javaFields && jsFields.length ? alignFields(javaFields.fields, jsFields) : new Map();
+      // The field alignment is the same in every round: compute it once, and cap the table size so a
+    // class with thousands of fields cannot allocate an enormous LCS grid (this is what hung CI).
+    const tokenByField = tokenByFieldFor(ctor, javaFields, jsFields);
     const table = merged[simpleName] || {};
     const claimedFns = new Set(Object.values(table).map((entry) => entry.fn));
 
