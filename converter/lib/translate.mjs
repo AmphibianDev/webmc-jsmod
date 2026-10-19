@@ -176,6 +176,86 @@ const NATIVE_SOURCE = [
   ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(Z)V", "function (api, self, a) { self.returnValue = a[0]; }"],
   ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(D)V", "function (api, self, a) { self.returnValue = a[0]; }"],
   ["org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(F)V", "function (api, self, a) { self.returnValue = a[0]; }"],
+  ["java/lang/Record.<init>()V", "function () {}"],
+  ["java/lang/Object.<clinit>()V", "function () {}"],
+  ["java/lang/StringBuilder.<init>(Ljava/lang/CharSequence;)V", "function (api, self, a) { self.__sb = [String(a[0])]; }"],
+  ["java/lang/IllegalArgumentException.<init>()V", "function (api, self) { self.__webmcError = 'IllegalArgumentException'; self.message = ''; }"],
+  ["java/lang/IllegalArgumentException.<init>(Ljava/lang/String;)V", "function (api, self, a) { self.__webmcError = 'IllegalArgumentException'; self.message = a[0] == null ? '' : String(a[0]); }"],
+  ["java/lang/IllegalStateException.<init>()V", "function (api, self) { self.__webmcError = 'IllegalStateException'; self.message = ''; }"],
+  ["java/lang/IllegalStateException.<init>(Ljava/lang/String;)V", "function (api, self, a) { self.__webmcError = 'IllegalStateException'; self.message = a[0] == null ? '' : String(a[0]); }"],
+  ["java/lang/RuntimeException.<init>()V", "function (api, self) { self.__webmcError = 'RuntimeException'; self.message = ''; }"],
+  ["java/lang/RuntimeException.<init>(Ljava/lang/String;)V", "function (api, self, a) { self.__webmcError = 'RuntimeException'; self.message = a[0] == null ? '' : String(a[0]); }"],
+  ["java/lang/UnsupportedOperationException.<init>()V", "function (api, self) { self.__webmcError = 'UnsupportedOperationException'; self.message = ''; }"],
+  ["java/lang/UnsupportedOperationException.<init>(Ljava/lang/String;)V", "function (api, self, a) { self.__webmcError = 'UnsupportedOperationException'; self.message = a[0] == null ? '' : String(a[0]); }"],
+  ["java/lang/AssertionError.<init>()V", "function (api, self) { self.__webmcError = 'AssertionError'; self.message = ''; }"],
+  ["java/lang/AssertionError.<init>(Ljava/lang/Object;)V", "function (api, self, a) { self.__webmcError = 'AssertionError'; self.message = String(a[0]); }"],
+  ["java/lang/NullPointerException.<init>()V", "function (api, self) { self.__webmcError = 'NullPointerException'; self.message = ''; }"],
+  ["java/lang/NullPointerException.<init>(Ljava/lang/String;)V", "function (api, self, a) { self.__webmcError = 'NullPointerException'; self.message = a[0] == null ? '' : String(a[0]); }"],
+  ["java/lang/Error.<init>(Ljava/lang/String;)V", "function (api, self, a) { self.__webmcError = 'Error'; self.message = String(a[0]); }"],
+  ["java/lang/Throwable.getMessage()Ljava/lang/String;", "function (api, self) { return self && self.message != null ? self.message : null; }"],
+  ["java/lang/Throwable.getCause()Ljava/lang/Throwable;", "function (api, self) { return self ? (self.cause || null) : null; }"],
+  ["java/lang/Throwable.fillInStackTrace()Ljava/lang/Throwable;", "function (api, self) { return self; }"],
+  ["java/lang/Throwable.printStackTrace()V", "function (api, self) { api.log(String(self && self.message || self)); }"],
+  ["java/util/Objects.requireNonNull(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;", "function (api, self, a) { if (a[0] == null) { throw new Error(a[1] == null ? 'null' : String(a[1])); } return a[0]; }"],
+  ["java/util/Objects.requireNonNull(Ljava/lang/Object;Ljava/util/function/Supplier;)Ljava/lang/Object;", "function (api, self, a) { if (a[0] == null) { throw new Error(a[1] ? String(a[1]()) : 'null'); } return a[0]; }"],
+  ["java/util/Objects.isNull(Ljava/lang/Object;)Z", "function (api, self, a) { return a[0] == null; }"],
+  ["java/util/Objects.nonNull(Ljava/lang/Object;)Z", "function (api, self, a) { return a[0] != null; }"],
+  ["java/util/Objects.toString(Ljava/lang/Object;)Ljava/lang/String;", "function (api, self, a) { return String(a[0]); }"],
+  ["java/util/Objects.hash([Ljava/lang/Object;)I", "function (api, self, a) { var h = 0; (a[0] || []).forEach(function (v) { h = (h * 31 + String(v).length) | 0; }); return h; }"],
+  ["java/util/List.contains(Ljava/lang/Object;)Z", "function (api, self, a) { return (self || []).indexOf(a[0]) >= 0; }"],
+  ["java/util/List.indexOf(Ljava/lang/Object;)I", "function (api, self, a) { return (self || []).indexOf(a[0]); }"],
+  ["java/util/List.clear()V", "function (api, self) { if (self && self.length) { self.length = 0; } else if (self) { self.__list = []; } }"],
+  ["java/util/List.addAll(Ljava/util/Collection;)Z", "function (api, self, a) { var src = a[0] && a[0].__list ? a[0].__list : (a[0] || []); for (var i = 0; i < src.length; i++) { self.push(src[i]); } return src.length > 0; }"],
+  ["java/util/List.add(I)V", "function (api, self, a) { (self.__list = self.__list || []).push(a[0]); }"],
+  ["java/util/List.of([Ljava/lang/Object;)Ljava/util/List;", "function (api, self, a) { return Array.prototype.slice.call(a[0] || []); }"],
+  ["java/util/List.copyOf(Ljava/util/Collection;)Ljava/util/List;", "function (api, self, a) { return Array.prototype.slice.call(a[0] || []); }"],
+  ["java/util/List.remove(Ljava/lang/Object;)Z", "function (api, self, a) { var i = (self || []).indexOf(a[0]); if (i < 0) { return false; } self.splice(i, 1); return true; }"],
+  ["java/util/Set.iterator()Ljava/util/Iterator;", "function (api, self) { return { __list: Array.from(self || []), __i: 0 }; }"],
+  ["java/util/Set.isEmpty()Z", "function (api, self) { return !self || !self.length; }"],
+  ["java/util/Collection.size()I", "function (api, self) { return (self && self.length) || 0; }"],
+  ["java/util/Collection.contains(Ljava/lang/Object;)Z", "function (api, self, a) { return (self || []).indexOf(a[0]) >= 0; }"],
+  ["java/util/Collection.add(Ljava/lang/Object;)Z", "function (api, self, a) { self.push(a[0]); return true; }"],
+  ["java/util/Map.isEmpty()Z", "function (api, self) { return !self || self.size === 0; }"],
+  ["java/util/Map.clear()V", "function (api, self) { if (self && self.clear) { self.clear(); } }"],
+  ["java/util/Map.computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;", "function (api, self, a) { var current = self.get(a[0]); if (current == null) { current = a[1](a[0]); self.set(a[0], current); } return current; }"],
+  ["java/util/Map.values()Ljava/util/Collection;", "function (api, self) { return self ? Array.from(self.values()) : []; }"],
+  ["java/util/Map.keySet()Ljava/util/Set;", "function (api, self) { return self ? Array.from(self.keys()) : []; }"],
+  ["java/util/Map.entrySet()Ljava/util/Set;", "function (api, self) { var out = []; if (self) { self.forEach(function (v, k) { out.push({ key: k, value: v, getKey: function () { return k; }, getValue: function () { return v; } }); }); } return out; }"],
+  ["java/util/Map.forEach(Ljava/util/function/BiConsumer;)V", "function (api, self, a) { if (self) { self.forEach(function (v, k) { a[0](k, v); }); } }"],
+  ["java/lang/Double.valueOf(D)Ljava/lang/Double;", "function (api, self, a) { return Number(a[0]); }"],
+  ["java/lang/Float.valueOf(F)Ljava/lang/Float;", "function (api, self, a) { return Number(a[0]); }"],
+  ["java/lang/Long.valueOf(J)Ljava/lang/Long;", "function (api, self, a) { return Number(a[0]); }"],
+  ["java/lang/Character.valueOf(C)Ljava/lang/Character;", "function (api, self, a) { return a[0]; }"],
+  ["java/lang/Character.toString(C)Ljava/lang/String;", "function (api, self, a) { return String.fromCharCode(a[0]); }"],
+  ["java/lang/Integer.toString(I)Ljava/lang/String;", "function (api, self, a) { return String(a[0]); }"],
+  ["java/lang/Double.toString(D)Ljava/lang/String;", "function (api, self, a) { return String(a[0]); }"],
+  ["java/lang/String.valueOf(D)Ljava/lang/String;", "function (api, self, a) { return String(a[0]); }"],
+  ["java/lang/String.valueOf(J)Ljava/lang/String;", "function (api, self, a) { return String(a[0]); }"],
+  ["java/lang/String.valueOf(C)Ljava/lang/String;", "function (api, self, a) { return String.fromCharCode(a[0]); }"],
+  ["java/lang/String.valueOf(Z)Ljava/lang/String;", "function (api, self, a) { return String(a[0]); }"],
+  ["java/lang/String.formatted([Ljava/lang/Object;)Ljava/lang/String;", "function (api, self, a) { var i = 0; return String(self).replace(/%[sdf]/g, function () { return String((a[0] || [])[i++]); }); }"],
+  ["java/lang/String.strip()Ljava/lang/String;", "function (api, self) { return String(self).trim(); }"],
+  ["java/lang/String.isBlank()Z", "function (api, self) { return String(self).trim().length === 0; }"],
+  ["java/lang/String.repeat(I)Ljava/lang/String;", "function (api, self, a) { return String(self).repeat(Math.max(0, a[0] | 0)); }"],
+  ["java/lang/String.toCharArray()[C", "function (api, self) { var t = String(self); var out = []; for (var i = 0; i < t.length; i++) { out.push(t.charCodeAt(i)); } return out; }"],
+  ["java/lang/String.getBytes()[B", "function (api, self) { var t = String(self); var out = []; for (var i = 0; i < t.length; i++) { out.push(t.charCodeAt(i) & 0xff); } return out; }"],
+  ["java/lang/Math.random()D", "function () { return Math.random(); }"],
+  ["java/lang/Math.signum(F)F", "function (api, self, a) { return Math.sign(a[0]); }"],
+  ["java/lang/Math.hypot(DD)D", "function (api, self, a) { return Math.hypot(a[0], a[1]); }"],
+  ["java/util/Arrays.stream([Ljava/lang/Object;)Ljava/util/stream/Stream;", "function (api, self, a) { return a[0] || []; }"],
+  ["java/util/List.stream()Ljava/util/stream/Stream;", "function (api, self) { return self || []; }"],
+  ["java/util/Collection.stream()Ljava/util/stream/Stream;", "function (api, self) { return self || []; }"],
+  ["java/util/stream/Stream.map(Ljava/util/function/Function;)Ljava/util/stream/Stream;", "function (api, self, a) { return (self || []).map(function (v) { return a[0](v); }); }"],
+  ["java/util/stream/Stream.filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", "function (api, self, a) { return (self || []).filter(function (v) { return a[0](v); }); }"],
+  ["java/util/stream/Stream.forEach(Ljava/util/function/Consumer;)V", "function (api, self, a) { (self || []).forEach(function (v) { a[0](v); }); }"],
+  ["java/util/stream/Stream.toList()Ljava/util/List;", "function (api, self) { return (self || []).slice(); }"],
+  ["java/util/stream/Stream.count()J", "function (api, self) { return (self || []).length; }"],
+  ["java/util/stream/Stream.findFirst()Ljava/util/Optional;", "function (api, self) { return { value: (self || [])[0] == null ? null : (self || [])[0] }; }"],
+  ["java/util/stream/Collectors.toList()Ljava/util/stream/Collector;", "function () { return null; }"],
+  ["java/util/Arrays.copyOf([Ljava/lang/Object;I)[Ljava/lang/Object;", "function (api, self, a) { var src = a[0] || []; var out = src.slice(0, a[1]); while (out.length < a[1]) { out.push(null); } return out; }"],
+  ["java/lang/System.exit(I)V", "function (api) { api.log('the mod called System.exit; ignored'); }"],
+  ["java/lang/Thread.currentThread()Ljava/lang/Thread;", "function () { return {}; }"],
+  ["java/lang/Thread.sleep(J)V", "function () {}"],
   ["java/lang/Object.<init>()V", "function () {}"],
   ["java/lang/Object.toString()Ljava/lang/String;", "function (api, self) { return String(self); }"],
   ["java/lang/Object.hashCode()I", "function (api, self) { return 0; }"],
@@ -270,6 +350,12 @@ export function translate(analysis, options = {}) {
    */
   const roots = new Set();
   const entrypointRootNames = [];
+  // The mod's own package roots, used to tell "a dependency of my own code" from "a library".
+  const ownRoots = new Set();
+  for (const className of classes.keys()) {
+    const parts = className.split("/");
+    if (parts.length >= 2) { ownRoots.add(parts.slice(0, 2).join("/")); }
+  }
   for (const [kind, list] of Object.entries(fabric.entrypoints || {})) {
     for (const entry of list) {
       const internal = String(entry.value).replace(/\./g, "/");
@@ -320,6 +406,16 @@ export function translate(analysis, options = {}) {
           if (call.owner && classes.has(call.owner)) {
             const declaring = declaresMethod(call.owner, call.name, call.descriptor);
             if (declaring) { edges.add(declaring + "::" + call.name + call.descriptor); }
+            continue;
+          }
+          // A call to a class outside the jar is a blind spot: the graph cannot follow it. Keeping
+          // every such class whole tripled Meteor's package (32 MB); keeping only the ones in the
+          // mod's own package tree costs little and covers the case that actually matters — a mod's
+          // own helpers, reached through a library interface.
+          const owner = String(call.owner || "");
+          if (owner && !/^(java|javax|jdk|sun|com\/mojang|net\/minecraft|org\/lwjgl)\//.test(owner)) {
+            const root = owner.split("/").slice(0, 2).join("/");
+            if (ownRoots.has(root)) { keepWholeClass.add(className); }
           }
         }
         for (const lambda of scan.lambdas) {
@@ -375,8 +471,10 @@ export function translate(analysis, options = {}) {
         resolve: (owner, name, descriptor, kind) => resolveCall(owner, name, descriptor, kind, className)
       });
       if (result.ok) {
-        methods.set(key, { source: result.source, ok: true });
+        methods.set(key, { source: result.source, ok: true, unresolved: result.unresolved || [] });
         report.translatedMethods++;
+        if (result.unresolved && result.unresolved.length) { report.deferredBootstraps = (report.deferredBootstraps || 0) + result.unresolved.length; }
+        if (result.deferred) { report.deferredCalls = (report.deferredCalls || 0) + result.deferred; }
       } else {
         methods.set(key, { ok: false, reason: result.reason });
         report.skippedMethods++;
@@ -410,7 +508,12 @@ export function translate(analysis, options = {}) {
     }
     if (KNOWN_NATIVE_KEYS.has(key)) { return { kind: "native" }; }
     if (KNOWN_MAPPED_KEYS.has(key)) { return { kind: "game" }; }
-    if (/^(java|javax|sun|jdk)\//.test(owner)) { return { kind: "unsupported", why: "JDK call " + owner + "." + name }; }
+    if (/^(java|javax|sun|jdk)\//.test(owner)) {
+      // A JDK call with no native: defer it. Refusing the whole method for one unmapped library
+      // call left large parts of mods untranslated for no gain; a deferred call fails only if the
+      // path that reaches it runs, and says what it was.
+      return { kind: "defer", why: "JDK call " + owner.replace(/\//g, ".") + "." + name };
+    }
     if (/^(net\/minecraft|net\/fabricmc|com\/mojang|org\/spongepowered|org\/lwjgl)\//.test(namedOwner)) {
       return allowInternals
         ? { kind: "internals", why: "game call " + namedOwner.replace(/\//g, ".") + "." + namedName }
@@ -483,7 +586,17 @@ export function translate(analysis, options = {}) {
   push("      newInstance: function (owner) { var instance = Object.create(null); instance.__class = owner; instance.__fields = FIELD_DEFAULTS[owner] || []; return instance; },");
   push("      cast: function (value, type) { return value; },");
   push("      isInstance: function (value, type) { return value != null; },");
-  push("      toError: function (value) { return value instanceof Error ? value : new Error(String(value)); }");
+  push("      toError: function (value) { return value instanceof Error ? value : new Error(String(value)); },");
+  push("      unsupportedCall: function (label) {");
+  push("        var fn = function () { throw new Error('webmc-transpiler: ' + label + ' has no translation'); };");
+  push("        fn.__webmcUnsupported = label;");
+  push("        return fn;");
+  push("      },");
+  push("      unsupportedLambda: function (label) {");
+  push("        var fn = function () { throw new Error('webmc-transpiler: a bootstrapped call in ' + label + ' has no translation'); };");
+  push("        fn.__webmcUnsupported = label;");
+  push("        return fn;");
+  push("      }");
   push("    };");
   push("    var STATICS = {};");
   emitCallBody(push);
@@ -639,9 +752,11 @@ export function translate(analysis, options = {}) {
   report.unresolved = Array.from(unresolvedCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 40).map(([what, count]) => ({ what, count }));
   report.capabilities = Array.from(capabilities);
   report.mappings = mappings ? mappings.size : null;
-  report.needsInternals = report.unresolved.some((entry) => /game call|internals|JDK call/.test(entry.what));
-  report.verdict = report.needsInternals ? "runs-partial (parts need the client internals)"
-    : (report.translatedMethods ? "runs" : "loads but does nothing");
+  report.deferred = (report.deferredCalls || 0) + (report.deferredBootstraps || 0);
+  report.needsInternals = report.deferred > 0 || (report.prunedMethods || 0) > 0;
+  report.verdict = report.deferred > 0
+    ? "runs (uses the internals for " + report.deferred + " deferred call site(s))"
+    : (report.prunedMethods ? "runs (some code was pruned as unreachable)" : "runs");
 
   const manifest = {
     id: fabric.id || "converted.mod",

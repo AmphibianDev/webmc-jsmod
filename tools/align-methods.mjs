@@ -35,7 +35,7 @@ const flag = (name, fallback) => {
   const at = args.indexOf("--" + name);
   return at >= 0 && args[at + 1] && !args[at + 1].startsWith("--") ? args[at + 1] : fallback;
 };
-const jarPath = resolve(flag("jar", join(root, "..", "webmc-port", "work", "client", "1.21.11-j17.jar")));
+export const jarPath = resolve(flag("jar", join(root, "..", "webmc-port", "work", "client", "1.21.11-j17.jar")));
 const mappingsDir = resolve(flag("mappings", join(root, "converter", "mappings", "1.21.11")));
 const jsDir = resolve(flag("js", join(root, "client", "1.21.11")));
 const anchorsFile = resolve(flag("anchors", join(root, "client", "1.21.11-internals", "symbols.json")));
@@ -46,7 +46,7 @@ const minLiteral = Number(flag("min-literal", 5));
  * client.txt is the obfuscated -> named map: `net.minecraft.client.Minecraft -> fzu:` followed by
  * its members, one per line, in the class file's own order.
  */
-function readClientMappings(dir) {
+export function readClientMappings(dir) {
   const byNamed = new Map();     // named (slashed) -> { obf, methods: Map<obfName, namedName> }
   const byObf = new Map();       // obf -> { named, methodNames: [], fields: [] }
   let current = null;
@@ -73,7 +73,7 @@ function readClientMappings(dir) {
 
 /* ------------------------------------------------------------------ Java side ------------------ */
 /** String literals a method's bytecode loads, without building instruction objects. */
-function literalsOf(code, pool) {
+export function literalsOf(code, pool) {
   const strings = [];
   let pc = 0;
   while (pc < code.length) {
@@ -105,8 +105,67 @@ function literalsOf(code, pool) {
   }
   return strings;
 }
+export function classFields(info) {
+  const list = [];
+  for (const field of info.fields || []) {
+    if (field.access & 0x0008) { continue; }         // instance fields only: constructors set those
+    let cursor = 0;
+    const parts = [];
+    while (cursor < field.descriptor.length) {
+      const inner = readType(field.descriptor, cursor);
+      parts.push(inner.type);
+      cursor = inner.next;
+    }
+    list.push({ name: field.name, descriptor: field.descriptor, kind: parts[0] });
+  }
+  return list;
+}
+function readType(text, at) {
+  const c = text[at];
+  if (c === "[") { const inner = readType(text, at + 1); return { type: inner.type + "[]", next: inner.next }; }
+  if (c === "L") { const end = text.indexOf(";", at); return { type: text.slice(at + 1, end), next: end + 1 }; }
+  return { type: c, next: at + 1 };
+}
+
+/** The field accesses of a method (getfield/putfield/getstatic/putstatic). */
+export function fieldsOf(code, pool) {
+  const out = [];
+  let pc = 0;
+  while (pc < code.length) {
+    const op = code[pc];
+    const info = OPCODE_TABLE[op];
+    if (!info) { break; }
+    let length = info.length;
+    if (op === 0xaa) {
+      let cursor = pc + 1; cursor += (4 - (cursor % 4)) % 4;
+      const low = read32(code, cursor + 4), high = read32(code, cursor + 8);
+      length = (cursor - pc) + 12 + (high - low + 1) * 4;
+    } else if (op === 0xab) {
+      let cursor = pc + 1; cursor += (4 - (cursor % 4)) % 4;
+      const pairs = read32(code, cursor + 4);
+      length = (cursor - pc) + 8 + pairs * 8;
+    } else if (op === 0xc4) {
+      length = code[pc + 1] === 0x84 ? 6 : 4;
+    }
+    if (length <= 0 || pc + length > code.length) { break; }
+    if (op >= 0xb2 && op <= 0xb5) {
+      const index = (code[pc + 1] << 8) | code[pc + 2];
+      const entry = pool[index];
+      if (entry && entry.tag === 9) {
+        const owner = pool[entry.classIndex];
+        const nt = pool[entry.nameAndTypeIndex];
+        const ownerName = owner ? (pool[owner.nameIndex] || {}).value : null;
+        const name = nt ? (pool[nt.nameIndex] || {}).value : null;
+        if (ownerName && name) { out.push({ owner: ownerName, name, isStatic: op === 0xb2 || op === 0xb3 }); }
+      }
+    }
+    pc += length;
+  }
+  return out;
+}
+
 /** The `invoke*` targets of a method, with the arity their descriptor implies. */
-function callsOf(code, pool) {
+export function callsOf(code, pool) {
   const calls = [];
   let pc = 0;
   while (pc < code.length) {
@@ -147,9 +206,10 @@ function callsOf(code, pool) {
 
 function read32(code, at) { return ((code[at] << 24) | (code[at + 1] << 16) | (code[at + 2] << 8) | code[at + 3]); }
 
-function javaFingerprints(jar, mappings) {
+export function javaFingerprints(jar, mappings) {
   const zip = readZip(jar);
   const methods = [];
+  const classFieldIndex = new Map();
   let classes = 0;
   for (const name of zip.names) {
     if (!name.endsWith(".class")) { continue; }
@@ -159,12 +219,23 @@ function javaFingerprints(jar, mappings) {
     let info;
     try { info = parseClass(zip.read(name)); } catch (error) { continue; }
     classes++;
+    classFieldIndex.set(obf, { namedClass: mapping.named, simpleClass: mapping.named.split("/").pop(), fields: classFields(info) });
+    // client.txt lists a class's methods in the class file's own order, and obfuscated names repeat
+    // across overloads — so names are paired *by position*, with the obf name as a checksum.
+    const ordered = info.methods.filter((method) => method.name !== "<init>" && method.name !== "<clinit>");
+    const namesByIndex = ordered.map((method, index) => {
+      const candidate = mapping.methodNames[index];
+      if (candidate && candidate.obf === method.name) { return candidate.named; }
+      return mapping.namedMethods.get(method.name) || null;
+    });
     for (const method of info.methods) {
       if (!method.code || !method.code.code) { continue; }
       const literals = literalsOf(method.code.code, info.pool);
       const calls = callsOf(method.code.code, info.pool);
-      if (!literals.length) { continue; }
-      const namedMethod = mapping.namedMethods.get(method.name) || null;
+      const accesses = fieldsOf(method.code.code, info.pool);
+      const namedMethod = method.name === "<init>" || method.name === "<clinit>"
+        ? null
+        : (namesByIndex[ordered.indexOf(method)] || mapping.namedMethods.get(method.name) || null);
       methods.push({
         obfClass: obf,
         namedClass: mapping.named,
@@ -175,13 +246,14 @@ function javaFingerprints(jar, mappings) {
         argCount: method.descriptor.replace(/^\(([^)]*)\).*$/, "$1").replace(/\[/g, "").length ? countArgs(method.descriptor) : 0,
         isStatic: (method.access & 0x0008) !== 0,
         literals,
-        calls
+        calls,
+        accesses
       });
     }
   }
-  return { methods, classes };
+  return { methods, classes, classFieldIndex };
 }
-function countArgs(descriptor) {
+export function countArgs(descriptor) {
   const inside = /^\(([^)]*)\)/.exec(descriptor)[1];
   let count = 0, at = 0;
   while (at < inside.length) {
@@ -194,7 +266,7 @@ function countArgs(descriptor) {
 }
 
 /* a tiny zip reader, so this tool has no dependency on the converter's import graph */
-function readZip(bytes) {
+export function readZip(bytes) {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   let eocd = -1;
   for (let i = bytes.length - 22; i >= 0; i--) { if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; } }
@@ -225,7 +297,7 @@ function readZip(bytes) {
  * one call fills (`A.AD5Q([...])`), and methods reference `G(1234)`. So a function's fingerprint is
  * the set of pool entries it reads, plus any literal it carries inline.
  */
-function stringPool(text) {
+export function stringPool(text) {
   const call = text.indexOf("A.AD5Q(");
   if (call < 0) { return []; }
   let at = text.indexOf("[", call);
@@ -252,7 +324,7 @@ function stringPool(text) {
   }
 }
 
-function jsFingerprints(text, pool) {
+export function jsFingerprints(text, pool) {
   const offsets = [];
   const assignmentRe = /\bA\.([A-Za-z0-9_$]+)\s*=(?!=)/g;
   let match;
@@ -290,17 +362,21 @@ function jsFingerprints(text, pool) {
   }
 
   const arity = new Map();
+  const functionSymbols = new Set();
   for (const entry of offsets) {
     const slice = text.slice(entry.at + entry.sym.length + 3, entry.at + entry.sym.length + 100).replace(/^\s*/, "");
     const fn = /^function\s*\(([^)]*)\)/.exec(slice);
     if (fn) {
+      functionSymbols.add(entry.sym);
       const params = fn[1].trim();
       arity.set(entry.sym, params ? params.split(",").length : 0);
     } else if (/^\(([^)]*)\)\s*=?>/.test(slice)) {
+      functionSymbols.add(entry.sym);
       const params = /^\(([^)]*)\)\s*=?>/.exec(slice)[1].trim();
       arity.set(entry.sym, params ? params.split(",").length : 0);
     } else {
       const arrow = /^([a-zA-Z_$][\w$]*)\s*=?>/.exec(slice);
+      if (arrow) { functionSymbols.add(entry.sym); }
       arity.set(entry.sym, arrow ? 1 : null);
     }
   }
@@ -314,7 +390,7 @@ function jsFingerprints(text, pool) {
     if (!list) { list = []; calleesBySym.set(sym, list); }
     list.push(match[1]);
   }
-  return { stringsBySym, arity, calleesBySym, offsets, assignments: offsets.length, pooled, inline, poolSize: pool.length };
+  return { stringsBySym, arity, functionSymbols, calleesBySym, offsets, assignments: offsets.length, pooled, inline, poolSize: pool.length };
 }
 
 /* ------------------------------------------------------------------ match ---------------------- */
@@ -382,251 +458,277 @@ function score(method, literals, jsArity) {
 function keyOf(method) { return method.obfClass + "." + method.obfMethod + method.descriptor; }
 
 /* ------------------------------------------------------------------ run ------------------------ */
-console.log("mappings: " + mappingsDir);
-const mappings = readClientMappings(mappingsDir);
-console.log(`  ${mappings.byObf.size} classes mapped`);
+function main() {
+  console.log("mappings: " + mappingsDir);
+  const mappings = readClientMappings(mappingsDir);
+  console.log(`  ${mappings.byObf.size} classes mapped`);
 
-console.log("java: " + jarPath);
-const java = javaFingerprints(readFileSync(jarPath), mappings);
-console.log(`  ${java.classes} classes, ${java.methods.length} methods with string literals`);
+  console.log("java: " + jarPath);
+  const java = javaFingerprints(readFileSync(jarPath), mappings);
+  console.log(`  ${java.classes} classes, ${java.methods.length} methods with string literals`);
 
-console.log("javascript: " + jsDir);
-const { html } = readClient(jsDir);
-const bounds = findEmbedded(html);
-const text = readStream(bounds.object, "classes").bytes.toString("utf8");
-const pool = stringPool(text);
-console.log(`  string pool: ${pool.length} entries`);
-const js = jsFingerprints(text, pool);
-console.log(`  ${js.assignments} assignments, ${js.pooled} pool reads + ${js.inline} inline literals, ${js.stringsBySym.size} functions fingerprinted`);
+  console.log("javascript: " + jsDir);
+  const { html } = readClient(jsDir);
+  const bounds = findEmbedded(html);
+  const text = readStream(bounds.object, "classes").bytes.toString("utf8");
+  const pool = stringPool(text);
+  console.log(`  string pool: ${pool.length} entries`);
+  const js = jsFingerprints(text, pool);
+  console.log(`  ${js.assignments} assignments, ${js.pooled} pool reads + ${js.inline} inline literals, ${js.stringsBySym.size} functions fingerprinted`);
 
-const result = align(java, js);
-console.log(`alignment: ${result.matches.size} exact matches (examined ${result.examined}, ambiguous ${result.ambiguous}, weak ${result.weak})`);
-const sample = Array.from(result.matches.entries()).slice(0, 8);
-for (const [sym, entry] of sample) {
-  console.log(`  A.${sym} -> ${entry.method.namedClass || entry.method.obfClass}.${entry.method.namedMethod || entry.method.obfMethod} (${entry.why}, score ${entry.score})`);
-}
-
-/* ------------------------------------------------------------------ targeted pass ------------- *
- * The global pass refuses ambiguous matches. A converted mod, though, tells us exactly which
- * methods it wants to patch — so for those, ambiguity can be resolved *within the class*: a Java
- * method of that class whose literals are all present in a function, unique among the class's
- * overloads, is that method.
- */
-const wantedFile = flag("wanted", null);
-let targeted = 0;
-const targetedDetail = [];
-if (wantedFile && existsSync(resolve(wantedFile))) {
-  const wanted = JSON.parse(readFileSync(resolve(wantedFile), "utf8")).wanted || [];
-  // Java methods by class + name
-  const byClassMethod = new Map();
-  for (const method of java.methods) {
-    if (!method.namedMethod) { continue; }
-    const key = method.namedClass + "::" + method.namedMethod;
-    let list = byClassMethod.get(key);
-    if (!list) { list = []; byClassMethod.set(key, list); }
-    list.push(method);
+  const result = align(java, js);
+  console.log(`alignment: ${result.matches.size} exact matches (examined ${result.examined}, ambiguous ${result.ambiguous}, weak ${result.weak})`);
+  const sample = Array.from(result.matches.entries()).slice(0, 8);
+  for (const [sym, entry] of sample) {
+    console.log(`  A.${sym} -> ${entry.method.namedClass || entry.method.obfClass}.${entry.method.namedMethod || entry.method.obfMethod} (${entry.why}, score ${entry.score})`);
   }
-  // JS functions by literal, for the superset test
-  const jsByLiteral = new Map();
-  for (const [sym, literals] of js.stringsBySym) {
-    for (const literal of literals) {
-      let list = jsByLiteral.get(literal);
-      if (!list) { list = []; jsByLiteral.set(literal, list); }
-      list.push(sym);
+
+  /* ------------------------------------------------------------------ targeted pass ------------- *
+   * The global pass refuses ambiguous matches. A converted mod, though, tells us exactly which
+   * methods it wants to patch — so for those, ambiguity can be resolved *within the class*: a Java
+   * method of that class whose literals are all present in a function, unique among the class's
+   * overloads, is that method.
+   */
+  const wantedFile = flag("wanted", null);
+  let targeted = 0;
+  const targetedDetail = [];
+  if (wantedFile && existsSync(resolve(wantedFile))) {
+    const wanted = JSON.parse(readFileSync(resolve(wantedFile), "utf8")).wanted || [];
+    // Java methods by class + name
+    const byClassMethod = new Map();
+    for (const method of java.methods) {
+      if (!method.namedMethod) { continue; }
+      const key = method.namedClass + "::" + method.namedMethod;
+      let list = byClassMethod.get(key);
+      if (!list) { list = []; byClassMethod.set(key, list); }
+      list.push(method);
     }
-  }
-  for (const want of wanted) {
-    const key = want.className + "::" + want.method;
-    const candidates = byClassMethod.get(key);
-    if (!candidates || !candidates.length) { continue; }
-    if (candidates.some((candidate) => result.acceptedMethods.has(keyOf(candidate)))) { continue; }
-    for (const candidate of candidates) {
-      const literals = new Set(candidate.literals);
-      if (!literals.size) { continue; }
-      // Candidate functions: those that contain this method's rarest literal…
-      let rarest = null, rarestCount = Infinity;
+    // JS functions by literal, for the superset test
+    const jsByLiteral = new Map();
+    for (const [sym, literals] of js.stringsBySym) {
       for (const literal of literals) {
-        const count = (result.byLiteral.get(literal) || []).length;
-        if (count > 0 && count < rarestCount) { rarest = literal; rarestCount = count; }
+        let list = jsByLiteral.get(literal);
+        if (!list) { list = []; jsByLiteral.set(literal, list); }
+        list.push(sym);
       }
-      if (!rarest) { continue; }
-      const pool = new Set(jsByLiteral.get(rarest) || []);
-      // …and whose literal set contains all of the method's literals.
-      const fits = [];
-      for (const sym of pool) {
-        const jsLiterals = js.stringsBySym.get(sym);
-        let all = true;
-        for (const literal of literals) { if (!jsLiterals.has(literal)) { all = false; break; } }
-        if (!all) { continue; }
-        const jsArity = js.arity.get(sym);
-        const expected = candidate.argCount + (candidate.isStatic ? 0 : 1);
-        if (jsArity != null && jsArity !== expected && jsArity !== candidate.argCount) { continue; }
-        fits.push(sym);
-      }
-      if (fits.length !== 1) { continue; }
-      const sym = fits[0];
-      if (result.matches.has(sym)) { continue; }
-      result.matches.set(sym, {
-        method: candidate,
-        score: 1.5,
-        why: `targeted: all ${literals.size} literal(s) of ${candidate.namedClass.split("/").pop()}.${candidate.namedMethod} present, unique in the class`
-      });
-      targeted++;
-      targetedDetail.push({ wanted: key, sym, method: candidate.namedClass + "." + candidate.namedMethod });
-      break;
     }
-  }
-  console.log(`targeted pass: ${targeted} more methods named from ${wanted.length} wanted targets`);
-}
-
-/* ------------------------------------------------------------------ propagation ---------------- *
- * Seeds: the methods named so far. A seed's Java method says which methods *of its own class* it
- * calls; its JavaScript body says which functions it calls. When the two agree on arity — one
- * unnamed candidate on each side, per arity — the callee is named. Repeat until nothing changes.
- */
-function propagate(java, js, seeds, rounds = 4) {
-  const namedFns = new Set(Array.from(seeds.values()).map((entry) => entry.fn));
-  const namedJava = new Set(seeds.keys());
-  const byObfClass = new Map();
-  for (const method of java.methods) {
-    const key = method.obfClass + "." + method.obfMethod + method.descriptor;
-    byObfClass.set(key, method);
-  }
-  const additions = [];
-  for (let round = 0; round < rounds; round++) {
-    let changed = 0;
-    const current = new Map(seeds);
-    for (const [javaKey, entry] of current) {
-      const method = byObfClass.get(javaKey);
-      if (!method) { continue; }
-      const jsArity = js.arity.get(entry.fn);
-      if (jsArity == null) { continue; }
-      // Java callees of the same class that are not named yet.
-      const javaCallees = [];
-      const seenJava = new Set();
-      for (const call of method.calls) {
-        if (call.owner !== method.obfClass) { continue; }
-        const key = call.owner + "." + call.name + call.descriptor;
-        const callee = byObfClass.get(key);
-        if (!callee || seenJava.has(key)) { continue; }
-        seenJava.add(key);
-        if (!callee.namedMethod) { continue; }
-        if (namedJava.has(key)) { continue; }
-        javaCallees.push({ key, named: callee.namedMethod, simple: callee.simpleClass, arity: call.argCount + (call.isStatic ? 0 : 1), info: callee });
-      }
-      if (!javaCallees.length || javaCallees.length > 8) { continue; }
-      // JS callees that are not named yet.
-      const seenJs = new Set();
-      const jsCallees = [];
-      for (const sym of js.calleesBySym.get(entry.fn) || []) {
-        if (namedFns.has(sym) || seenJs.has(sym)) { continue; }
-        const arity = js.arity.get(sym);
-        if (arity == null) { continue; }
-        seenJs.add(sym);
-        jsCallees.push({ sym, arity });
-      }
-      if (!jsCallees.length || jsCallees.length > 20) { continue; }
-      // Pair up by arity, one on each side. Ambiguity is refused.
-      const javaByArity = new Map();
-      for (const candidate of javaCallees) {
-        const list = javaByArity.get(candidate.arity) || [];
-        list.push(candidate);
-        javaByArity.set(candidate.arity, list);
-      }
-      const jsByArity = new Map();
-      for (const candidate of jsCallees) {
-        const list = jsByArity.get(candidate.arity) || [];
-        list.push(candidate);
-        jsByArity.set(candidate.arity, list);
-      }
-      for (const [arity, javaList] of javaByArity) {
-        const jsList = jsByArity.get(arity) || [];
-        if (javaList.length !== 1 || jsList.length !== 1) { continue; }
-        const javaCallee = javaList[0];
-        const jsCallee = jsList[0];
-        if (namedFns.has(jsCallee.sym) || namedJava.has(javaCallee.key)) { continue; }
-        namedFns.add(jsCallee.sym);
-        namedJava.add(javaCallee.key);
-        additions.push({
-          sym: jsCallee.sym,
-          method: javaCallee.info,
-          why: `propagated from ${method.namedClass.split("/").pop()}.${method.namedMethod} by arity ${arity}`
+    for (const want of wanted) {
+      const key = want.className + "::" + want.method;
+      const candidates = byClassMethod.get(key);
+      if (!candidates || !candidates.length) { continue; }
+      if (candidates.some((candidate) => result.acceptedMethods.has(keyOf(candidate)))) { continue; }
+      for (const candidate of candidates) {
+        const literals = new Set(candidate.literals);
+        if (!literals.size) { continue; }
+        // Candidate functions: those that contain this method's rarest literal…
+        let rarest = null, rarestCount = Infinity;
+        for (const literal of literals) {
+          const count = (result.byLiteral.get(literal) || []).length;
+          if (count > 0 && count < rarestCount) { rarest = literal; rarestCount = count; }
+        }
+        if (!rarest) { continue; }
+        const pool = new Set(jsByLiteral.get(rarest) || []);
+        // …and whose literal set contains all of the method's literals.
+        const fits = [];
+        for (const sym of pool) {
+          const jsLiterals = js.stringsBySym.get(sym);
+          let all = true;
+          for (const literal of literals) { if (!jsLiterals.has(literal)) { all = false; break; } }
+          if (!all) { continue; }
+          const jsArity = js.arity.get(sym);
+          const expected = candidate.argCount + (candidate.isStatic ? 0 : 1);
+          if (jsArity != null && jsArity !== expected && jsArity !== candidate.argCount) { continue; }
+          fits.push(sym);
+        }
+        if (fits.length !== 1) { continue; }
+        const sym = fits[0];
+        if (result.matches.has(sym)) { continue; }
+        result.matches.set(sym, {
+          method: candidate,
+          score: 1.5,
+          why: `targeted: all ${literals.size} literal(s) of ${candidate.namedClass.split("/").pop()}.${candidate.namedMethod} present, unique in the class`
         });
-        seeds.set(javaCallee.key, { fn: jsCallee.sym, method: javaCallee.info, why: "propagated" });
-        changed++;
+        targeted++;
+        targetedDetail.push({ wanted: key, sym, method: candidate.namedClass + "." + candidate.namedMethod });
+        break;
       }
     }
-    if (!changed) { break; }
+    console.log(`targeted pass: ${targeted} more methods named from ${wanted.length} wanted targets`);
   }
-  return additions;
-}
 
-/* merge with the anchors: exact anchors win, alignment fills the rest */
-const mergedAdditions = [];
-const anchors = existsSync(anchorsFile) ? JSON.parse(readFileSync(anchorsFile, "utf8")).anchors : {};
-const merged = {};
-const stats = { anchored: 0, aligned: 0, byClass: {} };
-for (const [className, methods] of Object.entries(anchors)) {
-  merged[className] = merged[className] || {};
-  for (const [method, entry] of Object.entries(methods)) {
-    merged[className][method] = entry;
-    stats.anchored++;
+  /* ------------------------------------------------------------------ propagation ---------------- *
+   * Seeds: the methods named so far. A seed's Java method says which methods *of its own class* it
+   * calls; its JavaScript body says which functions it calls. When the two agree on arity — one
+   * unnamed candidate on each side, per arity — the callee is named. Repeat until nothing changes.
+   */
+  function propagate(java, js, seeds, rounds = 4) {
+    const namedFns = new Set(Array.from(seeds.values()).map((entry) => entry.fn));
+    const namedJava = new Set(seeds.keys());
+    const byObfClass = new Map();
+    for (const method of java.methods) {
+      const key = method.obfClass + "." + method.obfMethod + method.descriptor;
+      byObfClass.set(key, method);
+    }
+    const additions = [];
+    for (let round = 0; round < rounds; round++) {
+      let changed = 0;
+      const current = new Map(seeds);
+      for (const [javaKey, entry] of current) {
+        const method = byObfClass.get(javaKey);
+        if (!method) { continue; }
+        const jsArity = js.arity.get(entry.fn);
+        if (jsArity == null) { continue; }
+        // Java callees of the same class that are not named yet.
+        const javaCallees = [];
+        const seenJava = new Set();
+        for (const call of method.calls) {
+          if (call.owner !== method.obfClass) { continue; }
+          const key = call.owner + "." + call.name + call.descriptor;
+          const callee = byObfClass.get(key);
+          if (!callee || seenJava.has(key)) { continue; }
+          seenJava.add(key);
+          if (!callee.namedMethod) { continue; }
+          if (namedJava.has(key)) { continue; }
+          javaCallees.push({ key, named: callee.namedMethod, simple: callee.simpleClass, arity: call.argCount + (call.isStatic ? 0 : 1), info: callee });
+        }
+        if (!javaCallees.length || javaCallees.length > 8) { continue; }
+        // JS callees that are not named yet.
+        const seenJs = new Set();
+        const jsCallees = [];
+        for (const sym of js.calleesBySym.get(entry.fn) || []) {
+          if (namedFns.has(sym) || seenJs.has(sym)) { continue; }
+          const arity = js.arity.get(sym);
+          if (arity == null) { continue; }
+          seenJs.add(sym);
+          jsCallees.push({ sym, arity });
+        }
+        if (!jsCallees.length || jsCallees.length > 20) { continue; }
+        // Pair up by arity, one on each side. Ambiguity is refused.
+        const javaByArity = new Map();
+        for (const candidate of javaCallees) {
+          const list = javaByArity.get(candidate.arity) || [];
+          list.push(candidate);
+          javaByArity.set(candidate.arity, list);
+        }
+        const jsByArity = new Map();
+        for (const candidate of jsCallees) {
+          const list = jsByArity.get(candidate.arity) || [];
+          list.push(candidate);
+          jsByArity.set(candidate.arity, list);
+        }
+        for (const [arity, javaList] of javaByArity) {
+          const jsList = jsByArity.get(arity) || [];
+          if (javaList.length !== 1 || jsList.length !== 1) { continue; }
+          const javaCallee = javaList[0];
+          const jsCallee = jsList[0];
+          if (namedFns.has(jsCallee.sym) || namedJava.has(javaCallee.key)) { continue; }
+          namedFns.add(jsCallee.sym);
+          namedJava.add(javaCallee.key);
+          additions.push({
+            sym: jsCallee.sym,
+            method: javaCallee.info,
+            why: `propagated from ${method.namedClass.split("/").pop()}.${method.namedMethod} by arity ${arity}`
+          });
+          seeds.set(javaCallee.key, { fn: jsCallee.sym, method: javaCallee.info, why: "propagated" });
+          changed++;
+        }
+      }
+      if (!changed) { break; }
+    }
+    return additions;
   }
-}
-// Propagate from everything named so far (anchors + alignment + targeted).
-{
-  const seedMap = new Map();
-  const byFn = new Map();
-  for (const [domain, methods] of Object.entries(anchors)) {
+
+  /* merge with the anchors: exact anchors win, alignment fills the rest */
+  const mergedAdditions = [];
+  const anchors = existsSync(anchorsFile) ? JSON.parse(readFileSync(anchorsFile, "utf8")).anchors : {};
+  const merged = {};
+  const stats = { anchored: 0, aligned: 0, byClass: {} };
+  // `--merge` starts from a map earlier passes produced, so propagation can use every name known
+  // so far instead of only this run's anchors.
+  const mergeFile = flag("merge", null);
+  const carried = mergeFile && existsSync(resolve(mergeFile))
+    ? (JSON.parse(readFileSync(resolve(mergeFile), "utf8")).anchors || {})
+    : {};
+  for (const [className, methods] of Object.entries(carried)) {
+    merged[className] = merged[className] || {};
     for (const [method, entry] of Object.entries(methods)) {
-      const javaMethod = java.methods.find((candidate) => candidate.simpleClass === domain && candidate.namedMethod === method);
-      if (javaMethod && entry.fn) { seedMap.set(javaMethod.obfClass + "." + javaMethod.obfMethod + javaMethod.descriptor, { fn: entry.fn, method: javaMethod, why: "anchor" }); }
+      merged[className][method] = entry;
+      stats.carried = (stats.carried || 0) + 1;
     }
   }
-  for (const [sym, entry] of result.matches) {
-    if (!entry.method.namedMethod) { continue; }
-    seedMap.set(entry.method.obfClass + "." + entry.method.obfMethod + entry.method.descriptor, { fn: sym, method: entry.method, why: entry.why });
+  for (const [className, methods] of Object.entries(anchors)) {
+    merged[className] = merged[className] || {};
+    for (const [method, entry] of Object.entries(methods)) {
+      merged[className][method] = entry;
+      if (!carried[className] || !carried[className][method]) { stats.anchored++; }
+    }
   }
-  const additions = propagate(java, js, seedMap);
-  let added = 0;
-  for (const addition of additions) {
+  // Propagate from everything named so far (anchors + alignment + targeted).
+  {
+    const seedMap = new Map();
+    const methodBySimple = new Map();
+    for (const method of java.methods) {
+      if (!method.namedMethod) { continue; }
+      if (!methodBySimple.has(method.simpleClass)) { methodBySimple.set(method.simpleClass, new Map()); }
+      const table = methodBySimple.get(method.simpleClass);
+      if (!table.has(method.namedMethod)) { table.set(method.namedMethod, method); }
+    }
+    for (const [domain, methods] of Object.entries(merged)) {
+      for (const [method, entry] of Object.entries(methods)) {
+        if (!entry.fn) { continue; }
+        const table = methodBySimple.get(domain);
+        const javaMethod = table && table.get(method);
+        if (javaMethod) { seedMap.set(javaMethod.obfClass + "." + javaMethod.obfMethod + javaMethod.descriptor, { fn: entry.fn, method: javaMethod, why: entry.why || "carried" }); }
+      }
+    }
+    for (const [sym, entry] of result.matches) {
+      if (!entry.method.namedMethod) { continue; }
+      seedMap.set(entry.method.obfClass + "." + entry.method.obfMethod + entry.method.descriptor, { fn: sym, method: entry.method, why: entry.why });
+    }
+    const additions = propagate(java, js, seedMap);
+    let added = 0;
+    for (const addition of additions) {
+      const simple = addition.method.simpleClass;
+      if (!addition.method.namedMethod) { continue; }
+      mergedAdditions.push(addition);
+      added++;
+    }
+    console.log(`propagation: ${added} more methods named from ${seedMap.size} seeds`);
+  }
+  for (const addition of mergedAdditions) {
     const simple = addition.method.simpleClass;
-    if (!addition.method.namedMethod) { continue; }
-    mergedAdditions.push(addition);
-    added++;
+    if (merged[simple] && merged[simple][addition.method.namedMethod]) { continue; }
+    merged[simple] = merged[simple] || {};
+    merged[simple][addition.method.namedMethod] = { fn: addition.sym, index: null, arity: js.arity.get(addition.sym) || null, why: addition.why };
+    stats.aligned++;
   }
-  console.log(`propagation: ${added} more methods named from ${seedMap.size} seeds`);
+  let alignmentSkipped = 0;
+  for (const [sym, entry] of result.matches) {
+    const method = entry.method;
+    if (!method.namedMethod) { alignmentSkipped++; continue; }
+    const simple = method.simpleClass;
+    if (merged[simple] && merged[simple][method.namedMethod]) { alignmentSkipped++; continue; }
+    merged[simple] = merged[simple] || {};
+    merged[simple][method.namedMethod] = { fn: sym, index: null, arity: js.arity.get(sym) || null, why: entry.why, score: entry.score };
+    stats.aligned++;
+  }
+  stats.targeted = result.matches.size - stats.aligned - alignmentSkipped > 0 ? 0 : 0;
+  stats.byClass = Object.fromEntries(Object.entries(merged).map(([cls, methods]) => [cls, Object.keys(methods).length]));
+  writeFileSync(outFile, JSON.stringify({
+    note: "Built by tools/build-symbols.mjs (exact lambda anchors) and tools/align-methods.mjs (string-constant alignment).",
+    client: { bytes: text.length, assignments: js.assignments },
+    stats: {
+      anchoredMethods: stats.anchored,
+      alignedMethods: stats.aligned,
+      classes: Object.keys(merged).length,
+      examined: result.examined,
+      ambiguous: result.ambiguous
+    },
+    anchors: merged,
+    targeted: targetedDetail.slice(0, 50)
+  }, null, 1) + "\n");
+  console.log(`wrote ${outFile}: ${stats.anchored} anchored + ${stats.aligned} aligned = ${Object.keys(merged).reduce((total, cls) => total + Object.keys(merged[cls]).length, 0)} methods in ${Object.keys(merged).length} classes`);
+
 }
-for (const addition of mergedAdditions) {
-  const simple = addition.method.simpleClass;
-  if (merged[simple] && merged[simple][addition.method.namedMethod]) { continue; }
-  merged[simple] = merged[simple] || {};
-  merged[simple][addition.method.namedMethod] = { fn: addition.sym, index: null, arity: js.arity.get(addition.sym) || null, why: addition.why };
-  stats.aligned++;
-}
-let alignmentSkipped = 0;
-for (const [sym, entry] of result.matches) {
-  const method = entry.method;
-  if (!method.namedMethod) { alignmentSkipped++; continue; }
-  const simple = method.simpleClass;
-  if (merged[simple] && merged[simple][method.namedMethod]) { alignmentSkipped++; continue; }
-  merged[simple] = merged[simple] || {};
-  merged[simple][method.namedMethod] = { fn: sym, index: null, arity: js.arity.get(sym) || null, why: entry.why, score: entry.score };
-  stats.aligned++;
-}
-stats.targeted = result.matches.size - stats.aligned - alignmentSkipped > 0 ? 0 : 0;
-stats.byClass = Object.fromEntries(Object.entries(merged).map(([cls, methods]) => [cls, Object.keys(methods).length]));
-writeFileSync(outFile, JSON.stringify({
-  note: "Built by tools/build-symbols.mjs (exact lambda anchors) and tools/align-methods.mjs (string-constant alignment).",
-  client: { bytes: text.length, assignments: js.assignments },
-  stats: {
-    anchoredMethods: stats.anchored,
-    alignedMethods: stats.aligned,
-    classes: Object.keys(merged).length,
-    examined: result.examined,
-    ambiguous: result.ambiguous
-  },
-  anchors: merged,
-  targeted: targetedDetail.slice(0, 50)
-}, null, 1) + "\n");
-console.log(`wrote ${outFile}: ${stats.anchored} anchored + ${stats.aligned} aligned = ${Object.keys(merged).reduce((total, cls) => total + Object.keys(merged[cls]).length, 0)} methods in ${Object.keys(merged).length} classes`);
+
+if (process.argv[1] && process.argv[1].endsWith("align-methods.mjs")) { main(); }

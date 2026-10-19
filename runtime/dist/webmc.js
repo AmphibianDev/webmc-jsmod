@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610181431";
+  WebMC.build = "202610190414";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -119,11 +119,18 @@
    * detail, and the panel gets a line. A mod's own error must never look like the client's.
    */
   var reports = [];
+  var reportWindow = { at: 0, count: 0, suppressed: 0 };
   WebMC.__internal = {
     reports: reports,
     reportError: function (where, error, owner) {
       var text = formatError(error);
-      var entry = { where: where, text: text, owner: owner, at: Date.now() };
+      var now = Date.now();
+      // A mod that fails in a loop must not turn into thousands of console lines and messages a
+      // second: that alone can stall a browser tab. The first ten in a second are reported.
+      if (now - reportWindow.at > 1000) { reportWindow = { at: now, count: 0, suppressed: 0 }; }
+      reportWindow.count++;
+      if (reportWindow.count > 10) { reportWindow.suppressed++; return; }
+      var entry = { where: where, text: text, owner: owner, at: now };
       reports.push(entry);
       if (reports.length > 400) { reports.splice(0, 200); }
       try { console.error("[webmc] " + where + (owner ? " (" + owner + ")" : "") + ": " + text); } catch (ignored) {}
@@ -575,6 +582,7 @@
     version: clientInfo.version || "unknown",
     base: clientInfo.base || null,
     symbolsUrl: clientInfo.symbolsUrl || null,
+    internals: clientInfo.internals === false ? false : true,
     trustAll: clientInfo.trustAll === true
   };
   WebMC.__internal.boot = boot;
@@ -757,9 +765,13 @@
    */
   var applied = [];
   var refused = [];
+  var rolledBack = 0;
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
   function applyPatch(plan) {
+    if ((internal.boot && internal.boot.internals === false) || WebMC.__internal.internalsDisabled) {
+      return { ok: false, why: "the internals layer is switched off for this page (?internals=off)" };
+    }
     if (!state.available) { detect(); }
     if (!state.available) { return { ok: false, why: state.reason }; }
     if (!plan || !plan.targets || !plan.targets.length) { return { ok: false, why: "the plan names no target class" }; }
@@ -772,11 +784,13 @@
       results.push({ ok: false, why: "accessors need a field-name map, which this build does not carry yet", injection: plan.accessors[a].name });
     }
     var appliedHere = results.filter(function (r) { return r.ok; }).length;
+    var wrapped = results.filter(function (r) { return r.ok && r.rollback; }).map(function (r) { return r.rollback; });
     var record = {
       plan: plan,
       applied: appliedHere,
       refused: results.length - appliedHere,
-      results: results
+      results: results,
+      rollback: wrapped
     };
     if (appliedHere) { applied.push(record); } else { refused.push(record); }
     return {
@@ -807,8 +821,8 @@
     for (var i = 0; i < targets.length; i++) {
       var resolved = resolve(plan.targets[0], targets[i]);
       if (!resolved) { continue; }
-      if (wrappedBy.size >= 48) {
-        return { ok: false, kind: kind, target: targets[i], why: "the live-patch budget (48 methods) is full" };
+      if (wrappedBy.size >= 256) {
+        return { ok: false, kind: kind, target: targets[i], why: "the live-patch budget (256 methods) is full" };
       }
       if (wrappedBy.has(resolved.fn)) {
         // A method is wrapped once. A second plan for the same method is refused by name rather
@@ -820,7 +834,10 @@
       var label = plan.mixin + " -> " + plan.targets[0] + "." + targets[i];
       wrappedBy.set(resolved.fn, label);
       state.teaVM[resolved.fn] = makeWrapper(original, run, { cancellable: !!injection.cancellable, atHead: atHead, atReturn: atReturn, label: label });
-      return { ok: true, kind: kind, target: targets[i], point: point, fn: resolved.fn, arity: resolved.arity, mixin: plan.mixin };
+      return {
+        ok: true, kind: kind, target: targets[i], point: point, fn: resolved.fn, arity: resolved.arity, mixin: plan.mixin,
+        rollback: { fn: resolved.fn, original: original, label: label }
+      };
     }
     return { ok: false, kind: kind, why: "no anchor for " + plan.targets[0] + "." + targets.join("/") + " (the build's symbol map does not name it)" };
   }
@@ -839,6 +856,7 @@
     var sampleCalls = 0;
     var sampleStartedAt = Date.now();
     var sampling = true;
+    var handlerFailures = 0;
     var SAMPLE_CALLS = 20;
     var HOT_PER_SECOND = 40;
     return function (self) {
@@ -866,18 +884,53 @@
         return original.apply(this, arguments);
       }
       var args = Array.prototype.slice.call(arguments, 1);
-      var info = { cancellable: options.cancellable, cancelled: false, returnValue: undefined };
+      var info = { cancellable: options.cancellable, cancelled: false, cancelIgnored: false, returnValue: undefined };
       if (options.atHead) {
-        try { run(self, args, info); } catch (error) { internal.reportError("patch:" + options.label, error); }
-        if (info.cancelled && info.cancellable) { return info.returnValue; }
+        try { run(self, args, info); }
+        catch (error) {
+          // A handler whose calls this build cannot satisfy fails on every invocation; leaving it
+          // in place turns the game into an error flood. It is switched off by name instead.
+          if (++handlerFailures >= 25) {
+            disabled = true;
+            internal.toast("patch switched off: " + options.label + " failed " + handlerFailures + " times (" +
+              String(error && error.message || error).slice(0, 90) + ")");
+          } else {
+            internal.reportError("patch:" + options.label, error);
+          }
+        }
+        // `cancel()` is deliberately *not* honoured: a converted handler that skips a client tick
+        // stops the client updating, and no rollback can undo a tick that never ran. The handler
+        // still runs (so its own work happens); it just cannot stop the game's method.
+        if (info.cancelled) { info.cancelIgnored = true; }
       }
       var result = original.apply(this, arguments);
       if (options.atReturn) {
-        try { run(self, args, info); } catch (error) { internal.reportError("patch:" + options.label, error); }
-        if (info.cancelled && info.cancellable) { return info.returnValue !== undefined ? info.returnValue : result; }
+        try { run(self, args, info); }
+        catch (error) {
+          if (++handlerFailures >= 25) {
+            disabled = true;
+            internal.toast("patch switched off: " + options.label + " failed " + handlerFailures + " times");
+          } else {
+            internal.reportError("patch:" + options.label, error);
+          }
+        }
+        if (info.cancelled) { info.cancelIgnored = true; }
       }
       return result;
     };
+  }
+
+  /** Undo a wave: every wrapper it installed is replaced by the function it wrapped. */
+  function rollback(handles) {
+    var undone = 0;
+    for (var i = 0; i < (handles || []).length; i++) {
+      var handle = handles[i];
+      if (!handle || !handle.fn) { continue; }
+      state.teaVM[handle.fn] = handle.original;
+      wrappedBy.delete(handle.fn);
+      undone++;
+    }
+    return undone;
   }
 
   function summary() {
@@ -893,6 +946,7 @@
       resolutions: state.resolutions,
       misses: state.misses,
       appliedInjections: applied.reduce(function (total, record) { return total + record.applied; }, 0),
+      rolledBack: rolledBack,
       appliedPlans: applied.length,
       refusedPlans: refused.length,
       refusedReasons: refused.slice(0, 12).map(function (record) { return (record.results.find(function (r) { return !r.ok; }) || {}).why || "unknown"; })
@@ -930,6 +984,7 @@
     state: state,
     detect: detect,
     bus: readyBus,
+    noteRollback: function (count) { rolledBack += count; },
     available: function () { if (!state.available) { detect(); } return state.available; },
     classes: function () { buildRegistry(); return state.classes ? Array.from(state.classes.keys()) : []; },
     detect: detect,
@@ -964,10 +1019,35 @@
       };
     }
   };
+  /** Public surface: for hand-written mods as much as for converted ones.
+   *   webmc.internals.available()                 is this build patched?
+   *   webmc.internals.classes()                   every class name the build exposes
+   *   webmc.internals.named(className)            the methods the symbol map names for a class
+   *   webmc.internals.resolve(className, method)  the compiled function behind a method
+   *   webmc.internals.wrap(className, method, fn) wrap it; returns an unwrap function
+   */
   WebMC.internals = {
-    available: function () { return state.available; },
+    available: function () { if (!state.available) { detect(); } return state.available; },
     summary: summary,
-    classes: function () { return internal.internals.classes(); }
+    classes: function () { return internal.internals.classes(); },
+    named: function (className) {
+      var symbols = loadSymbols();
+      var simple = simpleName(className);
+      return Object.keys((symbols && symbols[simple]) || {});
+    },
+    resolve: function (className, methodName) { return resolve(className, methodName); },
+    wrap: function (className, methodName, wrapper) {
+      var found = resolve(className, methodName);
+      if (!found) { return null; }
+      var original = found.callable;
+      var label = simpleName(className) + "." + methodName;
+      var wrapped = makeWrapper(original, function (self, args, info) { return wrapper.call(null, self, args, info); },
+        { cancellable: true, atHead: true, atReturn: false, label: label });
+      state.teaVM[found.fn] = wrapped;
+      wrappedBy.set(found.fn, "mod:" + label);
+      return function unwrap() { state.teaVM[found.fn] = original; wrappedBy.delete(found.fn); };
+    },
+    loadSymbols: loadSymbols
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);
 
@@ -2393,7 +2473,16 @@
     internal.internals.bus.on("ready", function () {
       // Patches go in once the client is *running*: wrapping a method during the client's own
       // start-up is how a mod platform bricks a client, and the client says when it is up.
-      waitForRunning(function () { applyPlans(); });
+      waitForRunning(function () {
+        // A warm client: the game has been publishing state for a few seconds, so "no new snapshot
+        // in six seconds" means something, rather than being the boot screen.
+        var warm = 0;
+        var warmTimer = setInterval(function () {
+          warm++;
+          var updates = internal.state ? internal.state.updates : 0;
+          if (updates >= 20 || warm > 40) { clearInterval(warmTimer); applyPlans(); }
+        }, 500);
+      });
     });
   }
 
@@ -2406,7 +2495,109 @@
     }, 500);
   }
 
+  /** Apply in waves, with a watchdog.
+   *
+   * The client publishes a state snapshot while it runs; that is a liveness signal the page can
+   * read. Waves are applied a few plans at a time, and a watchdog watches the signal for the whole
+   * session: if the client stops publishing while it is still drawing frames, the most recent wave
+   * is rolled back — a wrapper at a time, because they are property assignments — and the reason is
+   * recorded. The player keeps a working client; the panel keeps the names of what was undone.
+   */
+  var waves = [];
+  var watchdog = { running: false, lastUpdates: 0, lastFrames: 0, lastProgressAt: 0, rolls: 0 };
+
   function applyPlans() {
+    var pending = plans.filter(function (record) { return record.state !== "applied" && record.state !== "rolled-back"; });
+    if (!pending.length) { return; }
+    applyNextWave(pending);
+
+    if (!watchdog.running) {
+      watchdog.running = true;
+      watchdog.lastUpdates = internal.state ? internal.state.updates : 0;
+      watchdog.lastFrames = internal.frame ? internal.frame.count : 0;
+      watchdog.lastProgressAt = Date.now();
+      setInterval(function () {
+        var updates = internal.state ? internal.state.updates : 0;
+        var frames = internal.frame ? internal.frame.count : 0;
+        if (updates !== watchdog.lastUpdates) {
+          watchdog.lastUpdates = updates;
+          watchdog.lastProgressAt = Date.now();
+          return;
+        }
+        var drawing = frames - watchdog.lastFrames > 120;
+        watchdog.lastFrames = frames;
+        if (!drawing || Date.now() - watchdog.lastProgressAt < 20000) { return; }
+        // Frozen while drawing: undo the most recent wave and say so.
+        var wave = waves.pop();
+        if (!wave || !wave.handles.length) { return; }
+        var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(wave.handles) : 0;
+        watchdog.rolls++;
+        if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
+        for (var i = 0; i < wave.records.length; i++) {
+          wave.records[i].state = "rolled-back";
+          wave.records[i].why = "rolled back: the client stopped publishing state after this wave";
+        }
+        internal.toast("rolled back " + undone + " patch(es): the client stopped responding after that wave");
+        recount();
+        internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused, rolls: watchdog.rolls });
+        watchdog.lastProgressAt = Date.now() + 8000;   // give the client time to come back
+      }, 4000);
+    }
+  }
+
+  function applyNextWave(pending) {
+    var batch = pending.slice(0, 4);
+    if (!batch.length) { return; }
+    var handles = [];
+    for (var i = 0; i < batch.length; i++) {
+      var result = tryApply(batch[i]);
+      if (result.ok) {
+        batch[i].state = "applied";
+        batch[i].why = null;
+        var list = result.results || [];
+        for (var k = 0; k < list.length; k++) { if (list[k] && list[k].rollback) { handles.push(list[k].rollback); } }
+      } else {
+        batch[i].state = "planned";
+        batch[i].why = result.why || batch[i].why;
+      }
+    }
+    if (handles.length) { waves.push({ handles: handles, records: batch }); }
+    recount();
+    internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+    var rest = pending.slice(4);
+    if (!rest.length) { return; }
+    // One wave, then a check. A client that stops publishing state after a wave will not be asked
+    // to take another: that wave is rolled back and the rest stay plans.
+    var before = internal.state ? internal.state.updates : 0;
+    var framesBefore = internal.frame ? internal.frame.count : 0;
+    setTimeout(function () {
+      var updates = internal.state ? internal.state.updates : 0;
+      var frames = internal.frame ? internal.frame.count : 0;
+      // Alive means "still publishing". A window in which the page barely drew (loading, a
+      // background tab) cannot judge, so it counts as alive.
+      var alive = updates > before || frames - framesBefore < 120;
+      if (!alive && handles.length) {
+        var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(handles) : 0;
+        if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
+        for (var i = 0; i < batch.length; i++) {
+          if (batch[i].state === "applied") {
+            batch[i].state = "rolled-back";
+            batch[i].why = "rolled back: the client stopped publishing state after this wave";
+          }
+        }
+        for (var r = 0; r < rest.length; r++) {
+          if (rest[r].state === "planned") { rest[r].why = "not applied: an earlier wave made the client stop responding"; }
+        }
+        recount();
+        internal.toast("rolled back " + undone + " patch(es); no further waves will be applied");
+        internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+        return;
+      }
+      applyNextWave(rest);
+    }, 6000);
+  }
+
+  function oldApplyPlans() {
     {
       var changed = 0;
       for (var i = 0; i < plans.length; i++) {
@@ -2464,6 +2655,10 @@
   }
 
   WebMC.patches = {
+    setEnabled: function (value) {
+      WebMC.__internal.internalsDisabled = !value;
+      return { enabled: !!value, applied: applied, planned: refused };
+    },
     add: add,
     list: function () { return plans.slice(); },
     get: function (id) { return byId.get(id) || null; },
@@ -2672,6 +2867,7 @@
       suspended: mod.suspended,
       errors: mod.errors.slice(-6),
       from: mod.package || "index",
+      patches: internal.patches ? internal.patches.plans.filter(function (plan) { return plan.mod === mod.id; }).length : 0,
       trusted: !!mod.trusted,
       loadedAt: mod.loadedAt
     };

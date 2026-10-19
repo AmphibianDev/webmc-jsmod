@@ -48,11 +48,13 @@ node tools/live-check.mjs --with-meteor     # the deployed site, in a real brows
 
 **Meteor Client works here** — the real `meteor-client-1.21.11-86.jar`, converted, hot-loaded into a
 running client: 171 modules registered, 191 patch plans / 334 injections recorded, 0 errors, and
-**12 injections across 9 plans applied to the running client** — Meteor's `@Inject` handlers run
-inside the compiled game. The rest are `planned` with their reason (no name anchor for that method
-yet, or an accessor needing the field map). See **`docs/INTERNALS.md`**: the client is patched to
-expose its compiled internals, methods are named by lambda anchors plus string-constant alignment
-(2,450 methods), and wrappers sample call rates so a hot method is never wrapped.
+**about 100 injections across 40 plans applied to the running client** — Meteor's `@Inject` handlers
+run inside the compiled game, while the client keeps publishing state (2,500 snapshots in three
+minutes). The rest are `planned` with their reason (no name for that method yet, an accessor needing
+the field map, or a redirect that needs call-site rewriting). **`docs/INTERNALS.md`** explains the
+whole layer: the patched client, the five naming passes (17,727 methods), and the safety valves —
+sampling, failure cutoffs, wave-by-wave application and rollback, and the deliberate refusal to
+honour `cancel()` because a skipped tick cannot be undone.
 
 It proves, with the bytes it actually ran: the runtime is installed inside the client **before the
 client's first script**, the input hook sees a real key, the client publishes state, and mods from

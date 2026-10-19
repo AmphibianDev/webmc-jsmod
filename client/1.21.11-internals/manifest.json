@@ -7,12 +7,12 @@
  "bytes": 112986848,
  "total": 112986848,
  "chunk_bytes": 33554432,
- "sha256": "680bccd3b78533db34541e1773f42f6176a0968ed51e60078d8e314d955e323e",
+ "sha256": "3813d1b560a582b4bbbb230127669613f2ebf70818b76470938ec1bb870e22dd",
  "chunks": [
   {
    "path": "data/client.0000",
    "size": 33554432,
-   "sha256": "e11610098accdb839312f736e9dd82941d20fd647268ba70dc837e78488d51f0"
+   "sha256": "ec0b7f26722495668bd98f3c2fa3b3ceb2fae90f93dcf2aeaf844b806782260a"
   },
   {
    "path": "data/client.0001",

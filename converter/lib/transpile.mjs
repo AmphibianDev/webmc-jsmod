@@ -113,6 +113,8 @@ export function transpileMethod(options) {
 
   const lines = [];
   const unsupported = [];
+  const unresolvedLambdas = [];
+  let deferredCalls = 0;
   const pad = (slot) => "l" + slot;
   const emit = (line) => lines.push(line);
 
@@ -254,7 +256,14 @@ export function transpileMethod(options) {
             else { body.push("s.push(''); pc = " + (index + 1) + "; continue;"); }
             break;
           }
-          if (!lambda || !lambda.owner) { unsupported.push("an invokedynamic with no resolvable lambda"); break; }
+          if (!lambda || !lambda.owner) {
+            // The method keeps its translation; only this one value becomes a function that fails
+            // if it is ever called. Refusing the whole method for one exotic bootstrap was costing
+            // more than it protected.
+            unresolvedLambdas.push(className + "." + method.name + instruction.pc);
+            body.push("s.push(__ctx.unsupportedLambda(" + JSON.stringify(className + "." + method.name + ":" + instruction.pc) + ")); pc = " + (index + 1) + "; continue;");
+            break;
+          }
           const parsed = parseDescriptor(lambda.descriptor);
           const argCount = parsed.args.length;
           if (argCount) { body.push("var dv = new Array(" + argCount + "); for (var di = " + (argCount - 1) + "; di >= 0; di--) dv[di] = s.pop();"); }
@@ -265,6 +274,15 @@ export function transpileMethod(options) {
           const call = instruction.operand;
           if (!call) { unsupported.push("invoke with no reference"); break; }
           const target = resolve(call.owner, call.name, call.descriptor, instruction.name);
+          if (target && target.kind === "defer") {
+            const parsedDefer = parseDescriptor(call.descriptor);
+            const argCountDefer = parsedDefer.args.length;
+            if (argCountDefer) { body.push("var dv = new Array(" + argCountDefer + "); for (var di = " + (argCountDefer - 1) + "; di >= 0; di--) dv[di] = s.pop();"); }
+            if (instruction.name !== "invokestatic") { body.push("s.pop();"); }
+            deferredCalls++;
+            body.push("throw __ctx.toError((" + JSON.stringify(call.owner.replace(/\//g, ".") + "." + call.name) + ") + ' needs the client internals');");
+            break;
+          }
           if (!call.owner || !call.name) {
             unsupported.push("a call with no owner or name (damaged bytecode)");
             break;
@@ -295,6 +313,10 @@ export function transpileMethod(options) {
         if (instruction.name === "checkcast") { body.push("s.push(__ctx.cast(s.pop(), " + JSON.stringify(remap.klass(instruction.operand)) + ")); pc = " + (index + 1) + "; continue;"); break; }
         if (instruction.name === "instanceof") { body.push("s.push(__ctx.isInstance(s.pop(), " + JSON.stringify(remap.klass(instruction.operand)) + ")); pc = " + (index + 1) + "; continue;"); break; }
         if (instruction.name === "athrow") { body.push("throw __ctx.toError(s.pop());"); break; }
+        if (instruction.name === "monitorenter" || instruction.name === "monitorexit") {
+          // One realm, one thread: a monitor has nothing to guard here.
+          body.push("s.pop(); pc = " + (index + 1) + "; continue;"); break;
+        }
         if (instruction.name === "arraylength") { body.push("s.push(s.pop().length); pc = " + (index + 1) + "; continue;"); break; }
         if (/^(i|l|f|d|a|b|c|s)aload$/.test(instruction.name)) {
           body.push("r = s.pop() | 0; s.push(s.pop()[r]); pc = " + (index + 1) + "; continue;"); break;
@@ -303,6 +325,21 @@ export function transpileMethod(options) {
           body.push("r = s.pop(); var idx = s.pop() | 0; var arr = s.pop(); arr[idx] = r; pc = " + (index + 1) + "; continue;"); break;
         }
         if (/aload$/.test(instruction.name) && instruction.operand != null) { body.push("s.push(" + localName(instruction.operand) + "); pc = " + (index + 1) + "; continue;"); break; }
+        if (instruction.name === "tableswitch" || instruction.name === "lookupswitch") {
+          const table = instruction.operand;
+          if (!table) { unsupported.push("a switch with no table"); break; }
+          body.push("r = s.pop() | 0; switch (r) {");
+          for (const entry of table.cases) {
+            const target = indexByPc.get(entry.targetPc);
+            if (target == null) { unsupported.push("a switch target outside the method"); break; }
+            body.push("  case " + entry.value + ": pc = " + target + "; break;");
+          }
+          const defaultTarget = indexByPc.get(table.defaultPc);
+          if (defaultTarget == null) { unsupported.push("a switch default outside the method"); break; }
+          body.push("  default: pc = " + defaultTarget + "; break;");
+          body.push("} continue;");
+          break;
+        }
         if (instruction.name === "goto" || instruction.name === "goto_w") {
           body.push("pc = " + instruction.targetIndex + "; continue;"); break;
         }
@@ -344,6 +381,8 @@ export function transpileMethod(options) {
   return {
     ok: true,
     locals: localCount,
+    unresolved: unresolvedLambdas,
+    deferred: deferredCalls,
     source: "function (__ctx, __self, __args) {\n" + prefix + init.map((line) => line + "\n").join("") + lines.join("\n") + "\n}"
   };
 }
@@ -359,6 +398,7 @@ function literal(value) {
 /** Decode the instructions the transpiler needs, with branch targets resolved to pcs. */
 export function decode(code, pool, bootstrapMethods) {
   const out = [];
+  let switchTable = null;
   let pc = 0;
   while (pc < code.length) {
     const op = code[pc];
@@ -371,18 +411,30 @@ export function decode(code, pool, bootstrapMethods) {
     if (name === "tableswitch") {
       let cursor = pc + 1;
       cursor += (4 - (cursor % 4)) % 4;
-      const low = read32(code, cursor + 4), high = read32(code, cursor + 8);
-      length = (cursor - pc) + 12 + (high - low + 1) * 4;
+      const low = read32(code, cursor + 4);
+      const high = read32(code, cursor + 8);
+      const cases = [];
+      let at = cursor + 12;
+      for (let value = low; value <= high; value++, at += 4) { cases.push({ value, targetPc: pc + read32(code, at) }); }
+      length = (cursor - pc) + 12 + cases.length * 4;
+      switchTable = { cases, defaultPc: pc + read32(code, cursor) };
+      if (high < low || length <= 0 || pc + length > code.length) { throw new Error("damaged tableswitch at " + pc); }
     } else if (name === "lookupswitch") {
       let cursor = pc + 1;
       cursor += (4 - (cursor % 4)) % 4;
       const pairs = read32(code, cursor + 4);
+      const cases = [];
+      let at = cursor + 8;
+      for (let i = 0; i < pairs; i++, at += 8) { cases.push({ value: read32(code, at), targetPc: pc + read32(code, at + 4) }); }
       length = (cursor - pc) + 8 + pairs * 8;
+      switchTable = { cases, defaultPc: pc + read32(code, cursor) };
+      if (pairs < 0 || length <= 0 || pc + length > code.length) { throw new Error("damaged lookupswitch at " + pc); }
     } else if (name === "wide") {
       const next = code[pc + 1];
       length = next === 0x84 ? 6 : 4;
     }
-    const instruction = { pc, op, name, length, operand: null, constant: null, targetPc: null, offset: null };
+    const instruction = { pc, op, name, length, operand: switchTable, constant: null, targetPc: null, offset: null };
+    switchTable = null;
     if (name === "iinc") { instruction.operand = code[pc + 1]; instruction.constant = (code[pc + 2] << 24) >> 24; }
     else if (name === "bipush") { instruction.operand = (code[pc + 1] << 24) >> 24; }
     else if (name === "sipush") { instruction.operand = (((code[pc + 1] << 8) | code[pc + 2]) << 16) >> 16; }

@@ -118,11 +118,18 @@
    * detail, and the panel gets a line. A mod's own error must never look like the client's.
    */
   var reports = [];
+  var reportWindow = { at: 0, count: 0, suppressed: 0 };
   WebMC.__internal = {
     reports: reports,
     reportError: function (where, error, owner) {
       var text = formatError(error);
-      var entry = { where: where, text: text, owner: owner, at: Date.now() };
+      var now = Date.now();
+      // A mod that fails in a loop must not turn into thousands of console lines and messages a
+      // second: that alone can stall a browser tab. The first ten in a second are reported.
+      if (now - reportWindow.at > 1000) { reportWindow = { at: now, count: 0, suppressed: 0 }; }
+      reportWindow.count++;
+      if (reportWindow.count > 10) { reportWindow.suppressed++; return; }
+      var entry = { where: where, text: text, owner: owner, at: now };
       reports.push(entry);
       if (reports.length > 400) { reports.splice(0, 200); }
       try { console.error("[webmc] " + where + (owner ? " (" + owner + ")" : "") + ": " + text); } catch (ignored) {}

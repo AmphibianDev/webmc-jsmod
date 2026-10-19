@@ -1,13 +1,13 @@
 /* Converted from a Fabric mod by webmc-jsmod's converter.
  * gammautils 2.5.10 — Gamma Utils
- * Every 170 method that could be transpiled was; 21 could not.
+ * Every 187 method that could be transpiled was; 4 could not.
  * What could not is named in report.json next to this file. */
 (function () {
   "use strict";
   var SOURCE = "gammautils 2.5.10";
   var CLASSES = {};
-  var SUPER = {"io/github/sjouwer/gammautils/Commands":"java/lang/Object","io/github/sjouwer/gammautils/GammaManager":"java/lang/Object","io/github/sjouwer/gammautils/GammaUtils":"java/lang/Object","io/github/sjouwer/gammautils/KeyBindings":"java/lang/Object","io/github/sjouwer/gammautils/NightVisionManager":"java/lang/Object","io/github/sjouwer/gammautils/compat/SodiumConfigBuilder":"java/lang/Object","io/github/sjouwer/gammautils/config/ModConfig$GammaSettings":"java/lang/Object","io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings":"java/lang/Object","io/github/sjouwer/gammautils/config/ModConfig$OtherSettings":"java/lang/Object","io/github/sjouwer/gammautils/config/ModMenuApiImpl":"java/lang/Object","io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil":"java/lang/Object","io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect":"net/minecraft/class_1291","io/github/sjouwer/gammautils/statuseffect/StatusEffectManager":"java/lang/Object","io/github/sjouwer/gammautils/util/InfoProvider":"java/lang/Object","io/github/sjouwer/gammautils/util/LightLevelUtil":"java/lang/Object"};
-  var FIELD_DEFAULTS = {"io/github/sjouwer/gammautils/Commands":[{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"}],"io/github/sjouwer/gammautils/GammaManager":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"gamma","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;"},{"name":"transitionTimer","descriptor":"Ljava/util/Timer;"},{"name":"dynamicGammaTarget","descriptor":"D"}],"io/github/sjouwer/gammautils/GammaUtils":[{"name":"LOGGER","descriptor":"Lorg/slf4j/Logger;"},{"name":"NAMESPACE","descriptor":"Ljava/lang/String;"},{"name":"configHolder","descriptor":"Lme/shedaniel/autoconfig/ConfigHolder;"}],"io/github/sjouwer/gammautils/KeyBindings":[{"name":"GAMMA_CATEGORY","descriptor":"Lnet/minecraft/class_304$class_11900;"},{"name":"NIGHT_VISION_CATEGORY","descriptor":"Lnet/minecraft/class_304$class_11900;"},{"name":"BASE_KEY","descriptor":"Ljava/lang/String;"},{"name":"GAMMA_TOGGLE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_INCREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_DECREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_MAX","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_MIN","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_TOGGLE","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_INCREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_DECREASE","descriptor":"Lnet/minecraft/class_304;"}],"io/github/sjouwer/gammautils/NightVisionManager":[{"name":"nightVision","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;"},{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"transitionTimer","descriptor":"Ljava/util/Timer;"},{"name":"dynamicNightVisionTarget","descriptor":"D"}],"io/github/sjouwer/gammautils/compat/SodiumConfigBuilder":[],"io/github/sjouwer/gammautils/config/ModConfig$GammaSettings":[{"name":"value","descriptor":"D"},{"name":"defaultGamma","descriptor":"I"},{"name":"toggledGamma","descriptor":"I"},{"name":"updateToggle","descriptor":"Z"},{"name":"gammaStep","descriptor":"I"},{"name":"showStatusEffect","descriptor":"Z"},{"name":"resetOnClose","descriptor":"Z"},{"name":"transition","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$Transition;"},{"name":"dynamic","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$DynamicGamma;"},{"name":"dimensionPreference","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$DimensionPreference;"},{"name":"limiter","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$Limiter;"},{"name":"hudMessage","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$HudMessage;"}],"io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings":[{"name":"enabled","descriptor":"Z"},{"name":"value","descriptor":"D"},{"name":"toggledNightVision","descriptor":"I"},{"name":"updateToggle","descriptor":"Z"},{"name":"nightVisionStep","descriptor":"I"},{"name":"brightenFogColor","descriptor":"Z"},{"name":"showStatusEffect","descriptor":"Z"},{"name":"resetOnClose","descriptor":"Z"},{"name":"transition","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$Transition;"},{"name":"dynamic","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$DynamicNightVision;"},{"name":"dimensionPreference","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$DimensionPreference;"},{"name":"limiter","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$Limiter;"},{"name":"hudMessage","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$HudMessage;"}],"io/github/sjouwer/gammautils/config/ModConfig$OtherSettings":[{"name":"namespacedCommands","descriptor":"Z"}],"io/github/sjouwer/gammautils/config/ModMenuApiImpl":[],"io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil":[],"io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect":[{"name":"key","descriptor":"Ljava/lang/String;"}],"io/github/sjouwer/gammautils/statuseffect/StatusEffectManager":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"},{"name":"BRIGHT","descriptor":"Lnet/minecraft/class_6880$class_6881;"},{"name":"DIM","descriptor":"Lnet/minecraft/class_6880$class_6881;"},{"name":"NIGHT_VISION","descriptor":"Lnet/minecraft/class_6880$class_6881;"}],"io/github/sjouwer/gammautils/util/InfoProvider":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"}],"io/github/sjouwer/gammautils/util/LightLevelUtil":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"}]};
+  var SUPER = {"io/github/sjouwer/gammautils/Commands":"java/lang/Object","io/github/sjouwer/gammautils/GammaManager$1":"java/util/TimerTask","io/github/sjouwer/gammautils/GammaManager":"java/lang/Object","io/github/sjouwer/gammautils/GammaUtils":"java/lang/Object","io/github/sjouwer/gammautils/KeyBindings":"java/lang/Object","io/github/sjouwer/gammautils/NightVisionManager$1":"java/util/TimerTask","io/github/sjouwer/gammautils/NightVisionManager":"java/lang/Object","io/github/sjouwer/gammautils/compat/SodiumConfigBuilder":"java/lang/Object","io/github/sjouwer/gammautils/config/ModConfig$GammaSettings":"java/lang/Object","io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings":"java/lang/Object","io/github/sjouwer/gammautils/config/ModConfig$OtherSettings":"java/lang/Object","io/github/sjouwer/gammautils/config/ModMenuApiImpl":"java/lang/Object","io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil":"java/lang/Object","io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect":"net/minecraft/class_1291","io/github/sjouwer/gammautils/statuseffect/StatusEffectManager":"java/lang/Object","io/github/sjouwer/gammautils/util/InfoProvider":"java/lang/Object","io/github/sjouwer/gammautils/util/LightLevelUtil":"java/lang/Object"};
+  var FIELD_DEFAULTS = {"io/github/sjouwer/gammautils/Commands":[{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"}],"io/github/sjouwer/gammautils/GammaManager$1":[{"name":"val$valueChangePerTick","descriptor":"D"},{"name":"val$newValue","descriptor":"D"},{"name":"val$showMessage","descriptor":"Z"}],"io/github/sjouwer/gammautils/GammaManager":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"gamma","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;"},{"name":"transitionTimer","descriptor":"Ljava/util/Timer;"},{"name":"dynamicGammaTarget","descriptor":"D"}],"io/github/sjouwer/gammautils/GammaUtils":[{"name":"LOGGER","descriptor":"Lorg/slf4j/Logger;"},{"name":"NAMESPACE","descriptor":"Ljava/lang/String;"},{"name":"configHolder","descriptor":"Lme/shedaniel/autoconfig/ConfigHolder;"}],"io/github/sjouwer/gammautils/KeyBindings":[{"name":"GAMMA_CATEGORY","descriptor":"Lnet/minecraft/class_304$class_11900;"},{"name":"NIGHT_VISION_CATEGORY","descriptor":"Lnet/minecraft/class_304$class_11900;"},{"name":"BASE_KEY","descriptor":"Ljava/lang/String;"},{"name":"GAMMA_TOGGLE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_INCREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_DECREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_MAX","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_MIN","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_TOGGLE","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_INCREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_DECREASE","descriptor":"Lnet/minecraft/class_304;"}],"io/github/sjouwer/gammautils/NightVisionManager$1":[{"name":"val$valueChangePerTick","descriptor":"D"},{"name":"val$newValue","descriptor":"D"},{"name":"val$showMessage","descriptor":"Z"}],"io/github/sjouwer/gammautils/NightVisionManager":[{"name":"nightVision","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;"},{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"transitionTimer","descriptor":"Ljava/util/Timer;"},{"name":"dynamicNightVisionTarget","descriptor":"D"}],"io/github/sjouwer/gammautils/compat/SodiumConfigBuilder":[],"io/github/sjouwer/gammautils/config/ModConfig$GammaSettings":[{"name":"value","descriptor":"D"},{"name":"defaultGamma","descriptor":"I"},{"name":"toggledGamma","descriptor":"I"},{"name":"updateToggle","descriptor":"Z"},{"name":"gammaStep","descriptor":"I"},{"name":"showStatusEffect","descriptor":"Z"},{"name":"resetOnClose","descriptor":"Z"},{"name":"transition","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$Transition;"},{"name":"dynamic","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$DynamicGamma;"},{"name":"dimensionPreference","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$DimensionPreference;"},{"name":"limiter","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$Limiter;"},{"name":"hudMessage","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings$HudMessage;"}],"io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings":[{"name":"enabled","descriptor":"Z"},{"name":"value","descriptor":"D"},{"name":"toggledNightVision","descriptor":"I"},{"name":"updateToggle","descriptor":"Z"},{"name":"nightVisionStep","descriptor":"I"},{"name":"brightenFogColor","descriptor":"Z"},{"name":"showStatusEffect","descriptor":"Z"},{"name":"resetOnClose","descriptor":"Z"},{"name":"transition","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$Transition;"},{"name":"dynamic","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$DynamicNightVision;"},{"name":"dimensionPreference","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$DimensionPreference;"},{"name":"limiter","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$Limiter;"},{"name":"hudMessage","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings$HudMessage;"}],"io/github/sjouwer/gammautils/config/ModConfig$OtherSettings":[{"name":"namespacedCommands","descriptor":"Z"}],"io/github/sjouwer/gammautils/config/ModMenuApiImpl":[],"io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil":[],"io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect":[{"name":"key","descriptor":"Ljava/lang/String;"}],"io/github/sjouwer/gammautils/statuseffect/StatusEffectManager":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"},{"name":"BRIGHT","descriptor":"Lnet/minecraft/class_6880$class_6881;"},{"name":"DIM","descriptor":"Lnet/minecraft/class_6880$class_6881;"},{"name":"NIGHT_VISION","descriptor":"Lnet/minecraft/class_6880$class_6881;"}],"io/github/sjouwer/gammautils/util/InfoProvider":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"}],"io/github/sjouwer/gammautils/util/LightLevelUtil":[{"name":"client","descriptor":"Lnet/minecraft/class_310;"}]};
   function defineClass(name, methods) { CLASSES[name] = methods; }
   defineClass("io/github/sjouwer/gammautils/Commands", {
     "registerCommands()V": function (__ctx, __self, __args) {
@@ -2521,6 +2521,65 @@
     }
   });
   CLASSES["io/github/sjouwer/gammautils/Commands"].__fields = [{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"}];
+  defineClass("io/github/sjouwer/gammautils/GammaManager$1", {
+    "<init>(DDZ)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5;
+    l0 = __self;
+    l1 = __args[0];
+    l3 = __args[1];
+    l5 = __args[2];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(l0); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(l1); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop();
+      var target = s.pop();
+      __ctx.putField("io/github/sjouwer/gammautils/GammaManager$1","val$valueChangePerTick","D",target, r); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.push(l0); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      s.push(l3); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      r = s.pop();
+      var target = s.pop();
+      __ctx.putField("io/github/sjouwer/gammautils/GammaManager$1","val$newValue","D",target, r); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      s.push(l0); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(l5); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      r = s.pop();
+      var target = s.pop();
+      __ctx.putField("io/github/sjouwer/gammautils/GammaManager$1","val$showMessage","Z",target, r); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      s.push(l0); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.pop();
+      throw __ctx.toError(("java.util.TimerTask.<init>") + ' needs the client internals');
+    case 11:
+      __pc = 11;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    }
+  });
+  CLASSES["io/github/sjouwer/gammautils/GammaManager$1"].__fields = [{"name":"val$valueChangePerTick","descriptor":"D"},{"name":"val$newValue","descriptor":"D"},{"name":"val$showMessage","descriptor":"Z"}];
   defineClass("io/github/sjouwer/gammautils/GammaManager", {
     "<init>()V": function (__ctx, __self, __args) {
     var l0;
@@ -3145,6 +3204,532 @@
       __ctx.invokeStatic("io/github/sjouwer/gammautils/GammaManager","setGamma","(DZZZ)V", av); pc = 16; continue;
     case 16:
       __pc = 16;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "setGamma(DZZZ)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5, l6;
+    l0 = __args[0];
+    l2 = __args[1];
+    l3 = __args[2];
+    l4 = __args[3];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","transitionTimer","Ljava/util/Timer;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      r = s.pop(); if (r == null) { pc = 4; } else { pc = 2; } continue;
+    case 2:
+      __pc = 2;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","transitionTimer","Ljava/util/Timer;")); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.pop();
+      throw __ctx.toError(("java.util.Timer.cancel") + ' needs the client internals');
+    case 4:
+      __pc = 4;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","isLimiterEnabled","()Z", rv, [])); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      r = s.pop(); if (r == 0) { pc = 20; } else { pc = 7; } continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getMaximumStrength","()D", rv, [])); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getMinimumStrength","()D", rv, [])); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      r = s.pop(); var q = s.pop(); s.push(q > r ? 1 : (q < r ? -1 : 0)); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      r = s.pop(); if (r <= 0) { pc = 20; } else { pc = 13; } continue;
+    case 13:
+      __pc = 13;
+      s.push(l0); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getMinimumStrength","()D", rv, [])); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getMaximumStrength","()D", rv, [])); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      var dv = new Array(3); for (var di = 2; di >= 0; di--) dv[di] = s.pop();
+      throw __ctx.toError(("java.lang.Math.clamp") + ' needs the client internals');
+    case 19:
+      __pc = 19;
+      l0 = s.pop(); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      s.push(l2); pc = 21; continue;
+    case 21:
+      __pc = 21;
+      r = s.pop(); if (r == 0) { pc = 47; } else { pc = 22; } continue;
+    case 22:
+      __pc = 22;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 23; continue;
+    case 23:
+      __pc = 23;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","isSmoothTransitionEnabled","()Z", rv, [])); pc = 24; continue;
+    case 24:
+      __pc = 24;
+      r = s.pop(); if (r != 0) { pc = 27; } else { pc = 25; } continue;
+    case 25:
+      __pc = 25;
+      s.push(l4); pc = 26; continue;
+    case 26:
+      __pc = 26;
+      r = s.pop(); if (r == 0) { pc = 47; } else { pc = 27; } continue;
+    case 27:
+      __pc = 27;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 28; continue;
+    case 28:
+      __pc = 28;
+      s.push(l4); pc = 29; continue;
+    case 29:
+      __pc = 29;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getTransitionSpeed","(Z)D", rv, av)); pc = 30; continue;
+    case 30:
+      __pc = 30;
+      s.push(100); pc = 31; continue;
+    case 31:
+      __pc = 31;
+      r = s.pop(); s.push(s.pop() / r); pc = 32; continue;
+    case 32:
+      __pc = 32;
+      l5 = s.pop(); pc = 33; continue;
+    case 33:
+      __pc = 33;
+      s.push(l0); pc = 34; continue;
+    case 34:
+      __pc = 34;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 35; continue;
+    case 35:
+      __pc = 35;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getValue","()D", rv, [])); pc = 36; continue;
+    case 36:
+      __pc = 36;
+      r = s.pop(); var q = s.pop(); s.push(q > r ? 1 : (q < r ? -1 : 0)); pc = 37; continue;
+    case 37:
+      __pc = 37;
+      r = s.pop(); if (r >= 0) { pc = 42; } else { pc = 38; } continue;
+    case 38:
+      __pc = 38;
+      s.push(l5); pc = 39; continue;
+    case 39:
+      __pc = 39;
+      s.push(-1); pc = 40; continue;
+    case 40:
+      __pc = 40;
+      r = s.pop(); s.push(s.pop() * r); pc = 41; continue;
+    case 41:
+      __pc = 41;
+      l5 = s.pop(); pc = 42; continue;
+    case 42:
+      __pc = 42;
+      s.push(l0); pc = 43; continue;
+    case 43:
+      __pc = 43;
+      s.push(l5); pc = 44; continue;
+    case 44:
+      __pc = 44;
+      s.push(l3); pc = 45; continue;
+    case 45:
+      __pc = 45;
+      var av = new Array(3); for (var ai = 2; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/GammaManager","startTransitionTimer","(DDZ)V", av); pc = 46; continue;
+    case 46:
+      __pc = 46;
+      pc = undefined; continue;
+    case 47:
+      __pc = 47;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 48; continue;
+    case 48:
+      __pc = 48;
+      s.push(l0); pc = 49; continue;
+    case 49:
+      __pc = 49;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","setValue","(D)V", rv, av); pc = 50; continue;
+    case 50:
+      __pc = 50;
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/statuseffect/StatusEffectManager","updateGammaStatusEffect","()V", []); pc = 51; continue;
+    case 51:
+      __pc = 51;
+      s.push(l3); pc = 52; continue;
+    case 52:
+      __pc = 52;
+      r = s.pop(); if (r == 0) { pc = 54; } else { pc = 53; } continue;
+    case 53:
+      __pc = 53;
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","showGammaHudMessage","()V", []); pc = 54; continue;
+    case 54:
+      __pc = 54;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 55; continue;
+    case 55:
+      __pc = 55;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","isToggleUpdateEnabled","()Z", rv, [])); pc = 56; continue;
+    case 56:
+      __pc = 56;
+      r = s.pop(); if (r == 0) { pc = 65; } else { pc = 57; } continue;
+    case 57:
+      __pc = 57;
+      s.push(l0); pc = 58; continue;
+    case 58:
+      __pc = 58;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 59; continue;
+    case 59:
+      __pc = 59;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","getDefaultValue","()D", rv, [])); pc = 60; continue;
+    case 60:
+      __pc = 60;
+      r = s.pop(); var q = s.pop(); s.push(q > r ? 1 : (q < r ? -1 : 0)); pc = 61; continue;
+    case 61:
+      __pc = 61;
+      r = s.pop(); if (r == 0) { pc = 65; } else { pc = 62; } continue;
+    case 62:
+      __pc = 62;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 63; continue;
+    case 63:
+      __pc = 63;
+      s.push(l0); pc = 64; continue;
+    case 64:
+      __pc = 64;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","setToggledValue","(D)V", rv, av); pc = 65; continue;
+    case 65:
+      __pc = 65;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "toggleDynamicGamma()V": function (__ctx, __self, __args) {
+    var l0, l1;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","isDynamicEnabled","()Z", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r != 0) { pc = 5; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(1); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      pc = undefined; continue;
+    case 5:
+      __pc = 5;
+      s.push(0); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      l0 = s.pop(); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","setDynamicStatus","(Z)V", rv, av); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.push(l0); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      r = s.pop(); if (r == 0) { pc = 14; } else { pc = 12; } continue;
+    case 12:
+      __pc = 12;
+      s.push("On"); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      pc = undefined; continue;
+    case 14:
+      __pc = 14;
+      s.push("Off"); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/GammaManager.toggleDynamicGamma:33")); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","translatable","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      l1 = s.pop(); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      s.push(l1); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","sendMessage","(Lnet/minecraft/class_2561;)V", av); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "toggleStatusEffect()V": function (__ctx, __self, __args) {
+    var l0, l1;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","isStatusEffectEnabled","()Z", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r != 0) { pc = 5; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(1); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      pc = undefined; continue;
+    case 5:
+      __pc = 5;
+      s.push(0); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      l0 = s.pop(); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","setStatusEffectStatus","(Z)V", rv, av); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/statuseffect/StatusEffectManager","updateGammaStatusEffect","()V", []); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      s.push(l0); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      r = s.pop(); if (r == 0) { pc = 15; } else { pc = 13; } continue;
+    case 13:
+      __pc = 13;
+      s.push("On"); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      pc = undefined; continue;
+    case 15:
+      __pc = 15;
+      s.push("Off"); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/GammaManager.toggleStatusEffect:36")); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","translatable","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      l1 = s.pop(); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      s.push(l1); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","sendMessage","(Lnet/minecraft/class_2561;)V", av); pc = 21; continue;
+    case 21:
+      __pc = 21;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "toggleSmoothTransition()V": function (__ctx, __self, __args) {
+    var l0, l1;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","isSmoothTransitionEnabled","()Z", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r != 0) { pc = 5; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(1); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      pc = undefined; continue;
+    case 5:
+      __pc = 5;
+      s.push(0); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      l0 = s.pop(); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","gamma","Lio/github/sjouwer/gammautils/config/ModConfig$GammaSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$GammaSettings","setSmoothTransitionStatus","(Z)V", rv, av); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.push(l0); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      r = s.pop(); if (r == 0) { pc = 14; } else { pc = 12; } continue;
+    case 12:
+      __pc = 12;
+      s.push("On"); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      pc = undefined; continue;
+    case 14:
+      __pc = 14;
+      s.push("Off"); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/GammaManager.toggleSmoothTransition:33")); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","translatable","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      l1 = s.pop(); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      s.push(l1); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","sendMessage","(Lnet/minecraft/class_2561;)V", av); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "startTransitionTimer(DDZ)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4;
+    l0 = __args[0];
+    l2 = __args[1];
+    l4 = __args[2];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.newInstance("java/util/Timer")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(s[s.length - 1]); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      s.pop();
+      throw __ctx.toError(("java.util.Timer.<init>") + ' needs the client internals');
+    case 3:
+      __pc = 3;
+      r = s.pop();
+      __ctx.putStatic("io/github/sjouwer/gammautils/GammaManager","transitionTimer","Ljava/util/Timer;",r); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/GammaManager","transitionTimer","Ljava/util/Timer;")); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      s.push(__ctx.newInstance("io/github/sjouwer/gammautils/GammaManager$1")); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      s.push(s[s.length - 1]); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(l2); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      s.push(l4); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      var av = new Array(3); for (var ai = 2; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/GammaManager$1","<init>","(DDZ)V", rv, av); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      s.push(0n); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      s.push(10); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      var dv = new Array(3); for (var di = 2; di >= 0; di--) dv[di] = s.pop();
+      s.pop();
+      throw __ctx.toError(("java.util.Timer.scheduleAtFixedRate") + ' needs the client internals');
+    case 14:
+      __pc = 14;
       return;
     default: throw new Error("webmc transpiler: pc out of range " + pc);
     } }
@@ -3843,6 +4428,65 @@
     }
   });
   CLASSES["io/github/sjouwer/gammautils/KeyBindings"].__fields = [{"name":"GAMMA_CATEGORY","descriptor":"Lnet/minecraft/class_304$class_11900;"},{"name":"NIGHT_VISION_CATEGORY","descriptor":"Lnet/minecraft/class_304$class_11900;"},{"name":"BASE_KEY","descriptor":"Ljava/lang/String;"},{"name":"GAMMA_TOGGLE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_INCREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_DECREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_MAX","descriptor":"Lnet/minecraft/class_304;"},{"name":"GAMMA_MIN","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_TOGGLE","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_INCREASE","descriptor":"Lnet/minecraft/class_304;"},{"name":"NIGHT_VISION_DECREASE","descriptor":"Lnet/minecraft/class_304;"}];
+  defineClass("io/github/sjouwer/gammautils/NightVisionManager$1", {
+    "<init>(DDZ)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5;
+    l0 = __self;
+    l1 = __args[0];
+    l3 = __args[1];
+    l5 = __args[2];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(l0); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(l1); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop();
+      var target = s.pop();
+      __ctx.putField("io/github/sjouwer/gammautils/NightVisionManager$1","val$valueChangePerTick","D",target, r); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.push(l0); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      s.push(l3); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      r = s.pop();
+      var target = s.pop();
+      __ctx.putField("io/github/sjouwer/gammautils/NightVisionManager$1","val$newValue","D",target, r); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      s.push(l0); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(l5); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      r = s.pop();
+      var target = s.pop();
+      __ctx.putField("io/github/sjouwer/gammautils/NightVisionManager$1","val$showMessage","Z",target, r); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      s.push(l0); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.pop();
+      throw __ctx.toError(("java.util.TimerTask.<init>") + ' needs the client internals');
+    case 11:
+      __pc = 11;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    }
+  });
+  CLASSES["io/github/sjouwer/gammautils/NightVisionManager$1"].__fields = [{"name":"val$valueChangePerTick","descriptor":"D"},{"name":"val$newValue","descriptor":"D"},{"name":"val$showMessage","descriptor":"Z"}];
   defineClass("io/github/sjouwer/gammautils/NightVisionManager", {
     "<init>()V": function (__ctx, __self, __args) {
     var l0;
@@ -4495,6 +5139,491 @@
     default: throw new Error("webmc transpiler: pc out of range " + pc);
     } }
     },
+    "setNightVision(DZZZ)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5, l6;
+    l0 = __args[0];
+    l2 = __args[1];
+    l3 = __args[2];
+    l4 = __args[3];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","transitionTimer","Ljava/util/Timer;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      r = s.pop(); if (r == null) { pc = 4; } else { pc = 2; } continue;
+    case 2:
+      __pc = 2;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","transitionTimer","Ljava/util/Timer;")); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.pop();
+      throw __ctx.toError(("java.util.Timer.cancel") + ' needs the client internals');
+    case 4:
+      __pc = 4;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","isLimiterEnabled","()Z", rv, [])); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      r = s.pop(); if (r == 0) { pc = 21; } else { pc = 7; } continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","getMaximumStrength","()I", rv, [])); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","getMinimumStrength","()I", rv, [])); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      r = s.pop(); var l = s.pop(); if (l <= r) { pc = 21; } else { pc = 12; } continue;
+    case 12:
+      __pc = 12;
+      s.push(l0); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","getMinimumStrength","()I", rv, [])); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      r = s.pop(); s.push(Number(r)); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","getMaximumStrength","()I", rv, [])); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      r = s.pop(); s.push(Number(r)); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      var dv = new Array(3); for (var di = 2; di >= 0; di--) dv[di] = s.pop();
+      throw __ctx.toError(("java.lang.Math.clamp") + ' needs the client internals');
+    case 20:
+      __pc = 20;
+      l0 = s.pop(); pc = 21; continue;
+    case 21:
+      __pc = 21;
+      s.push(l2); pc = 22; continue;
+    case 22:
+      __pc = 22;
+      r = s.pop(); if (r == 0) { pc = 48; } else { pc = 23; } continue;
+    case 23:
+      __pc = 23;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 24; continue;
+    case 24:
+      __pc = 24;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","isSmoothTransitionEnabled","()Z", rv, [])); pc = 25; continue;
+    case 25:
+      __pc = 25;
+      r = s.pop(); if (r != 0) { pc = 28; } else { pc = 26; } continue;
+    case 26:
+      __pc = 26;
+      s.push(l4); pc = 27; continue;
+    case 27:
+      __pc = 27;
+      r = s.pop(); if (r == 0) { pc = 48; } else { pc = 28; } continue;
+    case 28:
+      __pc = 28;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 29; continue;
+    case 29:
+      __pc = 29;
+      s.push(l4); pc = 30; continue;
+    case 30:
+      __pc = 30;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","getTransitionSpeed","(Z)D", rv, av)); pc = 31; continue;
+    case 31:
+      __pc = 31;
+      s.push(100); pc = 32; continue;
+    case 32:
+      __pc = 32;
+      r = s.pop(); s.push(s.pop() / r); pc = 33; continue;
+    case 33:
+      __pc = 33;
+      l5 = s.pop(); pc = 34; continue;
+    case 34:
+      __pc = 34;
+      s.push(l0); pc = 35; continue;
+    case 35:
+      __pc = 35;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 36; continue;
+    case 36:
+      __pc = 36;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","getValue","()D", rv, [])); pc = 37; continue;
+    case 37:
+      __pc = 37;
+      r = s.pop(); var q = s.pop(); s.push(q > r ? 1 : (q < r ? -1 : 0)); pc = 38; continue;
+    case 38:
+      __pc = 38;
+      r = s.pop(); if (r >= 0) { pc = 43; } else { pc = 39; } continue;
+    case 39:
+      __pc = 39;
+      s.push(l5); pc = 40; continue;
+    case 40:
+      __pc = 40;
+      s.push(-1); pc = 41; continue;
+    case 41:
+      __pc = 41;
+      r = s.pop(); s.push(s.pop() * r); pc = 42; continue;
+    case 42:
+      __pc = 42;
+      l5 = s.pop(); pc = 43; continue;
+    case 43:
+      __pc = 43;
+      s.push(l0); pc = 44; continue;
+    case 44:
+      __pc = 44;
+      s.push(l5); pc = 45; continue;
+    case 45:
+      __pc = 45;
+      s.push(l3); pc = 46; continue;
+    case 46:
+      __pc = 46;
+      var av = new Array(3); for (var ai = 2; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/NightVisionManager","startTransitionTimer","(DDZ)V", av); pc = 47; continue;
+    case 47:
+      __pc = 47;
+      pc = undefined; continue;
+    case 48:
+      __pc = 48;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 49; continue;
+    case 49:
+      __pc = 49;
+      s.push(l0); pc = 50; continue;
+    case 50:
+      __pc = 50;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","setValue","(D)V", rv, av); pc = 51; continue;
+    case 51:
+      __pc = 51;
+      s.push(l0); pc = 52; continue;
+    case 52:
+      __pc = 52;
+      s.push(0); pc = 53; continue;
+    case 53:
+      __pc = 53;
+      r = s.pop(); var q = s.pop(); s.push(q > r ? 1 : (q < r ? -1 : 0)); pc = 54; continue;
+    case 54:
+      __pc = 54;
+      r = s.pop(); if (r != 0) { pc = 57; } else { pc = 55; } continue;
+    case 55:
+      __pc = 55;
+      s.push(0); pc = 56; continue;
+    case 56:
+      __pc = 56;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/NightVisionManager","setNightVisionStatus","(Z)V", av); pc = 57; continue;
+    case 57:
+      __pc = 57;
+      s.push(l3); pc = 58; continue;
+    case 58:
+      __pc = 58;
+      r = s.pop(); if (r == 0) { pc = 60; } else { pc = 59; } continue;
+    case 59:
+      __pc = 59;
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","showNightVisionStatusHudMessage","()V", []); pc = 60; continue;
+    case 60:
+      __pc = 60;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 61; continue;
+    case 61:
+      __pc = 61;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","isToggleUpdateEnabled","()Z", rv, [])); pc = 62; continue;
+    case 62:
+      __pc = 62;
+      r = s.pop(); if (r == 0) { pc = 72; } else { pc = 63; } continue;
+    case 63:
+      __pc = 63;
+      s.push(l0); pc = 64; continue;
+    case 64:
+      __pc = 64;
+      s.push(0); pc = 65; continue;
+    case 65:
+      __pc = 65;
+      r = s.pop(); var q = s.pop(); s.push(q > r ? 1 : (q < r ? -1 : 0)); pc = 66; continue;
+    case 66:
+      __pc = 66;
+      r = s.pop(); if (r == 0) { pc = 72; } else { pc = 67; } continue;
+    case 67:
+      __pc = 67;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 68; continue;
+    case 68:
+      __pc = 68;
+      s.push(l0); pc = 69; continue;
+    case 69:
+      __pc = 69;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("java/lang/Math","round","(D)J", av)); pc = 70; continue;
+    case 70:
+      __pc = 70;
+      r = s.pop(); s.push(Number(r)); pc = 71; continue;
+    case 71:
+      __pc = 71;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","setToggledValue","(I)V", rv, av); pc = 72; continue;
+    case 72:
+      __pc = 72;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "toggleDynamicNightVision()V": function (__ctx, __self, __args) {
+    var l0, l1;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","isDynamicEnabled","()Z", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r != 0) { pc = 5; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(1); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      pc = undefined; continue;
+    case 5:
+      __pc = 5;
+      s.push(0); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      l0 = s.pop(); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","setDynamicStatus","(Z)V", rv, av); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.push(l0); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      r = s.pop(); if (r == 0) { pc = 14; } else { pc = 12; } continue;
+    case 12:
+      __pc = 12;
+      s.push("On"); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      pc = undefined; continue;
+    case 14:
+      __pc = 14;
+      s.push("Off"); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/NightVisionManager.toggleDynamicNightVision:33")); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","translatable","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      l1 = s.pop(); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      s.push(l1); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","sendMessage","(Lnet/minecraft/class_2561;)V", av); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "toggleStatusEffect()V": function (__ctx, __self, __args) {
+    var l0, l1;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","isStatusEffectEnabled","()Z", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r != 0) { pc = 5; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(1); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      pc = undefined; continue;
+    case 5:
+      __pc = 5;
+      s.push(0); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      l0 = s.pop(); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","setStatusEffectStatus","(Z)V", rv, av); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/statuseffect/StatusEffectManager","updateNightVision","()V", []); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      s.push(l0); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      r = s.pop(); if (r == 0) { pc = 15; } else { pc = 13; } continue;
+    case 13:
+      __pc = 13;
+      s.push("On"); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      pc = undefined; continue;
+    case 15:
+      __pc = 15;
+      s.push("Off"); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/NightVisionManager.toggleStatusEffect:36")); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","translatable","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      l1 = s.pop(); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      s.push(l1); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","sendMessage","(Lnet/minecraft/class_2561;)V", av); pc = 21; continue;
+    case 21:
+      __pc = 21;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "toggleSmoothTransition()V": function (__ctx, __self, __args) {
+    var l0, l1;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","isSmoothTransitionEnabled","()Z", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r != 0) { pc = 5; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(1); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      pc = undefined; continue;
+    case 5:
+      __pc = 5;
+      s.push(0); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      l0 = s.pop(); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","nightVision","Lio/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings;")); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/config/ModConfig$NightVisionSettings","setSmoothTransitionStatus","(Z)V", rv, av); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.push(l0); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      r = s.pop(); if (r == 0) { pc = 14; } else { pc = 12; } continue;
+    case 12:
+      __pc = 12;
+      s.push("On"); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      pc = undefined; continue;
+    case 14:
+      __pc = 14;
+      s.push("Off"); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/NightVisionManager.toggleSmoothTransition:33")); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","translatable","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      l1 = s.pop(); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      s.push(l1); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/InfoProvider","sendMessage","(Lnet/minecraft/class_2561;)V", av); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
     "setNightVisionStatus(Z)V": function (__ctx, __self, __args) {
     var l0;
     l0 = __args[0];
@@ -4518,6 +5647,69 @@
       __ctx.invokeStatic("io/github/sjouwer/gammautils/statuseffect/StatusEffectManager","updateNightVision","()V", []); pc = 4; continue;
     case 4:
       __pc = 4;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "startTransitionTimer(DDZ)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4;
+    l0 = __args[0];
+    l2 = __args[1];
+    l4 = __args[2];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.newInstance("java/util/Timer")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(s[s.length - 1]); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      s.pop();
+      throw __ctx.toError(("java.util.Timer.<init>") + ' needs the client internals');
+    case 3:
+      __pc = 3;
+      r = s.pop();
+      __ctx.putStatic("io/github/sjouwer/gammautils/NightVisionManager","transitionTimer","Ljava/util/Timer;",r); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/NightVisionManager","transitionTimer","Ljava/util/Timer;")); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      s.push(__ctx.newInstance("io/github/sjouwer/gammautils/NightVisionManager$1")); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      s.push(s[s.length - 1]); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(l2); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(l0); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      s.push(l4); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      var av = new Array(3); for (var ai = 2; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("io/github/sjouwer/gammautils/NightVisionManager$1","<init>","(DDZ)V", rv, av); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      s.push(0n); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      s.push(10); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      var dv = new Array(3); for (var di = 2; di >= 0; di--) dv[di] = s.pop();
+      s.pop();
+      throw __ctx.toError(("java.util.Timer.scheduleAtFixedRate") + ' needs the client internals');
+    case 14:
+      __pc = 14;
       return;
     default: throw new Error("webmc transpiler: pc out of range " + pc);
     } }
@@ -6074,6 +7266,89 @@
       return;
     default: throw new Error("webmc transpiler: pc out of range " + pc);
     } }
+    },
+    "getPercentageText(Lnet/minecraft/class_1293;FFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5;
+    l0 = __args[0];
+    l1 = __args[1];
+    l2 = __args[2];
+    l3 = __args[3];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(l0); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/world/effect/MobEffectInstance","getEffect","()Lnet/minecraft/class_6880;", rv, [])); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      l4 = s.pop(); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.push(l4); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/core/Holder","value","()Ljava/lang/Object;", rv, [])); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      s.push(__ctx.isInstance(s.pop(), "io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect")); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      r = s.pop(); if (r == 0) { pc = 20; } else { pc = 7; } continue;
+    case 7:
+      __pc = 7;
+      s.push(l4); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/statuseffect/StatusEffectManager","NIGHT_VISION","Lnet/minecraft/class_6880$class_6881;")); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/core/Holder","equals","(Ljava/lang/Object;)Z", rv, av)); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      r = s.pop(); if (r == 0) { pc = 13; } else { pc = 11; } continue;
+    case 11:
+      __pc = 11;
+      s.push(__ctx.invokeStatic("io/github/sjouwer/gammautils/NightVisionManager","getNightVisionPercentage","()I", [])); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      pc = undefined; continue;
+    case 13:
+      __pc = 13;
+      s.push(__ctx.invokeStatic("io/github/sjouwer/gammautils/GammaManager","getGammaPercentage","()I", [])); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      l5 = s.pop(); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      s.push(l3); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      s.push(l5); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil.getPercentageText:46")); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/network/chat/Component","literal","(Ljava/lang/String;)Lnet/minecraft/class_5250;", av)); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      __ctx.invoke("org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable","setReturnValue","(Ljava/lang/Object;)V", rv, av); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
     }
   });
   CLASSES["io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil"].__fields = [];
@@ -6133,6 +7408,57 @@
       s.push(0); pc = 1; continue;
     case 1:
       __pc = 1;
+      return s.pop();
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "method_5559()Ljava/lang/String;": function (__ctx, __self, __args) {
+    var l0;
+    l0 = __self;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(l0); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(__ctx.getField("io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect","key","Ljava/lang/String;", s.pop())); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect.method_5559:4")); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      return s.pop();
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "getIdentifier()Lnet/minecraft/class_2960;": function (__ctx, __self, __args) {
+    var l0;
+    l0 = __self;
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push("gammautils"); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(l0); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      s.push(__ctx.getField("io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect","key","Ljava/lang/String;", s.pop())); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.push(__ctx.unsupportedLambda("io/github/sjouwer/gammautils/statuseffect/GammaStatusEffect.getIdentifier:6")); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      var av = new Array(2); for (var ai = 1; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("net/minecraft/resources/Identifier","fromNamespaceAndPath","(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraft/class_2960;", av)); pc = 5; continue;
+    case 5:
+      __pc = 5;
       return s.pop();
     default: throw new Error("webmc transpiler: pc out of range " + pc);
     } }
@@ -7164,6 +8490,312 @@
   });
   CLASSES["io/github/sjouwer/gammautils/util/InfoProvider"].__fields = [{"name":"client","descriptor":"Lnet/minecraft/class_310;"},{"name":"config","descriptor":"Lio/github/sjouwer/gammautils/config/ModConfig;"}];
   defineClass("io/github/sjouwer/gammautils/util/LightLevelUtil", {
+    "getAverageLightLevel(IF)Ljava/lang/Double;": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5, l6, l7;
+    l0 = __args[0];
+    l1 = __args[1];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","client","Lnet/minecraft/class_310;")); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      s.push(__ctx.getField("net/minecraft/client/Minecraft","field_1687","Lnet/minecraft/class_638;", s.pop())); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      r = s.pop(); if (r == null) { pc = 6; } else { pc = 3; } continue;
+    case 3:
+      __pc = 3;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","client","Lnet/minecraft/class_310;")); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      s.push(__ctx.getField("net/minecraft/client/Minecraft","field_1724","Lnet/minecraft/class_746;", s.pop())); pc = 5; continue;
+    case 5:
+      __pc = 5;
+      r = s.pop(); if (r != null) { pc = 9; } else { pc = 6; } continue;
+    case 6:
+      __pc = 6;
+      s.push(15); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("java/lang/Double","valueOf","(D)Ljava/lang/Double;", av)); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      return s.pop();
+    case 9:
+      __pc = 9;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","client","Lnet/minecraft/class_310;")); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.push(__ctx.getField("net/minecraft/client/Minecraft","field_1724","Lnet/minecraft/class_746;", s.pop())); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/client/player/LocalPlayer","blockPosition","()Lnet/minecraft/class_2338;", rv, [])); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/core/BlockPos","above","()Lnet/minecraft/class_2338;", rv, [])); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      l2 = s.pop(); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      s.push(__ctx.newInstance("java/util/ArrayList")); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      s.push(s[s.length - 1]); pc = 16; continue;
+    case 16:
+      __pc = 16;
+      var rv = s.pop();
+      __ctx.invoke("java/util/ArrayList","<init>","()V", rv, []); pc = 17; continue;
+    case 17:
+      __pc = 17;
+      l3 = s.pop(); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      s.push(l3); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      s.push(l2); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      s.push(l1); pc = 21; continue;
+    case 21:
+      __pc = 21;
+      var av = new Array(2); for (var ai = 1; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","getLightLevel","(Lnet/minecraft/class_2338;F)D", av)); pc = 22; continue;
+    case 22:
+      __pc = 22;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("java/lang/Double","valueOf","(D)Ljava/lang/Double;", av)); pc = 23; continue;
+    case 23:
+      __pc = 23;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("java/util/List","add","(Ljava/lang/Object;)Z", rv, av)); pc = 24; continue;
+    case 24:
+      __pc = 24;
+      s.pop(); pc = 25; continue;
+    case 25:
+      __pc = 25;
+      s.push(l0); pc = 26; continue;
+    case 26:
+      __pc = 26;
+      r = s.pop(); if (r <= 0) { pc = 49; } else { pc = 27; } continue;
+    case 27:
+      __pc = 27;
+      s.push(__ctx.invokeStatic("net/minecraft/core/Direction","values","()[Lnet/minecraft/class_2350;", [])); pc = 28; continue;
+    case 28:
+      __pc = 28;
+      l4 = s.pop(); pc = 29; continue;
+    case 29:
+      __pc = 29;
+      s.push(l4); pc = 30; continue;
+    case 30:
+      __pc = 30;
+      s.push(s.pop().length); pc = 31; continue;
+    case 31:
+      __pc = 31;
+      l5 = s.pop(); pc = 32; continue;
+    case 32:
+      __pc = 32;
+      s.push(0); pc = 33; continue;
+    case 33:
+      __pc = 33;
+      l6 = s.pop(); pc = 34; continue;
+    case 34:
+      __pc = 34;
+      s.push(l6); pc = 35; continue;
+    case 35:
+      __pc = 35;
+      s.push(l5); pc = 36; continue;
+    case 36:
+      __pc = 36;
+      r = s.pop(); var l = s.pop(); if (l >= r) { pc = 49; } else { pc = 37; } continue;
+    case 37:
+      __pc = 37;
+      s.push(l4); pc = 38; continue;
+    case 38:
+      __pc = 38;
+      s.push(l6); pc = 39; continue;
+    case 39:
+      __pc = 39;
+      r = s.pop() | 0; s.push(s.pop()[r]); pc = 40; continue;
+    case 40:
+      __pc = 40;
+      l7 = s.pop(); pc = 41; continue;
+    case 41:
+      __pc = 41;
+      s.push(l3); pc = 42; continue;
+    case 42:
+      __pc = 42;
+      s.push(l2); pc = 43; continue;
+    case 43:
+      __pc = 43;
+      s.push(l7); pc = 44; continue;
+    case 44:
+      __pc = 44;
+      s.push(l0); pc = 45; continue;
+    case 45:
+      __pc = 45;
+      s.push(l1); pc = 46; continue;
+    case 46:
+      __pc = 46;
+      var av = new Array(5); for (var ai = 4; ai >= 0; ai--) av[ai] = s.pop();
+      __ctx.invokeStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","addLightLevelsInDirection","(Ljava/util/List;Lnet/minecraft/class_2338;Lnet/minecraft/class_2350;IF)V", av); pc = 47; continue;
+    case 47:
+      __pc = 47;
+      l6 = (l6 | 0) + 1; pc = 48; continue;
+    case 48:
+      __pc = 48;
+      pc = undefined; continue;
+    case 49:
+      __pc = 49;
+      s.push(l3); pc = 50; continue;
+    case 50:
+      __pc = 50;
+      var rv = s.pop();
+      s.push(__ctx.invoke("java/util/List","stream","()Ljava/util/stream/Stream;", rv, [])); pc = 51; continue;
+    case 51:
+      __pc = 51;
+      var dv = new Array(1); for (var di = 0; di >= 0; di--) dv[di] = s.pop();
+      s.push(__ctx.invoke("io/github/sjouwer/gammautils/util/LightLevelUtil","lambda$getAverageLightLevel$0","(Ljava/lang/Double;)D", null, dv)); pc = 52; continue;
+    case 52:
+      __pc = 52;
+      var dv = new Array(1); for (var di = 0; di >= 0; di--) dv[di] = s.pop();
+      s.pop();
+      throw __ctx.toError(("java.util.stream.Stream.mapToDouble") + ' needs the client internals');
+    case 53:
+      __pc = 53;
+      s.pop();
+      throw __ctx.toError(("java.util.stream.DoubleStream.average") + ' needs the client internals');
+    case 54:
+      __pc = 54;
+      s.push(15); pc = 55; continue;
+    case 55:
+      __pc = 55;
+      var dv = new Array(1); for (var di = 0; di >= 0; di--) dv[di] = s.pop();
+      s.pop();
+      throw __ctx.toError(("java.util.OptionalDouble.orElse") + ' needs the client internals');
+    case 56:
+      __pc = 56;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("java/lang/Double","valueOf","(D)Ljava/lang/Double;", av)); pc = 57; continue;
+    case 57:
+      __pc = 57;
+      return s.pop();
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
+    "addLightLevelsInDirection(Ljava/util/List;Lnet/minecraft/class_2338;Lnet/minecraft/class_2350;IF)V": function (__ctx, __self, __args) {
+    var l0, l1, l2, l3, l4, l5, l6;
+    l0 = __args[0];
+    l1 = __args[1];
+    l2 = __args[2];
+    l3 = __args[3];
+    l4 = __args[4];
+    var s = [];
+    var pc = 0;
+    var __pc = 0;
+    while (true) { switch (pc) {
+    case 0:
+      __pc = 0;
+      s.push(0); pc = 1; continue;
+    case 1:
+      __pc = 1;
+      l5 = s.pop(); pc = 2; continue;
+    case 2:
+      __pc = 2;
+      s.push(l5); pc = 3; continue;
+    case 3:
+      __pc = 3;
+      s.push(l3); pc = 4; continue;
+    case 4:
+      __pc = 4;
+      r = s.pop(); var l = s.pop(); if (l >= r) { pc = 26; } else { pc = 5; } continue;
+    case 5:
+      __pc = 5;
+      s.push(l1); pc = 6; continue;
+    case 6:
+      __pc = 6;
+      s.push(l2); pc = 7; continue;
+    case 7:
+      __pc = 7;
+      s.push(l5); pc = 8; continue;
+    case 8:
+      __pc = 8;
+      var av = new Array(2); for (var ai = 1; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/core/BlockPos","relative","(Lnet/minecraft/class_2350;I)Lnet/minecraft/class_2338;", rv, av)); pc = 9; continue;
+    case 9:
+      __pc = 9;
+      l6 = s.pop(); pc = 10; continue;
+    case 10:
+      __pc = 10;
+      s.push(__ctx.getStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","client","Lnet/minecraft/class_310;")); pc = 11; continue;
+    case 11:
+      __pc = 11;
+      s.push(__ctx.getField("net/minecraft/client/Minecraft","field_1687","Lnet/minecraft/class_638;", s.pop())); pc = 12; continue;
+    case 12:
+      __pc = 12;
+      s.push(l6); pc = 13; continue;
+    case 13:
+      __pc = 13;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/client/multiplayer/ClientLevel","getBlockState","(Lnet/minecraft/class_2338;)Lnet/minecraft/class_2680;", rv, av)); pc = 14; continue;
+    case 14:
+      __pc = 14;
+      var rv = s.pop();
+      s.push(__ctx.invoke("net/minecraft/world/level/block/state/BlockState","isAir","()Z", rv, [])); pc = 15; continue;
+    case 15:
+      __pc = 15;
+      r = s.pop(); if (r != 0) { pc = 17; } else { pc = 16; } continue;
+    case 16:
+      __pc = 16;
+      pc = undefined; continue;
+    case 17:
+      __pc = 17;
+      s.push(l0); pc = 18; continue;
+    case 18:
+      __pc = 18;
+      s.push(l6); pc = 19; continue;
+    case 19:
+      __pc = 19;
+      s.push(l4); pc = 20; continue;
+    case 20:
+      __pc = 20;
+      var av = new Array(2); for (var ai = 1; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("io/github/sjouwer/gammautils/util/LightLevelUtil","getLightLevel","(Lnet/minecraft/class_2338;F)D", av)); pc = 21; continue;
+    case 21:
+      __pc = 21;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      s.push(__ctx.invokeStatic("java/lang/Double","valueOf","(D)Ljava/lang/Double;", av)); pc = 22; continue;
+    case 22:
+      __pc = 22;
+      var av = new Array(1); for (var ai = 0; ai >= 0; ai--) av[ai] = s.pop();
+      var rv = s.pop();
+      s.push(__ctx.invoke("java/util/List","add","(Ljava/lang/Object;)Z", rv, av)); pc = 23; continue;
+    case 23:
+      __pc = 23;
+      s.pop(); pc = 24; continue;
+    case 24:
+      __pc = 24;
+      l5 = (l5 | 0) + 1; pc = 25; continue;
+    case 25:
+      __pc = 25;
+      pc = undefined; continue;
+    case 26:
+      __pc = 26;
+      return;
+    default: throw new Error("webmc transpiler: pc out of range " + pc);
+    } }
+    },
     "getLightLevel(Lnet/minecraft/class_2338;F)D": function (__ctx, __self, __args) {
     var l0, l1, l2, l3, l4, l5, l6;
     l0 = __args[0];
@@ -7382,7 +9014,17 @@
       newInstance: function (owner) { var instance = Object.create(null); instance.__class = owner; instance.__fields = FIELD_DEFAULTS[owner] || []; return instance; },
       cast: function (value, type) { return value; },
       isInstance: function (value, type) { return value != null; },
-      toError: function (value) { return value instanceof Error ? value : new Error(String(value)); }
+      toError: function (value) { return value instanceof Error ? value : new Error(String(value)); },
+      unsupportedCall: function (label) {
+        var fn = function () { throw new Error('webmc-transpiler: ' + label + ' has no translation'); };
+        fn.__webmcUnsupported = label;
+        return fn;
+      },
+      unsupportedLambda: function (label) {
+        var fn = function () { throw new Error('webmc-transpiler: a bootstrapped call in ' + label + ' has no translation'); };
+        fn.__webmcUnsupported = label;
+        return fn;
+      }
     };
     var STATICS = {};
     function call(owner, name, desc, self, args, isStatic) {
@@ -7558,6 +9200,86 @@
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(Z)V": function (api, self, a) { self.returnValue = a[0]; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(D)V": function (api, self, a) { self.returnValue = a[0]; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable.setReturnValue(F)V": function (api, self, a) { self.returnValue = a[0]; },
+      "java/lang/Record.<init>()V": function () {},
+      "java/lang/Object.<clinit>()V": function () {},
+      "java/lang/StringBuilder.<init>(Ljava/lang/CharSequence;)V": function (api, self, a) { self.__sb = [String(a[0])]; },
+      "java/lang/IllegalArgumentException.<init>()V": function (api, self) { self.__webmcError = 'IllegalArgumentException'; self.message = ''; },
+      "java/lang/IllegalArgumentException.<init>(Ljava/lang/String;)V": function (api, self, a) { self.__webmcError = 'IllegalArgumentException'; self.message = a[0] == null ? '' : String(a[0]); },
+      "java/lang/IllegalStateException.<init>()V": function (api, self) { self.__webmcError = 'IllegalStateException'; self.message = ''; },
+      "java/lang/IllegalStateException.<init>(Ljava/lang/String;)V": function (api, self, a) { self.__webmcError = 'IllegalStateException'; self.message = a[0] == null ? '' : String(a[0]); },
+      "java/lang/RuntimeException.<init>()V": function (api, self) { self.__webmcError = 'RuntimeException'; self.message = ''; },
+      "java/lang/RuntimeException.<init>(Ljava/lang/String;)V": function (api, self, a) { self.__webmcError = 'RuntimeException'; self.message = a[0] == null ? '' : String(a[0]); },
+      "java/lang/UnsupportedOperationException.<init>()V": function (api, self) { self.__webmcError = 'UnsupportedOperationException'; self.message = ''; },
+      "java/lang/UnsupportedOperationException.<init>(Ljava/lang/String;)V": function (api, self, a) { self.__webmcError = 'UnsupportedOperationException'; self.message = a[0] == null ? '' : String(a[0]); },
+      "java/lang/AssertionError.<init>()V": function (api, self) { self.__webmcError = 'AssertionError'; self.message = ''; },
+      "java/lang/AssertionError.<init>(Ljava/lang/Object;)V": function (api, self, a) { self.__webmcError = 'AssertionError'; self.message = String(a[0]); },
+      "java/lang/NullPointerException.<init>()V": function (api, self) { self.__webmcError = 'NullPointerException'; self.message = ''; },
+      "java/lang/NullPointerException.<init>(Ljava/lang/String;)V": function (api, self, a) { self.__webmcError = 'NullPointerException'; self.message = a[0] == null ? '' : String(a[0]); },
+      "java/lang/Error.<init>(Ljava/lang/String;)V": function (api, self, a) { self.__webmcError = 'Error'; self.message = String(a[0]); },
+      "java/lang/Throwable.getMessage()Ljava/lang/String;": function (api, self) { return self && self.message != null ? self.message : null; },
+      "java/lang/Throwable.getCause()Ljava/lang/Throwable;": function (api, self) { return self ? (self.cause || null) : null; },
+      "java/lang/Throwable.fillInStackTrace()Ljava/lang/Throwable;": function (api, self) { return self; },
+      "java/lang/Throwable.printStackTrace()V": function (api, self) { api.log(String(self && self.message || self)); },
+      "java/util/Objects.requireNonNull(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;": function (api, self, a) { if (a[0] == null) { throw new Error(a[1] == null ? 'null' : String(a[1])); } return a[0]; },
+      "java/util/Objects.requireNonNull(Ljava/lang/Object;Ljava/util/function/Supplier;)Ljava/lang/Object;": function (api, self, a) { if (a[0] == null) { throw new Error(a[1] ? String(a[1]()) : 'null'); } return a[0]; },
+      "java/util/Objects.isNull(Ljava/lang/Object;)Z": function (api, self, a) { return a[0] == null; },
+      "java/util/Objects.nonNull(Ljava/lang/Object;)Z": function (api, self, a) { return a[0] != null; },
+      "java/util/Objects.toString(Ljava/lang/Object;)Ljava/lang/String;": function (api, self, a) { return String(a[0]); },
+      "java/util/Objects.hash([Ljava/lang/Object;)I": function (api, self, a) { var h = 0; (a[0] || []).forEach(function (v) { h = (h * 31 + String(v).length) | 0; }); return h; },
+      "java/util/List.contains(Ljava/lang/Object;)Z": function (api, self, a) { return (self || []).indexOf(a[0]) >= 0; },
+      "java/util/List.indexOf(Ljava/lang/Object;)I": function (api, self, a) { return (self || []).indexOf(a[0]); },
+      "java/util/List.clear()V": function (api, self) { if (self && self.length) { self.length = 0; } else if (self) { self.__list = []; } },
+      "java/util/List.addAll(Ljava/util/Collection;)Z": function (api, self, a) { var src = a[0] && a[0].__list ? a[0].__list : (a[0] || []); for (var i = 0; i < src.length; i++) { self.push(src[i]); } return src.length > 0; },
+      "java/util/List.add(I)V": function (api, self, a) { (self.__list = self.__list || []).push(a[0]); },
+      "java/util/List.of([Ljava/lang/Object;)Ljava/util/List;": function (api, self, a) { return Array.prototype.slice.call(a[0] || []); },
+      "java/util/List.copyOf(Ljava/util/Collection;)Ljava/util/List;": function (api, self, a) { return Array.prototype.slice.call(a[0] || []); },
+      "java/util/List.remove(Ljava/lang/Object;)Z": function (api, self, a) { var i = (self || []).indexOf(a[0]); if (i < 0) { return false; } self.splice(i, 1); return true; },
+      "java/util/Set.iterator()Ljava/util/Iterator;": function (api, self) { return { __list: Array.from(self || []), __i: 0 }; },
+      "java/util/Set.isEmpty()Z": function (api, self) { return !self || !self.length; },
+      "java/util/Collection.size()I": function (api, self) { return (self && self.length) || 0; },
+      "java/util/Collection.contains(Ljava/lang/Object;)Z": function (api, self, a) { return (self || []).indexOf(a[0]) >= 0; },
+      "java/util/Collection.add(Ljava/lang/Object;)Z": function (api, self, a) { self.push(a[0]); return true; },
+      "java/util/Map.isEmpty()Z": function (api, self) { return !self || self.size === 0; },
+      "java/util/Map.clear()V": function (api, self) { if (self && self.clear) { self.clear(); } },
+      "java/util/Map.computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;": function (api, self, a) { var current = self.get(a[0]); if (current == null) { current = a[1](a[0]); self.set(a[0], current); } return current; },
+      "java/util/Map.values()Ljava/util/Collection;": function (api, self) { return self ? Array.from(self.values()) : []; },
+      "java/util/Map.keySet()Ljava/util/Set;": function (api, self) { return self ? Array.from(self.keys()) : []; },
+      "java/util/Map.entrySet()Ljava/util/Set;": function (api, self) { var out = []; if (self) { self.forEach(function (v, k) { out.push({ key: k, value: v, getKey: function () { return k; }, getValue: function () { return v; } }); }); } return out; },
+      "java/util/Map.forEach(Ljava/util/function/BiConsumer;)V": function (api, self, a) { if (self) { self.forEach(function (v, k) { a[0](k, v); }); } },
+      "java/lang/Double.valueOf(D)Ljava/lang/Double;": function (api, self, a) { return Number(a[0]); },
+      "java/lang/Float.valueOf(F)Ljava/lang/Float;": function (api, self, a) { return Number(a[0]); },
+      "java/lang/Long.valueOf(J)Ljava/lang/Long;": function (api, self, a) { return Number(a[0]); },
+      "java/lang/Character.valueOf(C)Ljava/lang/Character;": function (api, self, a) { return a[0]; },
+      "java/lang/Character.toString(C)Ljava/lang/String;": function (api, self, a) { return String.fromCharCode(a[0]); },
+      "java/lang/Integer.toString(I)Ljava/lang/String;": function (api, self, a) { return String(a[0]); },
+      "java/lang/Double.toString(D)Ljava/lang/String;": function (api, self, a) { return String(a[0]); },
+      "java/lang/String.valueOf(D)Ljava/lang/String;": function (api, self, a) { return String(a[0]); },
+      "java/lang/String.valueOf(J)Ljava/lang/String;": function (api, self, a) { return String(a[0]); },
+      "java/lang/String.valueOf(C)Ljava/lang/String;": function (api, self, a) { return String.fromCharCode(a[0]); },
+      "java/lang/String.valueOf(Z)Ljava/lang/String;": function (api, self, a) { return String(a[0]); },
+      "java/lang/String.formatted([Ljava/lang/Object;)Ljava/lang/String;": function (api, self, a) { var i = 0; return String(self).replace(/%[sdf]/g, function () { return String((a[0] || [])[i++]); }); },
+      "java/lang/String.strip()Ljava/lang/String;": function (api, self) { return String(self).trim(); },
+      "java/lang/String.isBlank()Z": function (api, self) { return String(self).trim().length === 0; },
+      "java/lang/String.repeat(I)Ljava/lang/String;": function (api, self, a) { return String(self).repeat(Math.max(0, a[0] | 0)); },
+      "java/lang/String.toCharArray()[C": function (api, self) { var t = String(self); var out = []; for (var i = 0; i < t.length; i++) { out.push(t.charCodeAt(i)); } return out; },
+      "java/lang/String.getBytes()[B": function (api, self) { var t = String(self); var out = []; for (var i = 0; i < t.length; i++) { out.push(t.charCodeAt(i) & 0xff); } return out; },
+      "java/lang/Math.random()D": function () { return Math.random(); },
+      "java/lang/Math.signum(F)F": function (api, self, a) { return Math.sign(a[0]); },
+      "java/lang/Math.hypot(DD)D": function (api, self, a) { return Math.hypot(a[0], a[1]); },
+      "java/util/Arrays.stream([Ljava/lang/Object;)Ljava/util/stream/Stream;": function (api, self, a) { return a[0] || []; },
+      "java/util/List.stream()Ljava/util/stream/Stream;": function (api, self) { return self || []; },
+      "java/util/Collection.stream()Ljava/util/stream/Stream;": function (api, self) { return self || []; },
+      "java/util/stream/Stream.map(Ljava/util/function/Function;)Ljava/util/stream/Stream;": function (api, self, a) { return (self || []).map(function (v) { return a[0](v); }); },
+      "java/util/stream/Stream.filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;": function (api, self, a) { return (self || []).filter(function (v) { return a[0](v); }); },
+      "java/util/stream/Stream.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (v) { a[0](v); }); },
+      "java/util/stream/Stream.toList()Ljava/util/List;": function (api, self) { return (self || []).slice(); },
+      "java/util/stream/Stream.count()J": function (api, self) { return (self || []).length; },
+      "java/util/stream/Stream.findFirst()Ljava/util/Optional;": function (api, self) { return { value: (self || [])[0] == null ? null : (self || [])[0] }; },
+      "java/util/stream/Collectors.toList()Ljava/util/stream/Collector;": function () { return null; },
+      "java/util/Arrays.copyOf([Ljava/lang/Object;I)[Ljava/lang/Object;": function (api, self, a) { var src = a[0] || []; var out = src.slice(0, a[1]); while (out.length < a[1]) { out.push(null); } return out; },
+      "java/lang/System.exit(I)V": function (api) { api.log('the mod called System.exit; ignored'); },
+      "java/lang/Thread.currentThread()Ljava/lang/Thread;": function () { return {}; },
+      "java/lang/Thread.sleep(J)V": function () {},
       "java/lang/Object.<init>()V": function () {},
       "java/lang/Object.toString()Ljava/lang/String;": function (api, self) { return String(self); },
       "java/lang/Object.hashCode()I": function (api, self) { return 0; },
@@ -7702,6 +9424,6 @@
         accessors: [{"kind":"invoker","name":"getSprite","rawName":"method_4608","descriptor":"(Lnet/minecraft/class_2960;)Lnet/minecraft/class_1058;","method":"invokeGetSprite"}]
       });
     }
-    api.log('converted: ' + SOURCE + ' — ' + "170 methods translated, 21 not");
+    api.log('converted: ' + SOURCE + ' — ' + "187 methods translated, 4 not");
   });
 })();

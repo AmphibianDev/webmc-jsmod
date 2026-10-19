@@ -194,6 +194,7 @@
       suspended: mod.suspended,
       errors: mod.errors.slice(-6),
       from: mod.package || "index",
+      patches: internal.patches ? internal.patches.plans.filter(function (plan) { return plan.mod === mod.id; }).length : 0,
       trusted: !!mod.trusted,
       loadedAt: mod.loadedAt
     };

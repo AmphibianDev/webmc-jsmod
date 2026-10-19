@@ -153,9 +153,13 @@
    */
   var applied = [];
   var refused = [];
+  var rolledBack = 0;
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
   function applyPatch(plan) {
+    if ((internal.boot && internal.boot.internals === false) || WebMC.__internal.internalsDisabled) {
+      return { ok: false, why: "the internals layer is switched off for this page (?internals=off)" };
+    }
     if (!state.available) { detect(); }
     if (!state.available) { return { ok: false, why: state.reason }; }
     if (!plan || !plan.targets || !plan.targets.length) { return { ok: false, why: "the plan names no target class" }; }
@@ -168,11 +172,13 @@
       results.push({ ok: false, why: "accessors need a field-name map, which this build does not carry yet", injection: plan.accessors[a].name });
     }
     var appliedHere = results.filter(function (r) { return r.ok; }).length;
+    var wrapped = results.filter(function (r) { return r.ok && r.rollback; }).map(function (r) { return r.rollback; });
     var record = {
       plan: plan,
       applied: appliedHere,
       refused: results.length - appliedHere,
-      results: results
+      results: results,
+      rollback: wrapped
     };
     if (appliedHere) { applied.push(record); } else { refused.push(record); }
     return {
@@ -203,8 +209,8 @@
     for (var i = 0; i < targets.length; i++) {
       var resolved = resolve(plan.targets[0], targets[i]);
       if (!resolved) { continue; }
-      if (wrappedBy.size >= 48) {
-        return { ok: false, kind: kind, target: targets[i], why: "the live-patch budget (48 methods) is full" };
+      if (wrappedBy.size >= 256) {
+        return { ok: false, kind: kind, target: targets[i], why: "the live-patch budget (256 methods) is full" };
       }
       if (wrappedBy.has(resolved.fn)) {
         // A method is wrapped once. A second plan for the same method is refused by name rather
@@ -216,7 +222,10 @@
       var label = plan.mixin + " -> " + plan.targets[0] + "." + targets[i];
       wrappedBy.set(resolved.fn, label);
       state.teaVM[resolved.fn] = makeWrapper(original, run, { cancellable: !!injection.cancellable, atHead: atHead, atReturn: atReturn, label: label });
-      return { ok: true, kind: kind, target: targets[i], point: point, fn: resolved.fn, arity: resolved.arity, mixin: plan.mixin };
+      return {
+        ok: true, kind: kind, target: targets[i], point: point, fn: resolved.fn, arity: resolved.arity, mixin: plan.mixin,
+        rollback: { fn: resolved.fn, original: original, label: label }
+      };
     }
     return { ok: false, kind: kind, why: "no anchor for " + plan.targets[0] + "." + targets.join("/") + " (the build's symbol map does not name it)" };
   }
@@ -235,6 +244,7 @@
     var sampleCalls = 0;
     var sampleStartedAt = Date.now();
     var sampling = true;
+    var handlerFailures = 0;
     var SAMPLE_CALLS = 20;
     var HOT_PER_SECOND = 40;
     return function (self) {
@@ -262,18 +272,53 @@
         return original.apply(this, arguments);
       }
       var args = Array.prototype.slice.call(arguments, 1);
-      var info = { cancellable: options.cancellable, cancelled: false, returnValue: undefined };
+      var info = { cancellable: options.cancellable, cancelled: false, cancelIgnored: false, returnValue: undefined };
       if (options.atHead) {
-        try { run(self, args, info); } catch (error) { internal.reportError("patch:" + options.label, error); }
-        if (info.cancelled && info.cancellable) { return info.returnValue; }
+        try { run(self, args, info); }
+        catch (error) {
+          // A handler whose calls this build cannot satisfy fails on every invocation; leaving it
+          // in place turns the game into an error flood. It is switched off by name instead.
+          if (++handlerFailures >= 25) {
+            disabled = true;
+            internal.toast("patch switched off: " + options.label + " failed " + handlerFailures + " times (" +
+              String(error && error.message || error).slice(0, 90) + ")");
+          } else {
+            internal.reportError("patch:" + options.label, error);
+          }
+        }
+        // `cancel()` is deliberately *not* honoured: a converted handler that skips a client tick
+        // stops the client updating, and no rollback can undo a tick that never ran. The handler
+        // still runs (so its own work happens); it just cannot stop the game's method.
+        if (info.cancelled) { info.cancelIgnored = true; }
       }
       var result = original.apply(this, arguments);
       if (options.atReturn) {
-        try { run(self, args, info); } catch (error) { internal.reportError("patch:" + options.label, error); }
-        if (info.cancelled && info.cancellable) { return info.returnValue !== undefined ? info.returnValue : result; }
+        try { run(self, args, info); }
+        catch (error) {
+          if (++handlerFailures >= 25) {
+            disabled = true;
+            internal.toast("patch switched off: " + options.label + " failed " + handlerFailures + " times");
+          } else {
+            internal.reportError("patch:" + options.label, error);
+          }
+        }
+        if (info.cancelled) { info.cancelIgnored = true; }
       }
       return result;
     };
+  }
+
+  /** Undo a wave: every wrapper it installed is replaced by the function it wrapped. */
+  function rollback(handles) {
+    var undone = 0;
+    for (var i = 0; i < (handles || []).length; i++) {
+      var handle = handles[i];
+      if (!handle || !handle.fn) { continue; }
+      state.teaVM[handle.fn] = handle.original;
+      wrappedBy.delete(handle.fn);
+      undone++;
+    }
+    return undone;
   }
 
   function summary() {
@@ -289,6 +334,7 @@
       resolutions: state.resolutions,
       misses: state.misses,
       appliedInjections: applied.reduce(function (total, record) { return total + record.applied; }, 0),
+      rolledBack: rolledBack,
       appliedPlans: applied.length,
       refusedPlans: refused.length,
       refusedReasons: refused.slice(0, 12).map(function (record) { return (record.results.find(function (r) { return !r.ok; }) || {}).why || "unknown"; })
@@ -326,6 +372,7 @@
     state: state,
     detect: detect,
     bus: readyBus,
+    noteRollback: function (count) { rolledBack += count; },
     available: function () { if (!state.available) { detect(); } return state.available; },
     classes: function () { buildRegistry(); return state.classes ? Array.from(state.classes.keys()) : []; },
     detect: detect,
@@ -360,9 +407,34 @@
       };
     }
   };
+  /** Public surface: for hand-written mods as much as for converted ones.
+   *   webmc.internals.available()                 is this build patched?
+   *   webmc.internals.classes()                   every class name the build exposes
+   *   webmc.internals.named(className)            the methods the symbol map names for a class
+   *   webmc.internals.resolve(className, method)  the compiled function behind a method
+   *   webmc.internals.wrap(className, method, fn) wrap it; returns an unwrap function
+   */
   WebMC.internals = {
-    available: function () { return state.available; },
+    available: function () { if (!state.available) { detect(); } return state.available; },
     summary: summary,
-    classes: function () { return internal.internals.classes(); }
+    classes: function () { return internal.internals.classes(); },
+    named: function (className) {
+      var symbols = loadSymbols();
+      var simple = simpleName(className);
+      return Object.keys((symbols && symbols[simple]) || {});
+    },
+    resolve: function (className, methodName) { return resolve(className, methodName); },
+    wrap: function (className, methodName, wrapper) {
+      var found = resolve(className, methodName);
+      if (!found) { return null; }
+      var original = found.callable;
+      var label = simpleName(className) + "." + methodName;
+      var wrapped = makeWrapper(original, function (self, args, info) { return wrapper.call(null, self, args, info); },
+        { cancellable: true, atHead: true, atReturn: false, label: label });
+      state.teaVM[found.fn] = wrapped;
+      wrappedBy.set(found.fn, "mod:" + label);
+      return function unwrap() { state.teaVM[found.fn] = original; wrappedBy.delete(found.fn); };
+    },
+    loadSymbols: loadSymbols
   };
 })(typeof globalThis !== "undefined" ? globalThis : self);

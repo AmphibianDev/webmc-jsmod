@@ -407,7 +407,9 @@ await test("a patched client resolves an anchored method and applies an @Inject 
   let result = null;
   for (let i = 0; i < 25; i++) { result = win.__gaiusTeaVM.IkAb({ name: "the client" }); }
   ok(injected > 0, "the handler ran once the call rate was known to be low");
-  eq(result, "cancelled", "cancel() short-circuited the original method");
+  // cancel() is deliberately not honoured: skipping a client tick stops the client updating, and
+  // no rollback can undo a tick that never ran. The handler still runs.
+  eq(result, "original", "the original method still ran even though the handler cancelled");
 });
 
 await test("a plan whose method has no anchor is refused, not guessed", () => {

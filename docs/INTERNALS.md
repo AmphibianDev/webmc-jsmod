@@ -48,8 +48,21 @@ TeaVM's JavaScript build has **no method-name table**. A method is `A.IkAb`, cal
 4. **Propagation.** A named method's bytecode says which methods of its class it calls; its compiled
    body says which functions it calls; when the arities agree one-to-one, the callee is named.
 
-Today that is **2,450 methods in 1,633 classes**, written to `symbols.json` next to the patched
-client. Every entry records *why* it is believed — an anchor, a fingerprint with its score, or a
+Today that is **17,727 methods in 6,401 classes**, written to `symbols.json` next to the patched
+client. Five passes get there, and each one's output is the next one's seed:
+
+| pass | what it uses | methods |
+| --- | --- | --- |
+| lambda anchors | TeaVM's `Owner$method$lambda$_<index>_<n>` names + the instantiation site | 762 |
+| string alignment | interned literals (`G(index)`) matched against the Java constant pool, by rarest literal + arity | ~3,300 |
+| virtual slots | the class tables' `[slot, function]` entries, with slot names learned from named pairs | ~2,600 |
+| caller propagation | a named caller's compiled body says which functions it calls; the Java side says which methods | ~2,500 |
+| per-class alignment | field ownership (constructor initialises a class's fields) + fields, literals, arity, callees | ~8,500 |
+
+Two bugs were worth more than any heuristic here: **`client.txt` lists methods in class-file order
+and obfuscated names repeat across overloads**, so names must be paired by position (this alone took
+Meteor from 56 to 153 named injections); and the first Java-side pass *skipped every method without a
+string literal*, which is most of the methods mods patch. Every entry records *why* it is believed — an anchor, a fingerprint with its score, or a
 propagation step — so a wrong entry can be argued with:
 
 ```json
@@ -74,23 +87,40 @@ native entries for it.
 
 ## The safety valves (a mod platform must not brick the client)
 
-1. **Applied when the client is running**, not while it starts. Wrapping a method during static
-   initialisation is how a client gets bricked.
+Learned the hard way, in this order:
+
+1. **Applied when the client is running and warm**, not while it starts. Wrapping a method during
+   static initialisation is how a client gets bricked.
 2. **Sampling.** A wrapper starts as a pass-through and measures the call rate; past 40 calls/s it
    stays passive and says so once. A per-frame or per-particle method never enters a stack machine.
-3. **A live budget** of 200 handler runs per second per method after sampling, and 48 wrapped
-   methods at most.
+3. **A live budget**: 200 handler runs/second per method, and 256 wrapped methods at most.
 4. **One wrap per method.** A second plan for the same method is refused by name instead of stacking
    wrappers.
-5. A handler that throws is reported against its mixin and the original method still runs.
+5. **Handler failure cutoff.** A handler that throws 25 times is switched off and named; a handler
+   whose calls this build cannot satisfy fails on *every* invocation, and error flooding alone can
+   stall a browser tab. `reportError` also caps itself at ten reports a second.
+6. **`cancel()` is not honoured.** A converted handler that skips a client tick stops the client
+   updating, and no rollback can undo a tick that never ran. The handler still runs, so its own work
+   happens; it just cannot stop the game's method. `info.cancelIgnored` says so.
+7. **Waves with a watchdog.** Plans are applied four at a time. After each wave the runtime asks
+   whether the client is still publishing state; a wave that froze it is rolled back (wrappers are
+   property assignments, so undo is exact) and no further waves are applied. A session-long watchdog
+   does the same for cumulative freezes, rolling back the most recent wave until the client answers
+   again. `?internals=off` switches the whole layer off, and `webmc.patches.setEnabled(false)` does
+   it at run time.
+
+Measured: with patches applied the client kept publishing state (2,140–2,532 snapshots in three
+minutes); before these valves, the same client froze after ~120 wrappers and stayed frozen.
 
 ## What applies today, measured
 
-| mod | injections with a name | applied in a live client |
+| mod | injections with a name (offline) | applied in a live client |
 | --- | --- | --- |
-| Meteor Client 1.21.11-86 | 19 / 327 | **12, across 9 plans** |
-| Gamma Utils 2.5.10 | 1 / 7 | 1 |
+| Meteor Client 1.21.11-86 | 220 / 327 (78 plans) | **≈100 injections across ≈40 plans** |
+| Gamma Utils 2.5.10 | 5 / 7 | 4 |
 | hello-fabric | — | — |
+
+The difference between "named" and "applied" is a deliberate safety policy, described next.
 
 The rest are `planned` with their reason: `no anchor for <class>.<method>` (this build's symbol map
 does not name it), `accessors need a field-name map` (a different alignment problem — fields), or

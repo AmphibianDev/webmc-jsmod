@@ -164,6 +164,35 @@ checks, 9 applied / 182 planned, 2,450 methods named, 9,855 classes exposed. `we
 refusal reasons; the browser check asserts the apply count so a regression is a red check, not a
 silent one.
 
+## 2026-10-19 — coverage, and a converter that carries more of a mod
+
+The internals layer worked but covered 9 of Meteor's 191 plans. Three things fixed that, and one
+kept the client alive while it happened.
+
+**Naming (2,450 → 17,727 methods).** The two decisive bugs were both in the Java side's *names*:
+`client.txt` lists methods in class-file order while obfuscated names repeat across overloads (so
+names must be paired by position — this alone took Meteor from 56 to 153 named injections), and the
+first pass skipped every method without a string literal, which is most of the methods mods patch.
+On top of that: virtual-slot names learned from the class tables, caller propagation, and per-class
+alignment using field ownership read from constructors.
+
+**Applying (9 → ~100 injections, ~40 plans).** The map names 220 of Meteor's 327 injections; the
+runtime applies about 100 of them and the client stays healthy. The gap is policy, not capability.
+
+**Safety, learned by breaking the client several times.** A wave of patches that froze the client
+was rolled back; a handler that cancelled a tick left the client frozen with nothing to undo; 147
+handlers failing on every invocation flooded the console and stalled the tab. The rules now:
+`cancel()` is ignored (a skipped tick cannot be undone), a handler that fails 25 times is switched
+off, error reporting is throttled, patches go in four at a time with a liveness check after each
+wave, and a session-long watchdog rolls back the most recent wave if the client stops publishing
+state. `?internals=off` switches it all off.
+
+**The converter carries more of each mod.** Switch statements, deferred bootstraps and deferred JDK
+calls (a method is no longer refused because one exotic call inside it has no translation), many
+more JDK natives, and a narrower pruning rule. Meteor: 3,134 → **4,468 methods translated**, 7,961
+unreachable methods pruned, 1,662 call sites deferred to the internals layer instead of refusing the
+method, and the verdict now says which.
+
 ## Next
 
 1. **The internals layer**: a derived client build that exposes its TeaVM class table

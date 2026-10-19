@@ -294,7 +294,8 @@
       bootstrap.push("  version: " + JSON.stringify(manifest.title || version) + ",");
       bootstrap.push("  manifest: " + JSON.stringify({ sha256: manifest.sha256, bytes: manifest.bytes || manifest.total }) + ",");
       bootstrap.push("  trustAll: " + (new URLSearchParams(location.search).get("consent") === "all") + ",");
-      bootstrap.push("  symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json"));
+      bootstrap.push("  symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json") + ",");
+      bootstrap.push("  internals: " + (new URLSearchParams(location.search).get("internals") !== "off"));
       bootstrap.push("};");
       bootstrap.push("globalThis.__webmcMods = [");
       for (var k = 0; k < good.length; k++) {
