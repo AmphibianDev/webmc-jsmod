@@ -377,6 +377,24 @@ Honest list, because these are the parts a mod author will hit:
   lookup, so wrapping the function value does not intercept it. That is the next real piece of work.
 * Iris, Sodium, Lithium: render pipelines and native code. Unchanged, and will stay unchanged.
 
+## 2026-10-19 (deployed, measured) — the same set, before and after
+
+The heavy set (Meteor + Litematica + Jade + Zoomify) on the deployed site, two rounds apart:
+
+| | before this round | after |
+| --- | --- | --- |
+| symbol map | 17,539 methods | **23,130** methods in 7,300 classes |
+| plans registered | 240 | 240 |
+| plans applied | 75 | **154** |
+| injections applied | 79 | **209** | 
+| accessors installed | 107 | 107 |
+| rolled back | — (everything, twice: a title screen was mistaken for a stall) | **0** |
+| client | — | 48-60 fps, 3,962 state snapshots, 8/8 live checks |
+
+The two biggest single wins were not naming at all: they were an at-point read as a string instead of an
+object (94 plans), and a watchdog watching the wrong clock (81 plans dropped on a static screen). Both
+were invisible to the test suite and obvious the moment the live numbers were read per plan.
+
 ## 2026-10-19 (final for now) — the deployed site, measured
 
 Live check with **Meteor + Litematica + Jade + Zoomify** loaded together
