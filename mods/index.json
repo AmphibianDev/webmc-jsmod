@@ -33,6 +33,48 @@
       "optional": true,
       "name": "Meteor Client 1.21.11-86 (converted)",
       "description": "The real Meteor Client jar, converted by converter/convert.mjs. Optional because its package is 11.8 MB: click Load now in the Mods panel. Registers 171 modules and a 327-injection patch plan; the injections themselves need the client internals."
+    },
+    {
+      "id": "litematica",
+      "entry": "converted/litematica.js",
+      "optional": true,
+      "name": "Litematica (converted)",
+      "description": "Converted from its Modrinth jar by converter/convert.mjs. Optional because of its size: loaded on demand from the Mods panel."
+    },
+    {
+      "id": "jei",
+      "entry": "converted/jei.js",
+      "optional": true,
+      "name": "JEI (converted)",
+      "description": "Converted from its Modrinth jar by converter/convert.mjs. Optional because of its size: loaded on demand from the Mods panel."
+    },
+    {
+      "id": "zoomify",
+      "entry": "converted/zoomify.js",
+      "optional": true,
+      "name": "Zoomify (converted)",
+      "description": "Converted from its Modrinth jar by converter/convert.mjs. Optional because of its size: loaded on demand from the Mods panel."
+    },
+    {
+      "id": "jade",
+      "entry": "converted/jade.js",
+      "optional": true,
+      "name": "Jade (converted)",
+      "description": "Converted from its Modrinth jar by converter/convert.mjs. Optional because of its size: loaded on demand from the Mods panel."
+    },
+    {
+      "id": "shulkerboxtooltip",
+      "entry": "converted/shulkerboxtooltip.js",
+      "optional": true,
+      "name": "Shulker Box Tooltip (converted)",
+      "description": "Converted from its Modrinth jar by converter/convert.mjs. Optional because of its size: loaded on demand from the Mods panel."
+    },
+    {
+      "id": "appleskin",
+      "entry": "converted/appleskin.js",
+      "optional": true,
+      "name": "AppleSkin (converted)",
+      "description": "Converted from its Modrinth jar by converter/convert.mjs. Optional because of its size: loaded on demand from the Mods panel."
     }
   ]
 }

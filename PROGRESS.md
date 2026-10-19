@@ -222,6 +222,54 @@ The client now publishes state at the control rate with patches applied. `?patch
 turns the layer off. The panel lists every plan with its state — applied, planned, rolled-back — and
 the reason.
 
+## 2026-10-19 (later still) — fields, accessors, and the Modrinth answer
+
+Two things landed that change the picture.
+
+**Fields and accessors.** The per-class pass now emits a **field map** (Java field name -> the
+compiled object's property: 7,588 fields in 2,948 classes), `internals.getField/putField` use it, and
+`@Accessor`/`@Invoker` plans install a table entry rather than being refused. Accessors wrap nothing,
+so they apply outside the wrapper budget. Meteor: **16 -> 69 of 191 plans** applied, 83 accessors
+live, client publishing state at the control rate.
+
+**A real Modrinth corpus.** 65 jars fetched through a proxy and converted in one pass (~2 s); all 65
+convert. The mixin counts are the interesting part: the famous "heavy" mods are not all heavy, and
+the heavy ones are mostly renderer/perf mods:
+
+| mod | classes | methods translated | mixin injections | Fabric events | keybinds |
+| --- | --- | --- | --- | --- | --- |
+| JEI | 4114 | 9032 | 17 | 11 | 0 |
+| Litematica | 507 | 3105 | 45 | 0 | 0 |
+| Iris | 1654 | 2208 | 224 | 0 | 1 |
+| Flashback | 2744 | 1931 | 165 | 5 | 4 |
+| Xaero's Minimap | 1048 | 1425 | 52 | 1 | 0 |
+| Mod Menu | 428 | 1148 | 103 | 2 | 1 |
+| Jade | 441 | 1089 | 12 | 11 | 1 |
+| Sodium | 1233 | 1041 | 240 | 1 | 0 |
+| BetterF3 | 824 | 546 | 13 | 0 | 0 |
+| Shulker Box Tooltip | 208 | 444 | 11 | 2 | 0 |
+| Zoomify | 234 | 371 | 2 | 2 | 5 |
+| Lithium | 687 | 286 | 370 | 0 | 0 |
+| AppleSkin | 98 | 149 | 10 | 0 | 0 |
+| No Chat Reports | 64 | 128 | 34 | 2 | 0 |
+
+And the part that matters: **in a real client, with zero errors** —
+
+| mod | plans applied | of | accessors | notes |
+| --- | --- | --- | --- | --- |
+| Litematica | **37** | 37 | 20 | schematic mod: 25 named injections + its accessors |
+| Jade | **12** | 12 | 4 | 11 Fabric events + its keybind |
+| Zoomify | **1** | 1 | 0 | keybinds + events translate; the FOV hook applies |
+| Gamma Utils | **6** | 6 | 0 | 11/11 events, 8 keybinds |
+
+Client state with all of them loaded: 2,002 snapshots in under three minutes, no rollbacks, no
+suspensions. Optional mods are now hot-loaded by reference (an 18 MB source inlined into the client
+bootstrap made a 150 MB document; localStorage would refuse it anyway).
+
+So the honest summary of "will mods work": **UI/QoL/info mods do** (JEI, Jade, Zoomify, Shulker,
+AppleSkin, Mod Menu, Litematica's logic, Xaero partly); **renderer and perf mods do not** (Iris,
+Sodium, Lithium — by nature, not by tuning); **deep client-hook mods are partial** (Meteor, Flashback).
+
 ## Next
 
 1. **The internals layer**: a derived client build that exposes its TeaVM class table
