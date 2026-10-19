@@ -55,7 +55,7 @@ jobs:
           cp /tmp/client.txt converter/mappings/1.21.11/client.txt
 
       - name: build the internals layer (patched client + symbol map)
-        run: node tools/build-internals.mjs --in client/1.21.11 --out client/1.21.11-internals
+        run: node tools/build-internals.mjs --in client/1.21.11 --out client/1.21.11-internals --rounds 6
 
       - name: build the runtime
         run: node runtime/build.mjs
