@@ -208,8 +208,14 @@ one:
 | configuration (same page, same mod) | state snapshots in ~4 min | plans applied |
 | --- | --- | --- |
 | internals off (control) | ~2,000 | 0 |
-| **shipped: cap 32 plans, waves of 6, bisect on failure** | **3,302** | **16** |
+| **shipped: cap 32 plans, waves of 6, bisect on failure** (local) | **3,302** | **16** |
+| the same on the deployed site | **3,680** | 7 |
 | uncapped (before `add()` was fixed) | frozen | 66–147 |
+
+The deployed site is the one that matters and it is now healthy: `node tools/live-check.mjs --with-meteor
+--full` reports 11/11 checks, 3,680 state snapshots in under five minutes, no suspended mods, and the
+symbol map naming 17,494 methods across 6,292 classes. Fewer plans apply there than locally (7 vs 16)
+because the liveness checks are stricter on a busy page — which is the policy working as intended.
 
 The client now publishes state at the control rate with patches applied. `?patches=200` or
 `webmc.patches.setCap(200)` raises the cap; `?internals=off` or `webmc.patches.setEnabled(false)`

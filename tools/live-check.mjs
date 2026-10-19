@@ -26,6 +26,7 @@ const arg = (name, fallback) => {
 const URL_TO_CHECK = arg("url", "https://amphibiandev.github.io/webmc-jsmod/") + "?autoplay=1&consent=all";
 const SECONDS = Number(arg("seconds", 240));
 const WITH_METEOR = args.includes("--with-meteor");
+const FULL_RUN = args.includes("--full");     // no early exit: the settled numbers, not the first ones
 const CDP_PORT = Number(arg("cdp", 9350));
 const SHOTS = join(root, "checks");
 mkdirSync(SHOTS, { recursive: true });
@@ -130,7 +131,7 @@ while (Date.now() < deadline) {
       // Stop early once the interesting conditions are all true — including the client's own hooks,
       // which appear later than the runtime's.
       const meteorOk = !WITH_METEOR || selftest.mods.some((m) => m.id === "meteor-client" && m.enabled);
-      if (selftest.frame.count > 60 && selftest.hooks.input && selftest.hooks.state && selftest.hooks.stateUpdates > 10 &&
+      if (!FULL_RUN && selftest.frame.count > 60 && selftest.hooks.input && selftest.hooks.state && selftest.hooks.stateUpdates > 10 &&
           selftest.mods.length >= 5 && meteorOk && selftest.patches.applied > 0) { break; }
     }
   } catch (error) {
