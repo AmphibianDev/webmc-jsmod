@@ -39,3 +39,6 @@ for (const plan of win.webmc.__internal.patches.plans) {
 }
 writeFileSync(out, JSON.stringify({ note: "wanted patch targets", source, wanted }, null, 1) + "\n");
 console.log(`${wanted.length} wanted methods -> ${out}`);
+// The runtime keeps intervals of its own (application scheduling, watches); the tool has said its
+// piece and must not be held open by them.
+process.exit(0);

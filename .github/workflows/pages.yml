@@ -10,6 +10,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      rebuild_symbols:
+        description: "Rebuild the symbol map (slow: the alignment passes take ~15 min)"
+        type: boolean
+        default: false
   release:
     types: [published]
 
@@ -47,17 +52,30 @@ jobs:
       - name: verify the client bytes
         run: node tools/verify-client.mjs
 
-      - name: fetch the jar and mappings the symbol build fingerprints against
+      - name: patch the client (its compiled internals reachable from the page)
+        run: node tools/patch-client.mjs --in client/1.21.11 --out client/1.21.11-internals
+
+      - name: rebuild the symbol map (only when asked: it is the slow alignment work)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.rebuild_symbols }}
         run: |
           curl -sSL --retry 3 -o /tmp/client.jar https://piston-data.mojang.com/v1/objects/ba2df812c2d12e0219c489c4cd9a5e1f0760f5bd/client.jar
           curl -sSL --retry 3 -o /tmp/client.txt https://piston-data.mojang.com/v1/objects/031a68bebf55d824f66d6573d8c752f0e1bf232a/client.txt
           mkdir -p converter/mappings/1.21.11
           cp /tmp/client.txt converter/mappings/1.21.11/client.txt
+          cp client/1.21.11-internals/symbols.json /tmp/symbols.before.json
+          node tools/build-internals.mjs --in client/1.21.11 --out /tmp/internals \
+            --rounds 5 --jar /tmp/client.jar --mappings converter/mappings/1.21.11 --js client/1.21.11
+          cp /tmp/internals/symbols.json client/1.21.11-internals/symbols.json
 
-      - name: build the internals layer (patched client + symbol map)
+      - name: the symbol map is present and names methods
         run: |
-          node tools/build-internals.mjs --in client/1.21.11 --out client/1.21.11-internals --rounds 5 \
-            --jar /tmp/client.jar --mappings converter/mappings/1.21.11 --js client/1.21.11
+          node -e "
+            const fs = require('fs');
+            const map = JSON.parse(fs.readFileSync('client/1.21.11-internals/symbols.json', 'utf8'));
+            const named = map.stats && map.stats.methodsNamed || 0;
+            console.log('symbol map:', named, 'methods in', Object.keys(map.anchors || {}).length, 'classes');
+            if (named < 1000) { throw new Error('the symbol map is missing or too small'); }
+          "
 
       - name: build the runtime
         run: node runtime/build.mjs
