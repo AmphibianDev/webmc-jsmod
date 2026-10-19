@@ -48,7 +48,7 @@ const minLiteral = Number(flag("min-literal", 5));
  */
 export function readClientMappings(dir) {
   const byNamed = new Map();     // named (slashed) -> { obf, methods: Map<obfName, namedName> }
-  const byObf = new Map();       // obf -> { named, methodNames: [], fields: [] }
+  const byObf = new Map();       // obf -> { named, methodNames: [], namedFields: Map }
   let current = null;
   for (const line of readFileSync(join(dir, "client.txt"), "utf8").split("\n")) {
     if (!line || line.startsWith("#")) { continue; }
@@ -56,7 +56,7 @@ export function readClientMappings(dir) {
       const match = /^(\S+) -> (\S+):$/.exec(line);
       if (!match) { continue; }
       const named = match[1].replace(/\./g, "/");
-      current = { obf: match[2], named, methodNames: [], namedMethods: new Map() };
+      current = { obf: match[2], named, methodNames: [], namedMethods: new Map(), namedFields: new Map() };
       byNamed.set(named, current);
       byObf.set(current.obf, current);
       continue;
@@ -66,7 +66,13 @@ export function readClientMappings(dir) {
     if (method) {
       current.methodNames.push({ obf: method[4], named: method[2], args: method[3] ? method[3].split(",").length : 0 });
       current.namedMethods.set(method[4], method[2]);
+      continue;
     }
+    // Fields are the other half of the file: `    boolean hasCollision -> F`. Without them the field
+    // map came out keyed by obfuscated names (`F`), so an `@Accessor` asking for `hasCollision` found
+    // nothing — 71 of Meteor's 71 accessors resolved to null while the map looked complete.
+    const field = /^\s+(.+?)\s+([A-Za-z_$][\w$]*)\s+->\s+(\S+)$/.exec(line);
+    if (field) { current.namedFields.set(field[3], field[2]); }
   }
   return { byNamed, byObf };
 }
@@ -219,7 +225,11 @@ export function javaFingerprints(jar, mappings) {
     let info;
     try { info = parseClass(zip.read(name)); } catch (error) { continue; }
     classes++;
-    classFieldIndex.set(obf, { namedClass: mapping.named, simpleClass: mapping.named.split("/").pop(), fields: classFields(info) });
+    classFieldIndex.set(obf, {
+      namedClass: mapping.named,
+      simpleClass: mapping.named.split("/").pop(),
+      fields: classFields(info).map((field) => Object.assign({}, field, { rawName: field.name, name: mapping.namedFields.get(field.name) || field.name }))
+    });
     // client.txt lists a class's methods in the class file's own order, and obfuscated names repeat
     // across overloads — so names are paired *by position*, with the obf name as a checksum.
     const ordered = info.methods.filter((method) => method.name !== "<init>" && method.name !== "<clinit>");
@@ -232,7 +242,13 @@ export function javaFingerprints(jar, mappings) {
       if (!method.code || !method.code.code) { continue; }
       const literals = literalsOf(method.code.code, info.pool);
       const calls = callsOf(method.code.code, info.pool);
-      const accesses = fieldsOf(method.code.code, info.pool);
+      // Field *accesses* are read from bytecode with obfuscated names; map them the same way the
+      // field index is mapped, or the two sides of the alignment would disagree.
+      const accesses = fieldsOf(method.code.code, info.pool).map((access) => {
+        const ownerMapping = mappings.byObf.get(access.owner);
+        const named = ownerMapping && ownerMapping.namedFields.get(access.name);
+        return named ? Object.assign({}, access, { rawName: access.name, name: named }) : access;
+      });
       const namedMethod = method.name === "<init>" || method.name === "<clinit>"
         ? null
         : (namesByIndex[ordered.indexOf(method)] || mapping.namedMethods.get(method.name) || null);

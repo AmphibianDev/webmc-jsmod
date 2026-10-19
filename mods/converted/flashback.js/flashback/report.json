@@ -1,0 +1,647 @@
+{
+  "source": "Flashback-0.39.10-for-MC1.21.11.jar",
+  "fabric": {
+    "id": "flashback",
+    "name": "Flashback",
+    "version": "0.39.10",
+    "authors": [
+      "Moulberry"
+    ],
+    "environment": "client"
+  },
+  "stats": {
+    "classCount": 2744,
+    "resourceCount": 44,
+    "dataResourceCount": 0,
+    "mixinClassCount": 134,
+    "methodCount": 24560
+  },
+  "entrypoints": [
+    {
+      "kind": "main",
+      "className": "com/moulberry/flashback/Flashback",
+      "method": "onInitialize",
+      "translated": true
+    },
+    {
+      "kind": "client",
+      "className": "com/moulberry/flashback/Flashback",
+      "method": "onInitializeClient",
+      "translated": true
+    }
+  ],
+  "events": [
+    {
+      "js": "commands",
+      "from": "com/moulberry/flashback/Flashback.onInitializeClient",
+      "fabric": "net/fabricmc/fabric/api/client/command/v2/ClientCommandRegistrationCallback.EVENT",
+      "lambda": "com/moulberry/flashback/Flashback.lambda$onInitializeClient$19",
+      "translated": true,
+      "reason": null
+    },
+    {
+      "js": "world:join",
+      "from": "com/moulberry/flashback/Flashback.onInitializeClient",
+      "fabric": "net/fabricmc/fabric/api/client/networking/v1/ClientPlayConnectionEvents.JOIN",
+      "lambda": "com/moulberry/flashback/Flashback.lambda$onInitializeClient$25",
+      "translated": true,
+      "reason": null
+    },
+    {
+      "js": "tick",
+      "from": "com/moulberry/flashback/Flashback.onInitializeClient",
+      "fabric": "net/fabricmc/fabric/api/client/event/lifecycle/v1/ClientTickEvents.END_CLIENT_TICK",
+      "lambda": "com/moulberry/flashback/Flashback.lambda$onInitializeClient$26",
+      "translated": true,
+      "reason": null
+    },
+    {
+      "js": "tick",
+      "from": "com/moulberry/flashback/Flashback.onInitializeClient",
+      "fabric": "net/fabricmc/fabric/api/client/event/lifecycle/v1/ClientTickEvents.START_CLIENT_TICK",
+      "lambda": "com/moulberry/flashback/Flashback.lambda$onInitializeClient$27",
+      "translated": true,
+      "reason": null
+    },
+    {
+      "js": "server:tick",
+      "from": "com/moulberry/flashback/Flashback.onInitializeClient",
+      "fabric": "net/fabricmc/fabric/api/event/lifecycle/v1/ServerTickEvents.END_SERVER_TICK",
+      "lambda": "com/moulberry/flashback/Flashback.lambda$onInitializeClient$28",
+      "translated": true,
+      "reason": null
+    }
+  ],
+  "keybinds": [
+    {
+      "name": "flashback",
+      "label": "flashback",
+      "category": null,
+      "key": "h",
+      "translated": true,
+      "handler": "stub (the mod polls the binding itself; the tick handler is the real logic)",
+      "from": "com/moulberry/flashback/Flashback.<clinit>"
+    },
+    {
+      "name": "flashback",
+      "label": "flashback",
+      "category": null,
+      "key": "h",
+      "translated": true,
+      "handler": "stub (the mod polls the binding itself; the tick handler is the real logic)",
+      "from": "com/moulberry/flashback/Flashback.<clinit>"
+    },
+    {
+      "name": "replays",
+      "label": "replays",
+      "category": null,
+      "key": "h",
+      "translated": true,
+      "handler": "stub (the mod polls the binding itself; the tick handler is the real logic)",
+      "from": "com/moulberry/flashback/Flashback.<clinit>"
+    },
+    {
+      "name": "flashback",
+      "label": "flashback",
+      "category": null,
+      "key": "h",
+      "translated": true,
+      "handler": "stub (the mod polls the binding itself; the tick handler is the real logic)",
+      "from": "com/moulberry/flashback/Flashback.<clinit>"
+    }
+  ],
+  "commands": [],
+  "modules": [],
+  "mixins": {
+    "summary": {
+      "mixinClasses": 134,
+      "injectionPoints": 165,
+      "accessors": 1,
+      "shadows": 121,
+      "byKind": {
+        "inject": 143,
+        "redirect": 1,
+        "modifyVariable": 1,
+        "overwrite": 20
+      },
+      "plainInjections": 143,
+      "invasiveInjections": 22,
+      "needsInternals": 22
+    },
+    "topTargets": [
+      {
+        "target": "com/moulberry/lattice/multiversion/LatticeMultiversion",
+        "count": 11
+      },
+      {
+        "target": "com/moulberry/lattice/LatticeConfigScreen",
+        "count": 5
+      },
+      {
+        "target": "com/moulberry/lattice/widget/DropdownWidget",
+        "count": 5
+      },
+      {
+        "target": "com/moulberry/lattice/widget/WidgetWithText",
+        "count": 4
+      },
+      {
+        "target": "net/minecraft/client/MouseHandler",
+        "count": 3
+      },
+      {
+        "target": "net/minecraft/client/multiplayer/ClientLevel",
+        "count": 3
+      },
+      {
+        "target": "com/moulberry/lattice/widget/DropdownWidget$Entry",
+        "count": 3
+      },
+      {
+        "target": "net/minecraft/client/renderer/LevelRenderer",
+        "count": 2
+      },
+      {
+        "target": "de/johni0702/minecraft/bobby/FakeChunkManager",
+        "count": 2
+      },
+      {
+        "target": "net/minecraft/world/entity/player/Player",
+        "count": 2
+      },
+      {
+        "target": "net/minecraft/world/entity/Entity",
+        "count": 2
+      },
+      {
+        "target": "net/minecraft/client/gui/components/BossHealthOverlay",
+        "count": 2
+      },
+      {
+        "target": "net/minecraft/world/entity/LivingEntity",
+        "count": 2
+      },
+      {
+        "target": "net/minecraft/client/renderer/entity/player/AvatarRenderer",
+        "count": 2
+      },
+      {
+        "target": "com/moulberry/lattice/widget/CategoryStringWidget",
+        "count": 2
+      },
+      {
+        "target": "com/moulberry/lattice/widget/EditableSlider",
+        "count": 2
+      },
+      {
+        "target": "net/minecraft/client/gui/components/debug/DebugScreenEntryList",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/gui/components/DebugScreenOverlay",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/resources/language/LanguageManager",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/Minecraft",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/multiplayer/PlayerInfo",
+        "count": 1
+      },
+      {
+        "target": "com/mojang/blaze3d/pipeline/RenderTarget",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/server/level/ThreadedLevelLightEngine",
+        "count": 1
+      },
+      {
+        "target": "com/mojang/blaze3d/platform/Window",
+        "count": 1
+      },
+      {
+        "target": "com/mojang/blaze3d/audio/Library",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/sounds/SoundEngine",
+        "count": 1
+      },
+      {
+        "target": "net/caffeinemc/mods/sodium/client/render/SodiumWorldRenderer",
+        "count": 1
+      },
+      {
+        "target": "me/jellysquid/mods/sodium/client/render/SodiumWorldRenderer",
+        "count": 1
+      },
+      {
+        "target": "com/moulberry/axiom/editor/EditorUI",
+        "count": 1
+      },
+      {
+        "target": "com/moulberry/axiom/integration/ServerIntegration",
+        "count": 1
+      },
+      {
+        "target": "de/johni0702/minecraft/bobby/Bobby",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/server/IntegratedServer",
+        "count": 1
+      },
+      {
+        "target": "net/fabricmc/fabric/impl/biome/modification/BiomeModificationImpl",
+        "count": 1
+      },
+      {
+        "target": "net/fabricmc/fabric/api/networking/v1/ServerPlayNetworking",
+        "count": 1
+      },
+      {
+        "target": "net/fabricmc/fabric/impl/recipe/sync/RecipeSyncImpl",
+        "count": 1
+      },
+      {
+        "target": "net/irisshaders/iris/uniforms/SystemTimeUniforms$Timer",
+        "count": 1
+      },
+      {
+        "target": "com/replaymod/recording/ReplayModRecording",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/resources/language/ClientLanguage",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/renderer/chunk/SectionRenderDispatcher$RenderSection",
+        "count": 1
+      },
+      {
+        "target": "net/minecraft/client/renderer/rendertype/TextureTransform",
+        "count": 1
+      }
+    ],
+    "topMethods": [
+      {
+        "target": "<unspecified>",
+        "count": 20
+      },
+      {
+        "target": "render",
+        "count": 7
+      },
+      {
+        "target": "tick",
+        "count": 5
+      },
+      {
+        "target": "runTick",
+        "count": 3
+      },
+      {
+        "target": "<init>",
+        "count": 3
+      },
+      {
+        "target": "handleCustomPayload",
+        "count": 3
+      },
+      {
+        "target": "renderLevel",
+        "count": 2
+      },
+      {
+        "target": "disconnect",
+        "count": 2
+      },
+      {
+        "target": "init",
+        "count": 2
+      },
+      {
+        "target": "save",
+        "count": 2
+      },
+      {
+        "target": "canSend",
+        "count": 2
+      },
+      {
+        "target": "send",
+        "count": 2
+      },
+      {
+        "target": "playSeededSound",
+        "count": 2
+      },
+      {
+        "target": "extractRenderState",
+        "count": 2
+      },
+      {
+        "target": "shouldRender",
+        "count": 2
+      },
+      {
+        "target": "rebuildCurrentList",
+        "count": 1
+      },
+      {
+        "target": "onResourceManagerReload",
+        "count": 1
+      },
+      {
+        "target": "close",
+        "count": 1
+      },
+      {
+        "target": "renderBlockDestroyAnimation",
+        "count": 1
+      },
+      {
+        "target": "submitBlockEntities",
+        "count": 1
+      },
+      {
+        "target": "addParticlesPass",
+        "count": 1
+      },
+      {
+        "target": "addSkyPass",
+        "count": 1
+      },
+      {
+        "target": "pauseGame",
+        "count": 1
+      },
+      {
+        "target": "renderNames",
+        "count": 1
+      },
+      {
+        "target": "shouldEntityAppearGlowing",
+        "count": 1
+      },
+      {
+        "target": "getTickTargetMillis",
+        "count": 1
+      },
+      {
+        "target": "doWorldLoad",
+        "count": 1
+      },
+      {
+        "target": "isMouseGrabbed",
+        "count": 1
+      },
+      {
+        "target": "onButton",
+        "count": 1
+      },
+      {
+        "target": "onScroll",
+        "count": 1
+      },
+      {
+        "target": "onMove",
+        "count": 1
+      },
+      {
+        "target": "grabMouse",
+        "count": 1
+      },
+      {
+        "target": "releaseMouse",
+        "count": 1
+      },
+      {
+        "target": "blitToScreen",
+        "count": 1
+      },
+      {
+        "target": "getWidth",
+        "count": 1
+      },
+      {
+        "target": "getHeight",
+        "count": 1
+      },
+      {
+        "target": "getScreenWidth",
+        "count": 1
+      },
+      {
+        "target": "getScreenHeight",
+        "count": 1
+      },
+      {
+        "target": "onResize",
+        "count": 1
+      },
+      {
+        "target": "calculateScale",
+        "count": 1
+      }
+    ]
+  },
+  "unresolved": [
+    {
+      "what": "is not in the jar",
+      "count": 97
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber$Exception.<init> — the mod's own method org.bytedeco.javacv.FrameGrabber$Exception.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 60
+    },
+    {
+      "what": "org.bytedeco.javacpp.BytePointer.getString — the mod's own method org.bytedeco.javacpp.BytePointer.getString was pruned (nothing reachable from an entry point calls it)",
+      "count": 14
+    },
+    {
+      "what": "org.bytedeco.javacpp.Loader.load — the mod's own method org.bytedeco.javacpp.Loader.load was pruned (nothing reachable from an entry point calls it)",
+      "count": 12
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber.<init> — the mod's own method org.bytedeco.javacv.FrameGrabber.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 12
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.getStyle — the mod's own method imgui.moulberry90.ImGui.getStyle was pruned (nothing reachable from an entry point calls it)",
+      "count": 10
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.getMainViewport — the mod's own method imgui.moulberry90.ImGui.getMainViewport was pruned (nothing reachable from an entry point calls it)",
+      "count": 9
+    },
+    {
+      "what": "org.bytedeco.javacv.OpenCVFrameConverter$ToIplImage.<init> — the mod's own method org.bytedeco.javacv.OpenCVFrameConverter$ToIplImage.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 9
+    },
+    {
+      "what": "com.moulberry.flashback.action.Action.name — the mod's own method name()Lnet/minecraft/class_2960",
+      "count": 8
+    },
+    {
+      "what": "com.moulberry.flashback.playback.ReplayGamePacketHandler.flushPendingEntities — the mod's own method com.moulberry.flashback.playback.ReplayGamePacketHandler.flushPendingEntities was pruned (nothing reachable from an entry point calls it)",
+      "count": 8
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameConverter.convert — the mod's own method convert(Ljava/lang/Object;)Lorg/bytedeco/javacv/Frame",
+      "count": 8
+    },
+    {
+      "what": "org.bytedeco.javacpp.Pointer.<init> — the mod's own method org.bytedeco.javacpp.Pointer.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 8
+    },
+    {
+      "what": "org.bytedeco.javacv.Frame.clone — the mod's own method org.bytedeco.javacv.Frame.clone was pruned (nothing reachable from an entry point calls it)",
+      "count": 7
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.textUnformatted — the mod's own method imgui.moulberry90.ImGui.textUnformatted was pruned (nothing reachable from an entry point calls it)",
+      "count": 6
+    },
+    {
+      "what": "com.moulberry.flashback.Interpolation.linear — the mod's own method com.moulberry.flashback.Interpolation.linear was pruned (nothing reachable from an entry point calls it)",
+      "count": 6
+    },
+    {
+      "what": "org.bytedeco.javacv.OpenCVFrameConverter$ToMat.<init> — the mod's own method org.bytedeco.javacv.OpenCVFrameConverter$ToMat.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 6
+    },
+    {
+      "what": "org.bytedeco.javacpp.BytePointer.<init> — the mod's own method org.bytedeco.javacpp.BytePointer.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 6
+    },
+    {
+      "what": "com.moulberry.flashback.keyframe.Keyframe.copy — the mod's own method copy()Lcom/moulberry/flashback/keyframe/Keyframe",
+      "count": 5
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.openPopup — the mod's own method imgui.moulberry90.ImGui.openPopup was pruned (nothing reachable from an entry point calls it)",
+      "count": 5
+    },
+    {
+      "what": "com.moulberry.flashback.playback.ReplayServer.method_30611 — the mod's own method method_30611()Lnet/minecraft/class_5455$class_6890",
+      "count": 5
+    },
+    {
+      "what": "com.moulberry.flashback.playback.ReplayServer.method_3760 — the mod's own method method_3760()Lnet/minecraft/class_3324",
+      "count": 5
+    },
+    {
+      "what": "com.moulberry.flashback.screen.ReplaySummary.getReplayId — the mod's own method com.moulberry.flashback.screen.ReplaySummary.getReplayId was pruned (nothing reachable from an entry point calls it)",
+      "count": 5
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber$Exception.printStackTrace — the mod's own method printStackTrace()V is not in the jar",
+      "count": 5
+    },
+    {
+      "what": "org.bytedeco.javacv.CanvasFrame.<init> — the mod's own method org.bytedeco.javacv.CanvasFrame.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 5
+    },
+    {
+      "what": "org.bytedeco.javacv.ImageTransformer$Parameters.getConstraintError — the mod's own method getConstraintError()D is not in the jar",
+      "count": 5
+    },
+    {
+      "what": "com.moulberry.flashback.configuration.FlashbackConfigV1.delayedSaveToDefaultFolder — the mod's own method com.moulberry.flashback.configuration.FlashbackConfigV1.delayedSaveToDefaultFolder was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.closeCurrentPopup — the mod's own method imgui.moulberry90.ImGui.closeCurrentPopup was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "imgui.moulberry90.ImGuiViewport.getCenterX — the mod's own method imgui.moulberry90.ImGuiViewport.getCenterX was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "imgui.moulberry90.ImGuiViewport.getCenterY — the mod's own method imgui.moulberry90.ImGuiViewport.getCenterY was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.setNextWindowPos — the mod's own method imgui.moulberry90.ImGui.setNextWindowPos was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.checkbox — the mod's own method imgui.moulberry90.ImGui.checkbox was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "imgui.moulberry90.ImGui.getTextLineHeightWithSpacing — the mod's own method imgui.moulberry90.ImGui.getTextLineHeightWithSpacing was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "com.moulberry.flashback.playback.ReplayConfigurationPacketHandler.flushPendingConfiguration — the mod's own method com.moulberry.flashback.playback.ReplayConfigurationPacketHandler.flushPendingConfiguration was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "com.moulberry.flashback.screen.ReplaySummary.getReplayName — the mod's own method com.moulberry.flashback.screen.ReplaySummary.getReplayName was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber.getImageWidth — the mod's own method org.bytedeco.javacv.FrameGrabber.getImageWidth was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber.getImageHeight — the mod's own method org.bytedeco.javacv.FrameGrabber.getImageHeight was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber.getFrameRate — the mod's own method org.bytedeco.javacv.FrameGrabber.getFrameRate was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "org.bytedeco.javacv.FrameGrabber.setImageMode — the mod's own method org.bytedeco.javacv.FrameGrabber.setImageMode was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "org.bytedeco.javacv.GLCanvasFrame$2.<init> — the mod's own method org.bytedeco.javacv.GLCanvasFrame$2.<init> was pruned (nothing reachable from an entry point calls it)",
+      "count": 4
+    },
+    {
+      "what": "org.bytedeco.javacv.ImageTransformer$Parameters.size — the mod's own method size()I is not in the jar",
+      "count": 4
+    }
+  ],
+  "translatedMethods": 1931,
+  "skippedMethods": 465,
+  "notes": [],
+  "roots": 12,
+  "reachableMethods": 2396,
+  "prunedMethods": 22164,
+  "deferredCalls": 1264,
+  "deferredBootstraps": 263,
+  "capabilities": [
+    "hud",
+    "input",
+    "commands",
+    "storage",
+    "settings",
+    "modules",
+    "player.read",
+    "world.read",
+    "camera.read",
+    "chat.write",
+    "internals"
+  ],
+  "mappings": {
+    "classes": 10201,
+    "methods": 49374,
+    "fields": 45040
+  },
+  "deferred": 1527,
+  "needsInternals": true,
+  "verdict": "runs (uses the internals for 1527 deferred call site(s))"
+}

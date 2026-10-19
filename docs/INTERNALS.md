@@ -48,8 +48,18 @@ TeaVM's JavaScript build has **no method-name table**. A method is `A.IkAb`, cal
 4. **Propagation.** A named method's bytecode says which methods of its class it calls; its compiled
    body says which functions it calls; when the arities agree one-to-one, the callee is named.
 
-Today that is **17,727 methods in 6,401 classes**, written to `symbols.json` next to the patched
-client. Five passes get there, and each one's output is the next one's seed:
+5. **The call graph** (`tools/align-classes.mjs`, the last pass). The passes above match one method at
+   a time, which leaves the methods with neither a distinctive literal nor a field of their own — the
+   ordinary methods in the middle of the client, which is what a big mixin mod patches. Both sides
+   have a *graph*, though: the Java class file says which methods a method calls, the compiled build
+   says which functions a function calls. Once ~14,000 methods are paired, a method whose
+   already-named callees are the functions this compiled function calls is that method. The pass runs
+   to a fixed point and only accepts a pair when it is **mutually best** — the method's favourite
+   function *and* that function's favourite method — with a clear margin over the runner-up, because a
+   wrong name is worse than a missing one: the runtime would wrap the wrong function.
+
+That is **20,962 methods in 6,966 classes**, written to `symbols.json` next to the patched client.
+The passes get there in this order, each one's output the next one's seed:
 
 | pass | what it uses | methods |
 | --- | --- | --- |
@@ -58,6 +68,7 @@ client. Five passes get there, and each one's output is the next one's seed:
 | virtual slots | the class tables' `[slot, function]` entries, with slot names learned from named pairs | ~2,600 |
 | caller propagation | a named caller's compiled body says which functions it calls; the Java side says which methods | ~2,500 |
 | per-class alignment | field ownership (constructor initialises a class's fields) + fields, literals, arity, callees | ~8,500 |
+| **call graph** | paired callees and callers on both sides, arity, fields, literals — mutual best, to a fixed point | **+3,415** |
 
 Two bugs were worth more than any heuristic here: **`client.txt` lists methods in class-file order
 and obfuscated names repeat across overloads**, so names must be paired by position (this alone took
@@ -80,6 +91,20 @@ they are applied outside the wrapper budget.
 
 For Meteor that is the difference between 16 and **69 of its 191 plans** on the running client, with
 83 accessors installed and the client still publishing state at the control rate.
+
+## Redirects, argument edits, overwrites — and injections *at* a call
+
+`@Redirect`, `@ModifyArg`, `@ModifyArgs` and `@Inject(at = @At("INVOKE"))` are all "at a call" mixins,
+and they share one mechanism: the target method is marked as *on the stack* while it runs, and the
+callee's wrapper consults the mod's handler while that mark is up. What differs is what the handler
+does:
+
+| kind | handler | effect |
+| --- | --- | --- |
+| `@Redirect` | returns a value | the call's result is replaced and the call is skipped |
+| `@ModifyArg` | returns one argument | that argument is rewritten, the call still happens |
+| `@ModifyArgs` | writes into an `Args` box | any of the arguments are rewritten |
+| `@Inject` at `INVOKE` | may cancel | the handler runs at the call; cancelling skips the call and uses `info.returnValue`; with `shift = AFTER` it runs after |
 
 ## Redirects, argument edits and overwrites
 
@@ -161,6 +186,11 @@ same rate as the control. The cap is the price of a client that stays alive, and
 rather than a promise.
 
 ## What applies today, measured
+
+Two numbers matter and they are different numbers: how many plans apply (a plan needs one named
+method) and how many *injections* apply (an `@Inject` needs its target, an `@Redirect` needs the
+callee too, an `@Accessor` needs a field). `tools/coverage-report.mjs` prints the split for any
+converted mod, which is how "the mod does not work" turns into "this class's methods are unnamed":
 
 | mod | injections with a name (offline) | applied in a live client |
 | --- | --- | --- |

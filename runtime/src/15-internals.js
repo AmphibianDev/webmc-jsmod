@@ -34,8 +34,11 @@
     bySimple: null,         // simple name -> [name]
     symbols: null,          // the anchor map, loaded lazily
     fields: null,           // Java field name -> compiled field token, per class
+    sites: null,            // "Class::method" -> the compiled function of each call inside it
+    sitesLoaded: false,
     accessors: null,        // accessor/invoker methods installed by converted mods
     symbolsUrl: null,
+    sitesUrl: null,
     symbolsLoaded: false,
     resolutions: 0,
     misses: 0
@@ -113,6 +116,51 @@
       internal.reportError("internals:symbols", error);
     }
     return state.symbols;
+  }
+
+  /** The call-site map: which compiled function each call inside a named method is. It exists because
+   *  a mixin names a *call*, and most of those callees are methods no naming pass has reached — but
+   *  the order of the calls is known on both sides, so the call site can be resolved without the
+   *  callee's name. Loaded lazily, and remembered as an empty map if the build did not ship it. */
+  function loadSites() {
+    if (state.sitesLoaded) { return state.sites; }
+    state.sitesLoaded = true;
+    state.sites = {};
+    if (!state.sitesUrl) { return state.sites; }
+    var request = new XMLHttpRequest();
+    try {
+      request.open("GET", state.sitesUrl, false);
+      request.send(null);
+      if (request.status >= 200 && request.status < 300) {
+        var parsed = JSON.parse(request.responseText);
+        state.sites = parsed.sites || {};
+      }
+    } catch (error) {
+      internal.reportError("internals:sites", error);
+    }
+    return state.sites;
+  }
+
+  /** The compiled function of a call inside a method, by the Java names the mixin writes. */
+  function callSiteFn(targetClass, targetMethod, calleeOwner, calleeName, ordinal) {
+    var sites = loadSites();
+    var key = simpleName(targetClass) + "::" + targetMethod;
+    var list = sites[key] || sites[targetClass + "::" + targetMethod];
+    if (!list || !list.length) { return null; }
+    var wantedOwner = simpleName(calleeOwner);
+    var wanted = ordinal == null ? 0 : ordinal;
+    var seen = 0;
+    for (var i = 0; i < list.length; i++) {
+      var entry = list[i];
+      var entryName = String(entry.callee || "");
+      var dot = entryName.lastIndexOf(".");
+      var entryOwner = simpleName(entryName.slice(0, dot).replace(/\./g, "/"));
+      var entryMethod = entryName.slice(dot + 1);
+      if (entryOwner !== wantedOwner || entryMethod !== calleeName) { continue; }
+      if (seen === wanted) { return { fn: entry.fn, site: i, exact: true }; }
+      seen++;
+    }
+    return null;
   }
 
   function findClass(name) {
@@ -310,8 +358,22 @@
       }
       if (!active) { return original.apply(this, arguments); }
       var args = Array.prototype.slice.call(arguments, 1);       // TeaVM passes `self` first
-      var info = { cancellable: false, cancelled: false, returnValue: undefined };
+      var info = { cancellable: true, cancelled: false, returnValue: undefined };
       try {
+        // An `@Inject` at an INVOKE point: the handler runs *at the call*, with the callee's
+        // arguments, and can cancel the call and supply its own return value — which is what
+        // `CallbackInfo.cancel()` does in a mixin. There is no bytecode to rewrite at run time, so
+        // the call site is approximated by "while this callee is called from inside that method".
+        if (active.kind === "injectAtInvoke") {
+          var around = active.shift === "AFTER";
+          if (!around) {
+            active.run(active.self, args, info);
+            if (info.cancelled) { return info.returnValue; }
+          }
+          var value = original.apply(this, [arguments[0]].concat(args));
+          if (around) { info.returnValue = value; active.run(active.self, args, info); if (info.cancelled) { return info.returnValue; } }
+          return value;
+        }
         if (active.kind === "modifyArgs") {
           var box = { __args: args.slice() };
           active.run(active.self, [box], info);
@@ -334,7 +396,7 @@
   }
 
   function applySite(plan, injection) {
-    var kind = injection.kind;
+    var kind = injection.kind === "inject" ? "injectAtInvoke" : injection.kind;
     var point = (injection.at || [])[0] || {};
     var callee = point.callee || null;
     if (point.value !== "INVOKE" || !callee || callee.kind !== "method") {
@@ -344,8 +406,18 @@
     var targetEntry = null;
     for (var t = 0; t < targets.length && !targetEntry; t++) { targetEntry = resolve(plan.targets[0], targets[t]); }
     if (!targetEntry) { return { ok: false, kind: kind, why: "no anchor for the method being redirected (" + plan.targets[0] + "." + targets.join("/") + ")" }; }
+    // The callee: by name if the map has it, and by call site if it does not. The site map is the
+    // better answer when it exists, because it is exact about *which* call in the method it is.
+    var ordinal = point.ordinal == null ? null : Number(point.ordinal);
+    var site = callSiteFn(plan.targets[0], targets[0], callee.owner, callee.name, ordinal);
+    // Name evidence first: the symbol map is anchored, the call-site map is an alignment. The site is
+    // the fallback for callees no naming pass has reached, and it is marked exact in the report.
     var calleeEntry = resolve(callee.owner, callee.name);
-    if (!calleeEntry) { return { ok: false, kind: kind, why: "no anchor for the redirected call " + callee.owner + "." + callee.name }; }
+    if (!calleeEntry && site) { calleeEntry = { fn: site.fn, arity: state.teaVM[site.fn] ? state.teaVM[site.fn].length - 1 : null }; }
+    if (!calleeEntry) {
+      return { ok: false, kind: kind, why: "neither the symbol map nor the call-site map has " + callee.owner + "." + callee.name +
+        " inside " + simpleName(plan.targets[0]) + "." + targets[0] };
+    }
     if (typeof injection.run !== "function") { return { ok: false, kind: kind, why: "the plan carries no runnable handler" }; }
     installBookkeeping(targetEntry.fn);
     if (!calleeSites.has(calleeEntry.fn)) { /* installed below */ }
@@ -355,11 +427,18 @@
       kind: kind,
       index: point.index != null ? point.index : point.ordinal,
       label: plan.mixin + " -> " + plan.targets[0] + "." + callee.name,
+      shift: String(point.shift || "").toUpperCase() === "AFTER" ? "AFTER" : "BEFORE",
       plan: plan
     });
     return {
       ok: true, kind: kind, target: targets[0], callee: callee.owner + "." + callee.name,
-      fn: calleeEntry.fn, note: "approximate: the callee is redirected while the target is on the stack",
+      fn: calleeEntry.fn,
+      exact: !!site,
+      note: site
+        ? "exact: call site " + site.site + " inside " + simpleName(plan.targets[0]) + "." + targets[0]
+        : (kind === "injectAtInvoke"
+          ? "approximate: the handler runs at every call to " + callee.owner + "." + callee.name + " inside the target"
+          : "approximate: the callee is redirected while the target is on the stack"),
       rollback: { fn: calleeEntry.fn, original: bookkeeping.get("callee:" + calleeEntry.fn).original, label: "site" }
     };
   }
@@ -398,7 +477,12 @@
     var atHead = /^HEAD$/i.test(String(point).split(":")[0]);
     var atReturn = /^(RETURN|TAIL)$/i.test(String(point).split(":")[0]);
     if (!atHead && !atReturn) {
-      return { ok: false, kind: kind, why: "injection point " + point + " needs a call-site map this layer does not have" };
+      // `@Inject(at = @At("INVOKE"))` is a call site, and a call site is exactly what the redirect
+      // machinery already stands in front of. Everything else (a field read, a constant, a local
+      // variable) has no call to stand in front of, and says so by name.
+      var viaSite = applySite(plan, injection);
+      if (viaSite.ok) { return viaSite; }
+      return { ok: false, kind: kind, why: "injection point " + (point.value || JSON.stringify(point)) + " needs a call-site map this layer does not have" };
     }
     if (typeof injection.run !== "function") {
       return { ok: false, kind: kind, why: "the plan carries no runnable handler (re-convert the mod with this version of the converter)" };
@@ -548,6 +632,7 @@
 
   // The bootstrap carries where the symbol map lives; the loader fills it in.
   state.symbolsUrl = (internal.boot && internal.boot.symbolsUrl) || null;
+  state.sitesUrl = state.symbolsUrl ? String(state.symbolsUrl).replace(/symbols\.json/, "sites.json") : null;
 
   var readyBus = new WebMC.Bus("internals");
   var announced = false;

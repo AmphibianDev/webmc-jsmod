@@ -329,7 +329,7 @@ function buildNameRegistry() {
 // so a slot whose function is already named teaches the name for every other class that has it.
 const symbols = existsSync(symbolsFile) ? JSON.parse(readFileSync(symbolsFile, "utf8")) : { anchors: {} };
 const merged = symbols.anchors || {};
-const stats = { matched: 0, byLiteral: 0, byField: 0, byCallee: 0, bySoleCandidate: 0, wantedMatches: 0, bySlot: 0, byCaller: 0 };
+const stats = { matched: 0, byLiteral: 0, byField: 0, byCallee: 0, bySoleCandidate: 0, wantedMatches: 0, bySlot: 0, byCaller: 0, callGraph: 0, callGraphSeeds: 0 };
 const jsArity = js.arity;
 const jsCallees = js.calleesBySym;
 
@@ -634,6 +634,294 @@ while (round < 3) {
   totalNew += newThisRound;
   console.log(`  round ${round}: +${newThisRound} methods named`);
   if (!newThisRound) { break; }
+}
+
+
+/* ------------------------------------------------------------- the call graph ------------------ *
+ * The passes above match one method at a time: literals, fields, or a caller's arity. That leaves
+ * the methods with neither a distinctive literal nor a field of their own — the ordinary methods in
+ * the middle of the client, which is exactly what a big mixin mod patches.
+ *
+ * But both sides have a *graph*. The Java class file says which methods a method calls (and, read
+ * backwards, which methods call it); the compiled build says which functions a function calls. Once
+ * some methods are named — 17.5k of them by the time this runs — the two graphs can be matched
+ * against each other: a Java method whose already-named callees are exactly the functions this
+ * compiled function calls is that method.
+ *
+ * This is a fixed-point pass: every accepted pair is new evidence for its neighbours, so it runs in
+ * rounds until nothing changes. A pair is only accepted when it is mutually best — the method's
+ * favourite function *and* that function's favourite method — with a real margin over the runner-up,
+ * because a wrong name is worse than a missing one: the runtime would wrap the wrong function.
+ */
+{
+  const keyOf = (method) => method.obfClass + "." + method.obfMethod + method.descriptor;
+  const javaByKey = new Map();
+  const javaCallers = new Map();          // java key -> Map(caller key -> count)
+  const jsCallers = new Map();            // symbol -> Map(caller symbol -> count)
+  for (const method of java.methods) {
+    const key = keyOf(method);
+    javaByKey.set(key, method);
+    for (const call of method.calls) {
+      const calleeKey = call.owner + "." + call.name + call.descriptor;
+      if (!javaByKey.has(calleeKey) && !java.methods.some((other) => keyOf(other) === calleeKey)) {
+        // The callee is outside the mappings (a JDK or library method): no edge to learn from.
+        continue;
+      }
+      let table = javaCallers.get(calleeKey);
+      if (!table) { table = new Map(); javaCallers.set(calleeKey, table); }
+      table.set(key, (table.get(key) || 0) + 1);
+    }
+  }
+  for (const [sym, callees] of jsCallees) {
+    for (const callee of callees) {
+      let table = jsCallers.get(callee);
+      if (!table) { table = new Map(); jsCallers.set(callee, table); }
+      table.set(sym, (table.get(sym) || 0) + 1);
+    }
+  }
+
+  /* Java methods by class + name, so the map's names can be turned back into descriptors. */
+  const javaByClassMethod = new Map();
+  for (const method of java.methods) {
+    if (!method.namedMethod) { continue; }
+    const key = method.simpleClass + "::" + method.namedMethod;
+    const list = javaByClassMethod.get(key) || [];
+    list.push(method);
+    javaByClassMethod.set(key, list);
+  }
+
+  const pairOfJava = new Map();          // java key -> symbol
+  const pairOfSym = new Map();           // symbol -> java key
+  const taken = new Set();               // every symbol the map already claims
+  for (const methodsOfClass of Object.values(merged)) {
+    for (const entry of Object.values(methodsOfClass)) { if (entry && entry.fn) { taken.add(entry.fn); } }
+  }
+  let seeded = 0;
+  for (const [cls, methods] of Object.entries(merged)) {
+    for (const [method, entry] of Object.entries(methods)) {
+      if (!entry || !entry.fn) { continue; }
+      const candidates = (javaByClassMethod.get(cls + "::" + method) || [])
+        .filter((candidate) => entry.arity == null || jsArity.get(entry.fn) === candidate.argCount + (candidate.isStatic ? 0 : 1) || jsArity.get(entry.fn) === candidate.argCount);
+      if (candidates.length !== 1) { continue; }
+      const key = keyOf(candidates[0]);
+      if (pairOfJava.has(key) || pairOfSym.has(entry.fn)) { continue; }
+      pairOfJava.set(key, entry.fn);
+      pairOfSym.set(entry.fn, key);
+      seeded++;
+    }
+  }
+
+  const ctorsBySimple = new Map();
+  for (const [ctor, name] of tuples) {
+    const list = ctorsBySimple.get(name) || [];
+    list.push(ctor);
+    ctorsBySimple.set(name, list);
+  }
+  const javaFieldsByClass = new Map();   // simple class -> Set(java field name)
+  for (const [obf, info] of java.classFieldIndex) {
+    const set = javaFieldsByClass.get(info.simpleClass) || new Set();
+    for (const field of info.fields || []) { set.add(field.name); }
+    javaFieldsByClass.set(info.simpleClass, set);
+  }
+
+  const calleeSets = new Map();          // symbol -> Set(callee symbols), built once
+  function javaKeyFor(className, method, descriptor) {
+    return className + "." + method + descriptor;
+  }
+
+  /** Candidate functions for a Java method: its class's bucket, plus the neighbourhood of its
+   *  already-paired callers and callees. Everything else would be a guess. */
+  const candidateCache = new Map();
+  function candidatesFor(method) {
+    const cacheKey = method.obfClass + "." + method.obfMethod + method.descriptor;
+    const cached = candidateCache.get(cacheKey);
+    if (cached) { return cached; }
+    const out = new Map();              // symbol -> why it is a candidate
+    const add = (sym, why) => { if (sym && js.functionSymbols && js.functionSymbols.has(sym)) { if (!out.has(sym)) { out.set(sym, why); } } };
+    for (const ctor of ctorsBySimple.get(method.simpleClass) || []) {
+      const members = bucket.get(ctor);
+      if (members) { for (const sym of members.keys()) { add(sym, "class"); } }
+    }
+    for (const [callerKey] of javaCallers.get(keyOf(method)) || []) {
+      const callerFn = pairOfJava.get(callerKey);
+      if (!callerFn) { continue; }
+      for (const sym of jsCallees.get(callerFn) || []) { add(sym, "called-by"); }
+    }
+    for (const call of method.calls) {
+      const calleeFn = pairOfJava.get(javaKeyFor(call.owner, call.name, call.descriptor));
+      if (!calleeFn) { continue; }
+      for (const [sym] of jsCallers.get(calleeFn) || []) { add(sym, "calls"); }
+    }
+    // A class bucket can be large; the candidates that came from the graph are the interesting ones,
+    // so when the set is big, keep the graph-derived ones and cap the rest.
+    let result = out;
+    if (out.size > 160) {
+      const graph = new Map();
+      let kept = 0;
+      for (const [sym, why] of out) {
+        if (why === "class") { if (kept++ > 40) { continue; } }
+        graph.set(sym, why);
+      }
+      result = graph;
+    }
+    candidateCache.set(cacheKey, result);
+    return result;
+  }
+
+  const scoreCache = new Map();
+  function scorePair(method, sym) {
+    const cacheKey = method.obfClass + "." + method.obfMethod + method.descriptor + "|" + sym;
+    if (scoreCache.has(cacheKey)) { return scoreCache.get(cacheKey); }
+    const result = scorePairUncached(method, sym);
+    scoreCache.set(cacheKey, result);
+    return result;
+  }
+  function scorePairUncached(method, sym) {
+    const expected = method.argCount + (method.isStatic ? 0 : 1);
+    const arity = jsArity.get(sym);
+    if (arity != null && arity !== expected && arity !== method.argCount) { return null; }
+    const jsBodyCallees = jsCallees.get(sym) || [];
+    let bodySet = calleeSets.get(sym);
+    if (!bodySet) { bodySet = new Set(jsBodyCallees); calleeSets.set(sym, bodySet); }
+    // Callees: how many of the method's Java callees are paired to functions this one calls.
+    let outHits = 0, outKnown = 0;
+    for (const call of method.calls) {
+      const calleeKey = javaKeyFor(call.owner, call.name, call.descriptor);
+      const calleeFn = pairOfJava.get(calleeKey);
+      if (!calleeFn) { continue; }
+      outKnown++;
+      if (bodySet.has(calleeFn)) { outHits++; }
+    }
+    // Callers: the other direction, and it is the stronger one for handlers and callbacks.
+    let inHits = 0, inKnown = 0;
+    for (const [callerKey] of javaCallers.get(keyOf(method)) || []) {
+      const callerFn = pairOfJava.get(callerKey);
+      if (!callerFn) { continue; }
+      inKnown++;
+      const callerCallees = jsCallees.get(callerFn);
+      if (callerCallees && callerCallees.indexOf(sym) >= 0) { inHits++; }
+    }
+    const jsLiterals = js.stringsBySym.get(sym) || new Set();
+    let sharedLits = 0, union = jsLiterals.size;
+    for (const literal of method.literals) { if (jsLiterals.has(literal)) { sharedLits++; } else { union++; } }
+    const literalJaccard = union > 0 ? sharedLits / union : 0;
+    // Fields, when this class's fields have been mapped to compiled tokens.
+    let sharedFields = 0;
+    const tokens = fieldTokensBySym.get(sym);
+    if (tokens) {
+      const javaFields = javaFieldsByClass.get(method.simpleClass);
+      if (javaFields) {
+        for (const access of method.accesses || []) {
+          if (!javaFields.has(access.name)) { continue; }
+          const mapped = tokenForField(method.simpleClass, access.name);
+          if (mapped && tokens.has(mapped)) { sharedFields++; }
+        }
+      }
+    }
+    // A method that calls itself and a function that calls itself: a cheap extra vote.
+    let selfCall = 0;
+    if (outKnown && method.calls.some((call) => javaKeyFor(call.owner, call.name, call.descriptor) === keyOf(method))) {
+      if (jsBodyCallees.indexOf(sym) >= 0) { selfCall = 1; }
+    }
+    const outRatio = outKnown ? outHits / outKnown : 0;
+    const inRatio = inKnown ? inHits / inKnown : 0;
+    const score =
+      outRatio * 3 + Math.min(outHits, 4) * 0.5 +
+      inRatio * 3 + Math.min(inHits, 4) * 0.5 +
+      literalJaccard * 1.5 + Math.min(sharedLits, 3) * 0.1 +
+      Math.min(sharedFields, 4) * 0.5 +
+      (arity != null && arity === expected ? 1 : 0) + selfCall * 0.5;
+    if (!outHits && !inHits && sharedLits === 0 && sharedFields < 2) { return null; }
+    return { score, outHits, inHits, outKnown, inKnown, sharedLits, sharedFields, arity };
+  }
+
+  const tokenMaps = new Map();
+  function tokenForField(simpleName, javaField) {
+    if (!tokenMaps.has(simpleName)) {
+      const obf = obfForSimple.get(simpleName);
+      const javaFields = obf ? java.classFieldIndex.get(obf) : null;
+      const ctor = (ctorsBySimple.get(simpleName) || [])[0];
+      const jsFields = ctor ? (fieldOrderByCtor.get(ctor) || []) : [];
+      tokenMaps.set(simpleName, ctor ? tokenByFieldFor(ctor, javaFields, jsFields) : new Map());
+    }
+    return tokenMaps.get(simpleName).get(javaField) || null;
+  }
+
+  let accepted = 0;
+  const acceptedDetail = [];
+  for (let round = 1; round <= 8; round++) {
+    let added = 0;
+    scoreCache.clear();
+    candidateCache.clear();
+    // Symbols and methods that are free this round.
+    const freeMethods = java.methods.filter((method) => method.namedMethod && !pairOfJava.has(keyOf(method)));
+    const bestForSym = new Map();
+    for (const method of freeMethods) {
+      const candidates = candidatesFor(method);
+      if (!candidates.size) { continue; }
+      for (const [sym] of candidates) {
+        if (pairOfSym.has(sym) || taken.has(sym)) { continue; }
+        const scored = scorePair(method, sym);
+        if (!scored || scored.score < 1.2) { continue; }
+        let list = bestForSym.get(sym);
+        if (!list) { list = []; bestForSym.set(sym, list); }
+        list.push({ method, sym, ...scored });
+      }
+    }
+    // The other direction, once per method: which function is *this method's* favourite. Computing it
+    // inside the acceptance loop (as the first version did) made the pass quadratic and turned a
+    // five-minute job into twenty.
+    const bestByMethod = new Map();
+    for (const method of freeMethods) {
+      for (const [sym] of candidatesFor(method)) {
+        if (pairOfSym.has(sym) || taken.has(sym)) { continue; }
+        const scored = scorePair(method, sym);
+        if (!scored) { continue; }
+        const previous = bestByMethod.get(method);
+        if (!previous || scored.score > previous.score) { bestByMethod.set(method, { sym, score: scored.score }); }
+      }
+    }
+    for (const [sym, list] of bestForSym) {
+      list.sort((a, b) => b.score - a.score);
+      const best = list[0];
+      const second = list[1];
+      // Mutual best, with a margin: the function's favourite method must also be the method's
+      // favourite function, and it must beat the runner-up clearly.
+      if (second && best.score < second.score * 1.25 + 0.3) { continue; }
+      const methodKey = keyOf(best.method);
+      const methodBest = bestByMethod.get(best.method);
+      if (methodBest && methodBest.sym !== sym && methodBest.score >= best.score * 1.25) { continue; }
+      if (best.outHits + best.inHits < 1 && best.sharedFields < 2) { continue; }
+      pairOfJava.set(methodKey, sym);
+      pairOfSym.set(sym, methodKey);
+      taken.add(sym);
+      const table = merged[best.method.simpleClass] || (merged[best.method.simpleClass] = {});
+      if (!table[best.method.namedMethod]) {
+        const evidence = [];
+        if (best.outHits) { evidence.push(`${best.outHits}/${best.outKnown} callee(s) already named`); }
+        if (best.inHits) { evidence.push(`called by ${best.inHits}/${best.inKnown} named caller(s)`); }
+        if (best.sharedFields) { evidence.push(`${best.sharedFields} field access(es)`); }
+        if (best.sharedLits) { evidence.push(`${best.sharedLits} literal(s)`); }
+        table[best.method.namedMethod] = {
+          fn: sym, index: null, arity: jsArity.get(sym) || null,
+          why: "call graph: " + evidence.join(", "),
+          score: Math.round(best.score * 100) / 100
+        };
+        added++;
+        accepted++;
+        if (acceptedDetail.length < 40) { acceptedDetail.push({ method: best.method.simpleClass + "." + best.method.namedMethod, fn: sym, score: Math.round(best.score * 100) / 100, why: table[best.method.namedMethod].why }); }
+      }
+    }
+    console.log(`  call graph round ${round}: +${added} methods named (${pairOfJava.size} paired)`);
+    if (!added) { break; }
+  }
+  if (process.argv.includes("--verbose")) {
+    for (const entry of acceptedDetail.slice(0, 15)) { console.log(`    ${entry.method} -> A.${entry.fn} (${entry.why})`); }
+  }
+  stats.callGraph = accepted;
+  stats.callGraphSeeds = seeded;
+  console.log(`  call graph: ${accepted} methods named from ${seeded} seeds`);
+  globalThis.__callGraphAccepted = acceptedDetail;
 }
 
 // The field map: Java field name -> compiled field token, per class. This is what turns an

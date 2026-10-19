@@ -76,10 +76,16 @@ export function readMixinPlan(analysis, mappings) {
     for (const extra of annotation.values.targets || []) { targets.push(String(extra)); }
     const rawTargets = targets.slice();
     if (mappings) { targets.forEach((target, index) => { targets[index] = mappings.class(target); }); }
+    // A plan against classes that are not the game's own (a mod patching its own bundled library, or
+    // another mod's class) never needs the client's internals: the mod's own code is translated, and
+    // the other mod's is not here to patch. Marking it keeps the numbers honest.
+    const ownTargets = mappings ? targets.filter((target) => !mappings.isGameClass(target)) : [];
     const entry = {
       className,
       simpleName: className.split("/").pop(),
       targets,
+      own: targets.length > 0 && ownTargets.length === targets.length,
+      ownTargets,
       rawTargets,
       environment: config ? (config.client && config.client.includes(className) ? "client"
         : config.server && config.server.includes(className) ? "server" : "both") : "unknown",
@@ -118,11 +124,23 @@ export function readMixinPlan(analysis, mappings) {
           });
           continue;
         }
-        const injectionTargets = normalizeTargets(found2.values.method);
+        // An `@Overwrite` has no `method` element: the handler in the mixin class *is* the target
+        // method, under its own name. Reading the annotation alone made every overwrite say
+        // `<unspecified>` — which is why Flashback's twenty overwrites and Lattice's fifteen looked
+        // like unmapped methods when they were actually the mod naming its targets in the only way
+        // the annotation allows. `@WrapOperation`/`@ModifyExpressionValue` are the same shape.
+        const implicitMethod = found2.values.method == null &&
+          (found2.kind === "overwrite" || found2.kind === "wrapOperation" || found2.kind === "wrapWithCondition");
+        const injectionTargets = implicitMethod
+          ? [method.name]
+          : normalizeTargets(found2.values.method);
         if (mappings) {
           const first = targets[0] || null;
           injectionTargets.forEach((target, index) => {
-            if (!/^method_\d+$/.test(target)) { return; }
+            // A remapped jar holds obfuscated names in `@Inject(method = "method_1234")`: resolve those
+            // through the mappings, both against the mixin's own target class and globally.
+            const needsMapping = /^method_\d+$/.test(target) || implicitMethod;
+            if (!needsMapping) { return; }
             const resolved = first ? mappings.method(first, target) : target;
             injectionTargets[index] = /^method_\d+$/.test(resolved) ? mappings.methodAnywhere(target) : resolved;
           });

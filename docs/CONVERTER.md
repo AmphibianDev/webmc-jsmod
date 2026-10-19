@@ -130,6 +130,23 @@ Members are joined on **name and descriptor**, not name alone: an obfuscator may
 for several overloads, and a name-only join silently picks the wrong one. When a mixin names a
 method that lives on a superclass, a globally unique intermediary name is used as a fallback.
 
+## Targets: what a mixin names, and what the plan says
+
+A mixin annotation is not always explicit about what it patches, and the converter used to lose two
+shapes of it:
+
+* **`@Overwrite`** has no `method` element at all: the handler's own name in the mixin class *is* the
+  target method. Reading the annotation alone produced `<unspecified>` for every overwrite — which is
+  what made Flashback's twenty overwrites and Lattice's fifteen look like unmapped methods when the
+  mod was naming its targets in the only way the annotation allows. The plan now takes the handler's
+  name and resolves it through the mappings.
+* **A plan against the mod's own classes.** A mod can mixin into its own bundled library (Flashback
+  does, into its Lattice widgets) or into another mod. Those targets are not the game's, the client
+  has nothing to patch, and the mod's own code already runs from the converted source. The plan is
+  marked `own: true` and the runtime retires it as `not-the-client` — with that reason, not as a
+  target it failed to find. Before that, "0 of 20 overwrites applied" read like a conversion failure
+  when it was a correct conversion of work that never needed the client.
+
 ## What the numbers look like
 
 Converted on this machine (2026-10-18), with mappings for 1.21.11:

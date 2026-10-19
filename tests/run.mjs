@@ -477,6 +477,45 @@ await test("a @Redirect is consulted while the target method is on the stack", a
   eq(calleeCalls, 0, "the original call did not run");
 });
 
+await test("an @Inject at an INVOKE point runs at the call and can cancel it", async () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const meta = Symbol("teavm_meta");
+  const target = function TargetClass() {}; target[meta] = { name: "net.minecraft.client.Minecraft" };
+  const callee = function CalleeClass() {}; callee[meta] = { name: "net.minecraft.client.OptionInstance" };
+  const seen = [];
+  win.__gaiusTeaVM = {
+    TargetCtor: target, CalleeCtor: callee,
+    TargetFn: function (self) { return win.__gaiusTeaVM.CalleeFn(self, 1) + win.__gaiusTeaVM.CalleeFn(self, 2); },
+    CalleeFn: function (self, value) { seen.push("call:" + value); return value * 10; }
+  };
+  const state = win.webmc.__internal.internals.state;
+  state.symbols = { Minecraft: { target: { fn: "TargetFn" } }, OptionInstance: { callee: { fn: "CalleeFn" } } };
+  state.symbolsLoaded = true;
+  win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+
+  win.webmc.patches.add({
+    targets: ["net/minecraft/client/Minecraft"],
+    injections: [{
+      kind: "inject", method: ["target"], cancellable: true,
+      at: [{ value: "INVOKE", callee: { kind: "method", owner: "net/minecraft/client/OptionInstance", name: "callee" } }],
+      run: (self, args, info) => {
+        seen.push("handler:" + args[0]);
+        if (args[0] === 2) { info.cancelled = true; info.returnValue = 99; }
+      }
+    }]
+  });
+  await new Promise((resolve) => setTimeout(resolve, 2500));
+  const record = win.webmc.__internal.patches.plans[0];
+  eq(record.state, "applied", "the call-site injection applied");
+  seen.length = 0;
+  const value = win.__gaiusTeaVM.TargetFn({});
+  eq(value, 10 + 99, "the first call ran and the second was cancelled by the handler");
+  ok(seen.indexOf("handler:1") >= 0 && seen.indexOf("handler:2") >= 0, "the handler ran at both call sites");
+  ok(seen.indexOf("call:2") < 0, "the cancelled call did not reach the original");
+});
+
 await test("a @ModifyArg changes one argument and the call still happens", async () => {
   const win = loadRuntime({ trustAll: true });
   win.__installClient();

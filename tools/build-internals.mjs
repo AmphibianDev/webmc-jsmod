@@ -35,7 +35,12 @@ const mappings = flag("mappings", join(root, "converter", "mappings", "1.21.11")
 const jsDir = flag("js", source);
 const patched = resolve(flag("out", join(root, "client", "1.21.11-internals")));
 const rounds = Number(flag("rounds", 4));
-const wantedFiles = all("wanted").length ? all("wanted") : [join(root, "mods", "converted", "meteor.js"), join(root, "mods", "converted", "gammautils.js")];
+// The wanted list biases the naming passes towards the targets the shipped mods actually patch. A
+// mod that is not in the list still benefits from everything the passes find on their own.
+const defaultWanted = ["meteor.js", "gammautils.js", "flashback.js/flashback/index.js", "litematica.js", "jei.js"]
+  .map((name) => join(root, "mods", "converted", name))
+  .filter((file) => existsSync(file));
+const wantedFiles = all("wanted").length ? all("wanted") : defaultWanted;
 
 const node = process.execPath;
 function run(script, argv) {
@@ -85,4 +90,8 @@ for (let round = 1; round <= rounds; round++) {
   if (named === previous) { break; }
   previous = named;
 }
-console.log("\nwrote " + symbolsFile);
+console.log("\n=== 5/5 call-site map (which compiled function each call inside a named method is) ===");
+run("build-sites.mjs", ["--jar", jar, "--mappings", mappings, "--js", jsDir,
+  "--symbols", symbolsFile, "--out", join(patched, "sites.json")]);
+
+console.log("\nwrote " + symbolsFile + " and " + join(patched, "sites.json"));

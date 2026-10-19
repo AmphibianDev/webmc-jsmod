@@ -1,0 +1,41 @@
+{
+  "id": "flashback",
+  "name": "Flashback",
+  "version": "0.39.10",
+  "authors": [
+    "Moulberry"
+  ],
+  "description": "Converted from a Fabric mod by webmc-jsmod (Flashback-0.39.10-for-MC1.21.11.jar)",
+  "capabilities": [
+    "hud",
+    "input",
+    "commands",
+    "storage",
+    "settings",
+    "modules",
+    "player.read",
+    "world.read",
+    "camera.read",
+    "chat.write",
+    "internals"
+  ],
+  "convertedFrom": {
+    "file": "Flashback-0.39.10-for-MC1.21.11.jar",
+    "sha256": "7ec58788ff8fbc64d609c9550896fb9cfe9436ae8b918101bfd8fad67498bc18",
+    "entrypoints": [
+      {
+        "kind": "main",
+        "className": "com/moulberry/flashback/Flashback",
+        "method": "onInitialize",
+        "translated": true
+      },
+      {
+        "kind": "client",
+        "className": "com/moulberry/flashback/Flashback",
+        "method": "onInitializeClient",
+        "translated": true
+      }
+    ]
+  },
+  "entry": "index.js"
+}

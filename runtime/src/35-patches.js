@@ -16,6 +16,7 @@
   var bus = new WebMC.Bus("patches");
   var applied = 0;
   var refused = 0;
+  var notTheClient = 0;
 
   function add(plan) {
     plan = plan || {};
@@ -29,6 +30,7 @@
       injections: Array.isArray(plan.injections) ? plan.injections.slice() : [],
       accessors: Array.isArray(plan.accessors) ? plan.accessors.slice() : [],
       shadows: Array.isArray(plan.shadows) ? plan.shadows.slice() : [],
+      own: plan.own === true,
       state: "planned",
       why: null,
       at: Date.now()
@@ -42,7 +44,7 @@
     record.state = "planned";
     record.why = null;
     recount();
-    internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+    announce();
     bus.emit("plan", record);
     scheduleApply();
     return record;
@@ -50,8 +52,34 @@
 
   function recount() {
     applied = 0;
-    for (var i = 0; i < plans.length; i++) { if (plans[i].state === "applied") { applied++; } }
-    refused = plans.length - applied;
+    notTheClient = 0;
+    for (var i = 0; i < plans.length; i++) {
+      if (plans[i].state === "applied") { applied++; }
+      else if (plans[i].state === "not-the-client") { notTheClient++; }
+    }
+    // A plan against the mod's own classes is not a refusal: the client was never the thing to patch.
+    refused = plans.length - applied - notTheClient;
+  }
+
+  /** Why the plans that did not apply did not apply, grouped. A platform that reports "68 of 191"
+   *  without the reasons is asking to be distrusted: the reasons are the honest half. */
+  function reasons() {
+    var counts = {};
+    for (var i = 0; i < plans.length; i++) {
+      var plan = plans[i];
+      if (plan.state === "applied" || plan.state === "not-the-client") { continue; }
+      var why = String(plan.why || plan.state);
+      // Group by the shape of the sentence, not the exact method name.
+      var key = why
+        .replace(/\([^)]*\)/g, "(…)")
+        .replace(/:.*$/, "")
+        .slice(0, 90);
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    return Object.keys(counts)
+      .map(function (key) { return { why: key, count: counts[key] }; })
+      .sort(function (a, b) { return b.count - a.count; })
+      .slice(0, 8);
   }
 
   /** The internals appear after the compiled module runs, which is later than mod loading. When
@@ -130,8 +158,17 @@
   var watchdog = { running: false, lastUpdates: 0, lastFrames: 0, lastProgressAt: 0 };
 
   function applyPlans() {
-    var pending = plans.filter(function (record) { return record.state !== "applied" && record.state !== "rolled-back"; });
-    if (!pending.length) { return; }
+    // A plan whose targets are the mod's own classes (or another mod's) has nothing here to patch:
+    // the mod's own code is the converted mod itself. Say so by name instead of leaving it "planned"
+    // forever, which read like a target the map had missed.
+    for (var o = 0; o < plans.length; o++) {
+      if (plans[o].own && plans[o].state === "planned" && !(plans[o].accessors || []).length) {
+        plans[o].state = "not-the-client";
+        plans[o].why = "the plan targets the mod's own classes: its code runs from the converted mod, not from the client";
+      }
+    }
+    var pending = plans.filter(function (record) { return record.state !== "applied" && record.state !== "rolled-back" && record.state !== "not-the-client"; });
+    if (!pending.length) { recount(); return; }
     // Accessor and invoker plans install a table entry; they wrap nothing, so they cost the client
     // nothing and are not subject to the wrapper budget. They are where a converted mod's field
     // reads and writes come from, and there are usually dozens of them.
@@ -144,7 +181,7 @@
         else { accessorOnly[i].why = result.why || accessorOnly[i].why; }
       }
       recount();
-      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+      announce();
     }
     pending = pending.filter(function (record) { return !(record.accessors || []).length || (record.injections || []).length; });
     // Order matters when the budget is smaller than the plan list: a plan that installs an accessor
@@ -202,7 +239,7 @@
       }
     }
     recount();
-    internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+    announce();
     if (!handles.length) { return Promise.resolve(); }
     return liveCheck().then(function (alive) {
       if (alive) { return; }
@@ -213,7 +250,7 @@
       }
       if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
       recount();
-      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+      announce();
       // Which half is responsible? Try each on its own.
       var half = Math.ceil(appliedRecords.length / 2);
       var halves = [appliedRecords.slice(0, half), appliedRecords.slice(half)];
@@ -259,7 +296,7 @@
         }
       }
       recount();
-      internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+      announce();
       watchdog.lastProgressAt = Date.now() + 10000;
     }, 5000);
   }
@@ -275,7 +312,7 @@
       }
       if (changed) {
         recount();
-        internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
+        announce();
         internal.toast("applied " + changed + " mixin plan(s) from converted mods (" + applied + " of " + plans.length + ")");
       }
     }
@@ -295,6 +332,19 @@
     }
   }
 
+  function announce() {
+    var stats = internal.internals && internal.internals.stats ? (internal.internals.stats() || {}) : {};
+    internal.notifyPanel({
+      kind: "webmc:patches",
+      count: plans.length,
+      applied: applied,
+      planned: refused,
+      own: notTheClient,
+      injections: stats.appliedInjections || 0,
+      reasons: reasons()
+    });
+  }
+
   function summary() {
     var classes = {};
     var methods = {};
@@ -312,6 +362,8 @@
       accessors: plans.reduce(function (total, plan) { return total + plan.accessors.length; }, 0),
       applied: applied,
       planned: refused,
+      own: notTheClient,
+      reasons: reasons(),
       targets: Object.keys(classes).sort(function (a, b) { return classes[b] - classes[a]; }).slice(0, 40).map(function (name) {
         return { target: name, count: classes[name] };
       }),

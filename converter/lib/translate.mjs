@@ -731,6 +731,10 @@ export function translate(analysis, options = {}) {
       push("      webmc.patches.add({");
       push("        modId: " + JSON.stringify(fabric.id) + ", mixin: " + JSON.stringify(mixin.className) + ",");
       push("        targets: " + JSON.stringify(mixin.targets) + ", environment: " + JSON.stringify(mixin.environment) + ",");
+      // `own` means every class this plan names is the mod's own (or another mod's), not the game's:
+      // the client has nothing to patch, so the plan is reported as not-the-client's rather than as
+      // a target that could not be found.
+      if (mixin.own) { push("        own: true,"); }
       push("        injections: [");
       for (const injection of mixin.injectionPoints) {
         // The at-points keep their target member reference: a @Redirect/@ModifyArg needs to know

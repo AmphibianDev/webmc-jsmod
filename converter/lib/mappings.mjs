@@ -140,6 +140,17 @@ export function loadMappings(directory) {
     size: { classes: namedClassByIntermediary.size, methods: methodByIntermediaryAndClass.size, fields: fieldByIntermediaryAndClass.size },
     _debug: { namedClassByObf, methodByIntermediaryAndClass, intermediaryClassByNamed },
     isIntermediary(name) { return /(^|\/)class_\d+$/.test(name); },
+    /** Is this a class of the game itself? A mixin can only patch what the client loads, and a
+     *  converted mod's plans against its own classes never need the client's internals at all — the
+     *  mod's own code is translated. Without this, a mod that patches its own helper classes looked
+     *  like a mod with twenty unresolvable targets (Flashback's `@Overwrite`s on its bundled Lattice
+     *  widgets were exactly that). */
+    isGameClass(name) {
+      if (!name) { return false; }
+      const slashed = String(name).replace(/\./g, "/");
+      return namedClassByIntermediary.has(slashed) || intermediaryClassByNamed.has(slashed)
+        || namedClassByObf.has(slashed) || intermediaryClassByObf.has(slashed);
+    },
     class(name) {
       if (!name) { return name; }
       if (namedClassByIntermediary.has(name)) { return namedClassByIntermediary.get(name); }
