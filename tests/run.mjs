@@ -395,6 +395,7 @@ await test("a patched client resolves an anchored method and applies an @Inject 
   // A test calls in a tight loop, which any method would look hot under; the thresholds are
   // tunable for exactly this, and must be set before the wrapper is created.
   win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
+  win.webmc.__internal.internals.limits.sampleCalls = 5;
   let injected = 0;
   win.webmc.patches.add({
     targets: ["net.minecraft.client.Minecraft"],
@@ -410,7 +411,7 @@ await test("a patched client resolves an anchored method and applies an @Inject 
   const summary = win.webmc.__internal.patches.summary();
   eq(summary.applied, 1, "the injection applied once the client was running");
   // The wrapper samples first: it passes through until it has measured the call rate, so a hot
-  // method is never wrapped. Twenty-five calls is past the sampling window.
+  // method is never wrapped. Well past the sampling window (5 calls in this test).
   let result = null;
   for (let i = 0; i < 25; i++) { result = win.__gaiusTeaVM.IkAb({ name: "the client" }); }
   ok(injected > 0, "the handler ran once the call rate was known to be low");
@@ -443,6 +444,40 @@ await test("a plan whose method has no anchor is refused, not guessed", async ()
 });
 
 /* ------------------------------------------------------------------ redirects ---------------- */
+await test("an @Inject at HEAD applies when the at-point is an object (the converter's own shape)", async () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const meta = Symbol("teavm_meta");
+  const target = function TargetClass() {}; target[meta] = { name: "net.minecraft.client.Minecraft" };
+  let calls = 0;
+  win.__gaiusTeaVM = {
+    TargetCtor: target,
+    TargetFn: function (self) { calls++; return 7; }
+  };
+  const state = win.webmc.__internal.internals.state;
+  state.symbols = { Minecraft: { tick: { fn: "TargetFn", arity: 1 } } };
+  state.symbolsLoaded = true;
+  win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
+  win.webmc.__internal.internals.limits.sampleCalls = 1;   // the wrapper learns the call rate first
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+
+  let seen = 0;
+  win.webmc.patches.add({
+    targets: ["net/minecraft/client/Minecraft"],
+    // The converter emits at-points as objects; a plain string is the hand-written shape.
+    injections: [{ kind: "inject", method: ["tick"], at: [{ value: "HEAD", ordinal: null, index: null, target: null, callee: null }],
+      run: () => { seen++; } }]
+  });
+  await new Promise((resolve) => setTimeout(resolve, 2500));
+  const record = win.webmc.__internal.patches.plans[0];
+  eq(record.state, "applied", "the HEAD injection applied: " + String(record.why || ""));
+  calls = 0;
+  win.__gaiusTeaVM.TargetFn({});
+  win.__gaiusTeaVM.TargetFn({});
+  eq(calls, 2, "the original still ran");
+  eq(seen, 2, "the handler ran at the head of the method");
+});
+
 await test("a @Redirect is consulted while the target method is on the stack", async () => {
   const win = loadRuntime({ trustAll: true });
   win.__installClient();

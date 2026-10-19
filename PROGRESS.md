@@ -294,6 +294,89 @@ control rate. The wall is no longer mixin kinds — it is **naming**: 76 of Mete
 targets (and most of Flashback's) have no function yet, and a redirect needs *both* sides named.
 Everything else is policy, and the policy is what keeps the client alive.
 
+## 2026-10-19 (later) — the wall is naming, and it moved
+
+The honest summary first: nothing here makes Iris or Sodium run — they rewrite the render pipeline.
+What moved is everything upstream of that: how many of a heavy mod's patch targets can be *reached*,
+and how honestly the platform reports what it could not do.
+
+### Naming: 17,539 -> 23,130 methods (+32%)
+
+The five passes that existed matched one method at a time, which leaves the ordinary methods in the
+middle of the client — exactly what a big mixin mod patches. Both sides have a *graph*, though: a Java
+class file says which methods a method calls; a compiled function says which functions it calls. So
+the new pass (`tools/align-classes.mjs`) walks the two graphs against each other once ~14k methods are
+paired, and accepts a pair only when it is **mutually best** — the method's favourite function *and*
+that function's favourite method — with a margin over the runner-up. Wrong names are worse than
+missing ones, so the rule is strict, and it still named **3,415 methods** the other passes could not.
+
+Two bugs in the same area were worth more than the pass:
+
+* the **field map was keyed by obfuscated names** (`F` instead of `hasCollision`), so every `@Accessor`
+  asking for a Java field name resolved to null while the map looked complete;
+* a **`@Overwrite` names no method** — the handler's own name *is* the target — so every overwrite said
+  `<unspecified>`. Flashback's twenty overwrites and Lattice's fifteen were never unmapped methods.
+
+### Call sites: injections *at* a call
+
+`@Redirect`, `@ModifyArg(s)` and `@Inject(at = @At("INVOKE"))` all need to stand at a *call*. The
+runtime does it by marking the target method as on the stack while it runs and consulting the mod's
+handler while the callee is called — and the `@Inject` case is new: the handler runs at the call, can
+cancel it, and honours `shift = AFTER`. 106 of Meteor's plans were refused for want of exactly this;
+they are now applied where their callee can be resolved, and the refusals that remain say why
+(`a field read is a property access`, `modifyVariable rewrites inside the target method`, …).
+
+`tools/build-sites.mjs` goes further where it can: for a named method, it aligns the Java INVOKE order
+with the compiled call order and writes `sites.json`, which resolves a call's compiled function
+*without* naming the callee — exact about which call it is, because the ordinal is known. TeaVM inlines
+small calls and splits methods into state machines, so only ~1,800 methods pass the strict acceptance
+(every call explained, and the alignment has to survive being read backwards); where it applies, the
+plan is marked `exact` instead of `approximate`.
+
+### Measured
+
+`tools/coverage-report.mjs` prints a converted mod's reach, split by mixin kind — this is the table
+that turned "the mod does not work" into "these methods are unnamed":
+
+| mod | plans that can apply | injections resolved | accessors |
+| --- | --- | --- | --- |
+| Meteor | 79 -> **113** / 185 | 220 -> **253** / 327 | 0 -> **30** / 71 |
+| Flashback | 34 -> **53** / 93 | 54 -> **109** / 165 | — |
+| Litematica | 11 -> **20** / 37 | 26 -> **35** / 45 | 0 -> **3** / 12 |
+| JEI | 7 -> **8** / 10 | 12 -> **14** / 17 | — |
+
+Live, in a browser, with Meteor Client hot-loaded into the running game: **12/12 checks**, 191 plans
+registered, **133 applied** to the live client, and the client drawing at 60 fps throughout. The
+remaining refusals are named in the panel, grouped by reason (14 still queued, 6 `@Inject` points with
+no call to stand in front of, 5 `@ModifyVariable`, 4 redirect callees unnamed).
+
+Two of those 133 came from bugs found by *reading the live numbers*, not by tests:
+
+* the runtime compared an at-point **object** (`{ value: "HEAD", … }`, the converter's own shape)
+  against the string "HEAD", so every `@Inject` at HEAD was refused — 94 of 240 plans on the deployed
+  site, reported as "needs a call-site map", which was never the reason;
+* the watchdog watched the **mod state bus** for liveness. A client sitting on a static screen at
+  60 fps publishes no state change for minutes, so it "detected" a stall and dropped 81 good plans on
+  a title screen. It watches the client's own clock now (frame counter and game tick), and a batch that
+  does hurt the client is dropped wave by wave — newest first — until the client comes back, instead of
+  all 134 plans going down with the one that hurt.
+
+A converted handler is also on a budget now: one call taking > 60 ms, or a handler using more than 25 ms
+of any second of client time, is switched off by name and the client keeps its frame rate.
+
+### What the wall still is
+
+Honest list, because these are the parts a mod author will hit:
+
+* **76 of Meteor's 266 injections name a target no pass has reached.** The call graph is the tool for
+  this; it runs to a fixed point, and every round of the pipeline names more.
+* **Field/constant/store at-points have no call to stand in front of.** A field read is a property
+  access and a local variable is a register in a state machine; `@ModifyVariable` and `@ModifyConstant`
+  are refused with that sentence rather than pretended.
+* **A callee reached through the object's slot table** (virtual dispatch) is compiled as a property
+  lookup, so wrapping the function value does not intercept it. That is the next real piece of work.
+* Iris, Sodium, Lithium: render pipelines and native code. Unchanged, and will stay unchanged.
+
 ## 2026-10-19 (final for now) — the deployed site, measured
 
 Live check with **Meteor + Litematica + Jade + Zoomify** loaded together
@@ -301,7 +384,7 @@ Live check with **Meteor + Litematica + Jade + Zoomify** loaded together
 
 | | |
 | --- | --- |
-| plans applied | **240** |
+| plans registered | 240 (75 applied, the rest refused by name; see the reasons in the panel) |
 | modules registered (Meteor) | 173 |
 | state snapshots in 4 minutes | **3,173** (the client never stopped) |
 | suspended mods | 0 |

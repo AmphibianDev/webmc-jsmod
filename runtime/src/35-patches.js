@@ -156,6 +156,11 @@
    * named in the panel instead of taking the whole set down.
    */
   var watchdog = { running: false, lastUpdates: 0, lastFrames: 0, lastProgressAt: 0 };
+  // What actually went in, newest last: each entry is one batch that passed its liveness check.
+  // The watchdog needs this because "the client stopped publishing state" does not say *which*
+  // wrapper did it, and rolling back 134 plans because the 134th hurt is not a platform — it is a
+  // switch. Dropping the newest batch first finds the offender and keeps the rest.
+  var appliedWaves = [];
 
   function applyPlans() {
     // A plan whose targets are the mod's own classes (or another mod's) has nothing here to patch:
@@ -242,7 +247,11 @@
     announce();
     if (!handles.length) { return Promise.resolve(); }
     return liveCheck().then(function (alive) {
-      if (alive) { return; }
+      if (alive) {
+        appliedWaves.push({ handles: handles, plans: appliedRecords });
+        if (appliedWaves.length > 40) { appliedWaves.shift(); }
+        return;
+      }
       var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(handles) : 0;
       for (var i = 0; i < appliedRecords.length; i++) {
         appliedRecords[i].state = "rolled-back";
@@ -268,37 +277,92 @@
     });
   }
 
+  /** Is the client alive? The honest answer is its own clock: the frame counter and the game tick,
+   *  both of which the runtime reads from the client's loop. The state bus is *not* a liveness
+   *  signal — a client sitting on a static screen at 60 fps publishes no state change for minutes,
+   *  and a watchdog that watches the mod bus dropped 81 perfectly good plans on a title screen. */
+  function aliveNow() {
+    var frames = internal.frame ? internal.frame.count : 0;
+    var ticks = internal.frame ? internal.frame.gameTick : 0;
+    var moved = frames > watchdog.lastFrames || ticks > watchdog.lastTicks;
+    watchdog.lastFrames = frames;
+    watchdog.lastTicks = ticks;
+    return moved;
+  }
+
   function startWatchdog() {
     if (watchdog.running) { return; }
     watchdog.running = true;
     watchdog.lastUpdates = internal.state ? internal.state.updates : 0;
     watchdog.lastFrames = internal.frame ? internal.frame.count : 0;
+    watchdog.lastTicks = internal.frame ? internal.frame.gameTick : 0;
     watchdog.lastProgressAt = Date.now();
     setInterval(function () {
       var updates = internal.state ? internal.state.updates : 0;
-      var frames = internal.frame ? internal.frame.count : 0;
+      var drawing = internal.frame ? internal.frame.count - watchdog.lastFrames > 120 : false;
+      var ticking = internal.frame ? internal.frame.gameTick - watchdog.lastTicks > 15 : false;
       if (updates !== watchdog.lastUpdates) {
         watchdog.lastUpdates = updates;
         watchdog.lastProgressAt = Date.now();
+        watchdog.quietWindows = 0;
         return;
       }
-      var drawing = frames - watchdog.lastFrames > 120;
-      watchdog.lastFrames = frames;
-      if (!drawing || Date.now() - watchdog.lastProgressAt < 25000) { return; }
-      internal.toast("the client stopped publishing state; patches are being rolled back");
-      var handles = internal.internals && internal.internals.handles ? internal.internals.handles() : [];
-      var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(handles) : 0;
-      if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
-      for (var i = 0; i < plans.length; i++) {
-        if (plans[i].state === "applied") {
-          plans[i].state = "rolled-back";
-          plans[i].why = "rolled back: the client stopped publishing state";
-        }
+      if (drawing || ticking) {
+        // The client is running and only the mod-facing state is quiet. That is normal.
+        watchdog.lastProgressAt = Date.now();
+        watchdog.quietWindows = 0;
+        return;
       }
-      recount();
-      announce();
+      // Nothing drew and no tick ran: the client itself has stopped, which is what a stall is. One
+      // quiet window is not enough — a GC or a resource reload can pause the client for seconds —
+      // and the clock is checked again before anything is blamed on a patch.
+      watchdog.quietWindows = (watchdog.quietWindows || 0) + 1;
+      if (watchdog.quietWindows < 2) { return; }
+      if (!drawing && !ticking && Date.now() - watchdog.lastProgressAt >= 40000) { dropWaves(); }
       watchdog.lastProgressAt = Date.now() + 10000;
     }, 5000);
+  }
+
+  /** The client stopped publishing state. Drop the newest wave, wait, and drop another if it is still
+   *  quiet — the offender is found and everything else stays applied. If even an empty set does not
+   *  bring the client back, the state of the client is the problem, not the patches, and the panel
+   *  says exactly that. */
+  function dropWaves() {
+    if (!appliedWaves.length) {
+      internal.toast("the client stopped publishing state, and no patch wave is applied — this is not the patches");
+      return;
+    }
+    var dropped = 0;
+    function again() {
+      var wave = appliedWaves.pop();
+      if (!wave) {
+        recount();
+        announce();
+        internal.toast("dropped every patch wave; the client is still not updating. Nothing from the mods is applied.");
+        return;
+      }
+      var undone = internal.internals && internal.internals.rollback ? internal.internals.rollback(wave.handles) : 0;
+      if (internal.internals && internal.internals.noteRollback) { internal.internals.noteRollback(undone); }
+      for (var i = 0; i < wave.plans.length; i++) {
+        wave.plans[i].state = "rolled-back";
+        wave.plans[i].why = "dropped: the client stopped publishing state after this batch went in";
+      }
+      dropped += wave.plans.length;
+      recount();
+      announce();
+      // Give the client a few seconds to come back before blaming the next wave.
+      var before = internal.state ? internal.state.updates : 0;
+      setTimeout(function () {
+        var now = internal.state ? internal.state.updates : 0;
+        if (now > before) {
+          internal.toast("dropped " + dropped + " plan(s) that stopped the client; " + applied + " stay applied");
+          return;
+        }
+        again();
+      }, 4000);
+    }
+    internal.toast("the client stopped publishing state; dropping the newest patches until it recovers");
+    again();
   }
 
   function oldApplyPlans() {

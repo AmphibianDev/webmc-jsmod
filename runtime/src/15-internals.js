@@ -268,7 +268,12 @@
   var rolledBack = 0;
   var allHandles = [];
   // Tuning knobs, exposed through the internals object so a test (or a mod author) can change them.
-  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256, maxPlans: 128 };
+  // handlerBudgetMs: a converted handler is a stack machine over a mod's own Java, and a mod that
+  // loops (an unresolved field reading as undefined, say) would freeze the tab — the failure this
+  // platform exists to prevent. One slow run, or a handler that eats more than a few milliseconds per
+  // second of client time, is switched off by name and the client keeps going.
+  var limits = { hotPerSecond: 20, sampleCalls: 40, runsPerSecond: 200, maxWrapped: 256, maxPlans: 128,
+    handlerBudgetMs: 60, handlerMsPerSecond: 25 };
   if (internal.boot && internal.boot.patchCap) { limits.maxPlans = Math.max(0, Number(internal.boot.patchCap) || limits.maxPlans); }
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
@@ -474,15 +479,20 @@
     var targets = Array.isArray(injection.method) ? injection.method : [injection.method];
     var points = Array.isArray(injection.at) ? injection.at : [injection.at];
     var point = points[0] || "HEAD";
-    var atHead = /^HEAD$/i.test(String(point).split(":")[0]);
-    var atReturn = /^(RETURN|TAIL)$/i.test(String(point).split(":")[0]);
+    // An at-point arrives as an object (`{ value: "HEAD", ordinal, index, … }`) from the converter and
+    // as a plain string from hand-written plans. Reading the object as a string compared "[object
+    // Object]" against "HEAD" and refused every `@Inject` at HEAD — 94 of 240 plans on the deployed
+    // site, reported as "needs a call-site map", which was never the reason.
+    var pointValue = String(point && typeof point === "object" ? (point.value || "HEAD") : point).split(":")[0].toUpperCase();
+    var atHead = pointValue === "HEAD";
+    var atReturn = pointValue === "RETURN" || pointValue === "TAIL";
     if (!atHead && !atReturn) {
       // `@Inject(at = @At("INVOKE"))` is a call site, and a call site is exactly what the redirect
       // machinery already stands in front of. Everything else (a field read, a constant, a local
       // variable) has no call to stand in front of, and says so by name.
       var viaSite = applySite(plan, injection);
       if (viaSite.ok) { return viaSite; }
-      return { ok: false, kind: kind, why: "injection point " + (point.value || JSON.stringify(point)) + " needs a call-site map this layer does not have" };
+      return { ok: false, kind: kind, why: "injection point " + pointValue + " (at " + (point.target || point.value || "?") + ") has no call to stand in front of: this layer patches calls and whole methods, not field reads or local variables" };
     }
     if (typeof injection.run !== "function") {
       return { ok: false, kind: kind, why: "the plan carries no runnable handler (re-convert the mod with this version of the converter)" };
@@ -524,6 +534,8 @@
     // spend the frame budget in a stack machine.
     var sampleCalls = 0;
     var sampleStartedAt = Date.now();
+    var budgetWindowStart = 0;
+    var budgetSpent = 0;
     var sampling = true;
     var handlerFailures = 0;
     var SAMPLE_CALLS = limits.sampleCalls;
@@ -554,6 +566,7 @@
       }
       var args = Array.prototype.slice.call(arguments, 1);
       var info = { cancellable: options.cancellable, cancelled: false, cancelIgnored: false, returnValue: undefined };
+      var budgetStart = Date.now();
       if (options.atHead) {
         try { run(self, args, info); }
         catch (error) {
@@ -573,6 +586,21 @@
         if (info.cancelled) { info.cancelIgnored = true; }
       }
       var result = original.apply(this, arguments);
+      // The handler's own cost, charged to this wrapper: a mod that is slow here does not get to slow
+      // the client down to a stop.
+      var spent = Date.now() - budgetStart;
+      if (now - budgetWindowStart > 1000) { budgetWindowStart = now; budgetSpent = 0; }
+      budgetSpent += spent;
+      if (spent > limits.handlerBudgetMs) {
+        disabled = true;
+        internal.toast("patch switched off: " + options.label + " took " + spent + " ms in one call");
+        return result;
+      }
+      if (budgetSpent > limits.handlerMsPerSecond) {
+        disabled = true;
+        internal.toast("patch switched off: " + options.label + " used " + budgetSpent + " ms of a second, more than the budget");
+        return result;
+      }
       if (options.atReturn) {
         try { run(self, args, info); }
         catch (error) {
