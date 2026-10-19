@@ -442,6 +442,72 @@ await test("a plan whose method has no anchor is refused, not guessed", async ()
     "the reason names the missing anchor (got: " + (record.why || "none") + ")");
 });
 
+/* ------------------------------------------------------------------ redirects ---------------- */
+await test("a @Redirect is consulted while the target method is on the stack", async () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const meta = Symbol("teavm_meta");
+  const target = function TargetClass() {}; target[meta] = { name: "net.minecraft.client.Minecraft" };
+  const callee = function CalleeClass() {}; callee[meta] = { name: "net.minecraft.client.OptionInstance" };
+  let calleeCalls = 0;
+  win.__gaiusTeaVM = {
+    TargetCtor: target, CalleeCtor: callee,
+    TargetFn: function (self) { return win.__gaiusTeaVM.CalleeFn(self, 1); },
+    CalleeFn: function (self, value) { calleeCalls++; return value + 1; }
+  };
+  const state = win.webmc.__internal.internals.state;
+  state.symbols = { Minecraft: { target: { fn: "TargetFn" } }, OptionInstance: { callee: { fn: "CalleeFn" } } };
+  state.symbolsLoaded = true;
+  win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+
+  win.webmc.patches.add({
+    targets: ["net/minecraft/client/Minecraft"],
+    injections: [{
+      kind: "redirect", method: ["target"],
+      at: [{ value: "INVOKE", callee: { kind: "method", owner: "net/minecraft/client/OptionInstance", name: "callee" } }],
+      run: (self, args) => 999
+    }]
+  });
+  await new Promise((resolve) => setTimeout(resolve, 2500));
+  const record = win.webmc.__internal.patches.plans[0];
+  eq(record.state, "applied", "the redirect applied");
+  const result = win.__gaiusTeaVM.TargetFn({});
+  eq(result, 999, "the handler's value replaced the call");
+  eq(calleeCalls, 0, "the original call did not run");
+});
+
+await test("a @ModifyArg changes one argument and the call still happens", async () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const meta = Symbol("teavm_meta");
+  const target = function TargetClass() {}; target[meta] = { name: "net.minecraft.client.Minecraft" };
+  const callee = function CalleeClass() {}; callee[meta] = { name: "net.minecraft.client.OptionInstance" };
+  let seen = null;
+  win.__gaiusTeaVM = {
+    TargetCtor: target, CalleeCtor: callee,
+    TargetFn: function (self) { return win.__gaiusTeaVM.CalleeFn(self, 1, 2); },
+    CalleeFn: function (self, a, b) { seen = [a, b]; return a + b; }
+  };
+  const state = win.webmc.__internal.internals.state;
+  state.symbols = { Minecraft: { target: { fn: "TargetFn" } }, OptionInstance: { callee: { fn: "CalleeFn" } } };
+  state.symbolsLoaded = true;
+  win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+  win.webmc.patches.add({
+    targets: ["net/minecraft/client/Minecraft"],
+    injections: [{
+      kind: "modifyArg", method: ["target"],
+      at: [{ value: "INVOKE", index: 1, callee: { kind: "method", owner: "net/minecraft/client/OptionInstance", name: "callee" } }],
+      run: () => 40
+    }]
+  });
+  await new Promise((resolve) => setTimeout(resolve, 2500));
+  const result = win.__gaiusTeaVM.TargetFn({});
+  eq(seen, [40, 2], "the first argument was replaced");
+  eq(result, 42, "the original call still ran");
+});
+
 /* ------------------------------------------------------------------ report ------------------- */
 console.log("\n" + passed + " passed, " + failed + " failed");
 if (failed) {

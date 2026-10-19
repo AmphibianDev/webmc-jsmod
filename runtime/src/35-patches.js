@@ -147,6 +147,17 @@
       internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
     }
     pending = pending.filter(function (record) { return !(record.accessors || []).length || (record.injections || []).length; });
+    // Order matters when the budget is smaller than the plan list: a plan that installs an accessor
+    // or a plain @Inject has a compiled method behind it, while a redirect also needs the callee
+    // named. The cheap ones go first so the budget is spent where it applies.
+    function priority(record) {
+      var kinds = (record.injections || []).map(function (injection) { return injection.kind || "inject"; });
+      if (kinds.indexOf("overwrite") >= 0) { return 4; }
+      if (kinds.indexOf("redirect") >= 0 || kinds.indexOf("modifyArg") >= 0 || kinds.indexOf("modifyArgs") >= 0) { return 3; }
+      if (kinds.length && kinds.every(function (kind) { return kind === "inject"; })) { return 1; }
+      return 2;
+    }
+    pending.sort(function (a, b) { return priority(a) - priority(b); });
     // A conservative default: the first N methods, in plan order, and then stop. A browser tab
     // tolerates a few dozen wrappers comfortably; the number is tunable and reported.
     var cap = (internal.internals && internal.internals.limits ? internal.internals.limits.maxPlans : 32) || 32;

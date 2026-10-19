@@ -7260,6 +7260,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -7438,11 +7442,11 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/InGameHudMixin",
         targets: ["net/minecraft/client/gui/Gui"], environment: "unknown",
         injections: [
-          { method: ["renderFood"], handler: "renderFoodPre", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["renderFood"], handler: "renderFoodPre", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/InGameHudMixin", "renderFoodPre(Lnet/minecraft/class_332;Lnet/minecraft/class_1657;IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderFood"], handler: "renderFoodPost", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["renderFood"], handler: "renderFoodPost", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/InGameHudMixin", "renderFoodPost(Lnet/minecraft/class_332;Lnet/minecraft/class_1657;IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderHearts"], handler: "renderHealthPost", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["renderHearts"], handler: "renderHealthPost", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/InGameHudMixin", "renderHealthPost(Lnet/minecraft/class_332;Lnet/minecraft/class_1657;IIIIFIIIZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -7451,7 +7455,7 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/ItemStackMixin",
         targets: ["net/minecraft/world/item/ItemStack"], environment: "unknown",
         injections: [
-          { method: ["getTooltipLines"], handler: "getTooltipFromItem", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["getTooltipLines"], handler: "getTooltipFromItem", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/ItemStackMixin", "getTooltipFromItem(Lnet/minecraft/class_1792$class_9635;Lnet/minecraft/class_1657;Lnet/minecraft/class_1836;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -7460,7 +7464,7 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/JEIRenderHelperMixin",
         targets: ["mezz/jei/fabric/platform/RenderHelper"], environment: "unknown",
         injections: [
-          { method: ["renderTooltip"], handler: "renderFoodPre", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["renderTooltip"], handler: "renderFoodPre", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/JEIRenderHelperMixin", "renderFoodPre(Lnet/minecraft/class_332;Ljava/util/List;IILnet/minecraft/class_327;Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -7469,7 +7473,7 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/MinecraftClientMixin",
         targets: ["net/minecraft/client/Minecraft"], environment: "unknown",
         injections: [
-          { method: ["tick"], handler: "onTick", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["tick"], handler: "onTick", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/MinecraftClientMixin", "onTick(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -7478,7 +7482,7 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/PlayerManagerMixin",
         targets: ["net/minecraft/server/players/PlayerList"], environment: "unknown",
         injections: [
-          { method: ["placeNewPlayer"], handler: "onPlayerConnect", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["placeNewPlayer"], handler: "onPlayerConnect", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/PlayerManagerMixin", "onPlayerConnect(Lnet/minecraft/class_2535;Lnet/minecraft/class_3222;Lnet/minecraft/class_8792;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -7487,7 +7491,7 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/ServerPlayerEntityMixin",
         targets: ["net/minecraft/server/level/ServerPlayer"], environment: "unknown",
         injections: [
-          { method: ["tick"], handler: "onUpdate", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["tick"], handler: "onUpdate", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/ServerPlayerEntityMixin", "onUpdate(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -7496,9 +7500,9 @@
         modId: "appleskin", mixin: "squeek/appleskin/mixin/TooltipComponentMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent"], environment: "unknown",
         injections: [
-          { method: ["create"], handler: "AppleSkin_of", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["create"], handler: "AppleSkin_of", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/TooltipComponentMixin", "AppleSkin_of(Lnet/minecraft/class_5481;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["create"], handler: "AppleSkin_ofData", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["create"], handler: "AppleSkin_ofData", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("squeek/appleskin/mixin/TooltipComponentMixin", "AppleSkin_ofData(Lnet/minecraft/class_5632;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []

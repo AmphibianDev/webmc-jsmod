@@ -520977,6 +520977,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -521843,9 +521847,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/AbstractBlockMixin",
         targets: ["net/minecraft/world/level/block/state/BlockBehaviour"], environment: "unknown",
         injections: [
-          { method: ["getShadeBrightness"], handler: "onGetAmbientOcclusionLightLevel", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getShadeBrightness"], handler: "onGetAmbientOcclusionLightLevel", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/AbstractBlockMixin", "onGetAmbientOcclusionLightLevel(Lnet/minecraft/class_2680;Lnet/minecraft/class_1922;Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getSeed"], handler: "onRenderingSeed", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getSeed"], handler: "onRenderingSeed", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/AbstractBlockMixin", "onRenderingSeed(Lnet/minecraft/class_2680;Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521854,7 +521858,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/AbstractBlockStateMixin",
         targets: ["net/minecraft/world/level/block/state/BlockBehaviour$BlockStateBase"], environment: "unknown",
         injections: [
-          { method: ["getOffset"], handler: "modifyPos", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getOffset"], handler: "modifyPos", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/AbstractBlockStateMixin", "modifyPos(Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521870,7 +521874,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/AbstractClientPlayerEntityMixin",
         targets: ["net/minecraft/client/player/AbstractClientPlayer"], environment: "unknown",
         injections: [
-          { method: ["getPlayerInfo"], handler: "onGetPlayerListEntry", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getPlayerInfo"], handler: "onGetPlayerListEntry", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/AbstractClientPlayerEntityMixin", "onGetPlayerListEntry(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521886,7 +521890,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ArmorFeatureRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer"], environment: "unknown",
         injections: [
-          { method: ["submit"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ArmorFeatureRendererMixin", "onRender(Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;ILnet/minecraft/class_10034;FFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521895,9 +521899,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BannerBlockEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/blockentity/BannerRenderer"], environment: "unknown",
         injections: [
-          { method: ["submit"], handler: "injectRender1", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "injectRender1", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BannerBlockEntityRendererMixin", "injectRender1(Lnet/minecraft/class_11949;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submit"], handler: "injectRender2", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["submit"], handler: "injectRender2", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_823;method_65555(Lnet/minecraft/class_11701;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;IIFLnet/minecraft/class_10378;Lnet/minecraft/class_10377;FLnet/minecraft/class_1767;Lnet/minecraft/class_9307;Lnet/minecraft/class_11683$class_11792;I)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/blockentity/BannerRenderer","name":"submitBanner","descriptor":"(Lnet/minecraft/class_11701;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;IIFLnet/minecraft/class_10378;Lnet/minecraft/class_10377;FLnet/minecraft/class_1767;Lnet/minecraft/class_9307;Lnet/minecraft/class_11683$class_11792;I)V","raw":"Lnet/minecraft/class_823;method_65555(Lnet/minecraft/class_11701;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;IIFLnet/minecraft/class_10378;Lnet/minecraft/class_10377;FLnet/minecraft/class_1767;Lnet/minecraft/class_9307;Lnet/minecraft/class_11683$class_11792;I)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BannerBlockEntityRendererMixin", "injectRender2(Lnet/minecraft/class_11949;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_10378;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521906,7 +521910,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BeaconBlockEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/blockentity/BeaconRenderer"], environment: "unknown",
         injections: [
-          { method: ["submitBeaconBeam"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submitBeaconBeam"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BeaconBlockEntityRendererMixin", "onRender(Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_2960;FFIIIFFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521915,9 +521919,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BeaconScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/BeaconScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "changeButtons", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["init"], handler: "changeButtons", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;clear()V","callee":{"kind":"method","owner":"java/util/List","name":"clear","descriptor":"()V","raw":"Ljava/util/List;clear()V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BeaconScreenMixin", "changeButtons(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderBg"], handler: "onDrawBackground", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["renderBg"], handler: "onDrawBackground", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BeaconScreenMixin", "onDrawBackground(Lnet/minecraft/class_332;FIILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521926,11 +521930,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BiomeColorsMixin",
         targets: ["net/minecraft/client/renderer/BiomeColors"], environment: "unknown",
         injections: [
-          { method: ["getAverageWaterColor"], handler: "onGetWaterColor", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getAverageWaterColor"], handler: "onGetWaterColor", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BiomeColorsMixin", "onGetWaterColor(Lnet/minecraft/class_1920;Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getAverageFoliageColor"], handler: "onGetFoliageColor", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getAverageFoliageColor"], handler: "onGetFoliageColor", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BiomeColorsMixin", "onGetFoliageColor(Lnet/minecraft/class_1920;Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getAverageGrassColor"], handler: "onGetGrassColor", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getAverageGrassColor"], handler: "onGetGrassColor", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BiomeColorsMixin", "onGetGrassColor(Lnet/minecraft/class_1920;Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521939,9 +521943,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockColorsMixin",
         targets: ["net/minecraft/client/color/block/BlockColors"], environment: "unknown",
         injections: [
-          { method: ["createDefault"], handler: "modifySpruceLeavesColor", kind: "modifyArg", at: ["INVOKE:3"], cancellable: false,
+          { method: ["createDefault"], handler: "modifySpruceLeavesColor", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":3,"index":null,"target":"Lnet/minecraft/class_324;method_1690(Lnet/minecraft/class_322;[Lnet/minecraft/class_2248;)V","callee":{"kind":"method","owner":"net/minecraft/client/color/block/BlockColors","name":"register","descriptor":"(Lnet/minecraft/class_322;[Lnet/minecraft/class_2248;)V","raw":"Lnet/minecraft/class_324;method_1690(Lnet/minecraft/class_322;[Lnet/minecraft/class_2248;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockColorsMixin", "modifySpruceLeavesColor(Lnet/minecraft/class_322;)Lnet/minecraft/class_322;", target, args.concat([info])); } },
-          { method: ["createDefault"], handler: "modifyBirchLeavesColor", kind: "modifyArg", at: ["INVOKE:4"], cancellable: false,
+          { method: ["createDefault"], handler: "modifyBirchLeavesColor", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":4,"index":null,"target":"Lnet/minecraft/class_324;method_1690(Lnet/minecraft/class_322;[Lnet/minecraft/class_2248;)V","callee":{"kind":"method","owner":"net/minecraft/client/color/block/BlockColors","name":"register","descriptor":"(Lnet/minecraft/class_322;[Lnet/minecraft/class_2248;)V","raw":"Lnet/minecraft/class_324;method_1690(Lnet/minecraft/class_322;[Lnet/minecraft/class_2248;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockColorsMixin", "modifyBirchLeavesColor(Lnet/minecraft/class_322;)Lnet/minecraft/class_322;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521957,7 +521961,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockEntityRenderManagerMixin",
         targets: ["net/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher"], environment: "unknown",
         injections: [
-          { method: ["submit"], handler: "onRenderEntity", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "onRenderEntity", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockEntityRenderManagerMixin", "onRenderEntity(Lnet/minecraft/class_11954;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521973,9 +521977,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockItemMixin",
         targets: ["net/minecraft/world/item/BlockItem"], environment: "unknown",
         injections: [
-          { method: ["placeBlock"], handler: "onPlace", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["placeBlock"], handler: "onPlace", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockItemMixin", "onPlace(Lnet/minecraft/class_1750;Lnet/minecraft/class_2680;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["place"], handler: "modifyState", kind: "modifyVariable", at: ["INVOKE"], cancellable: false,
+          { method: ["place"], handler: "modifyState", kind: "modifyVariable", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2680;method_27852(Lnet/minecraft/class_2248;)Z","callee":{"kind":"method","owner":"net/minecraft/world/level/block/state/BlockState","name":"is","descriptor":"(Lnet/minecraft/class_2248;)Z","raw":"Lnet/minecraft/class_2680;method_27852(Lnet/minecraft/class_2248;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockItemMixin", "modifyState(Lnet/minecraft/class_2680;Lnet/minecraft/class_1750;)Lnet/minecraft/class_2680;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521984,7 +521988,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockListCheckerMixin",
         targets: ["net/minecraft/client/multiplayer/resolver/AddressCheck"], environment: "unknown",
         injections: [
-          { method: ["createFromService"], handler: "onCreate", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["createFromService"], handler: "onCreate", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockListCheckerMixin", "onCreate(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -521993,7 +521997,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockMixin",
         targets: ["net/minecraft/world/level/block/Block"], environment: "unknown",
         injections: [
-          { method: ["shouldRenderFace"], handler: "meteor$forceXrayFace", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["shouldRenderFace"], handler: "meteor$forceXrayFace", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockMixin", "meteor$forceXrayFace(Lnet/minecraft/class_2680;Lnet/minecraft/class_2680;Lnet/minecraft/class_2350;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522002,9 +522006,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockModelRendererMixin",
         targets: ["net/minecraft/client/renderer/block/ModelBlockRenderer"], environment: "unknown",
         injections: [
-          { method: ["tesselateWithAO","tesselateWithoutAO"], handler: "onRenderSmooth", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["tesselateWithAO","tesselateWithoutAO"], handler: "onRenderSmooth", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockModelRendererMixin", "onRenderSmooth(Lnet/minecraft/class_1920;Ljava/util/List;Lnet/minecraft/class_2680;Lnet/minecraft/class_2338;Lnet/minecraft/class_4587;Lnet/minecraft/class_4588;ZILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["putQuadData"], handler: "modifyXrayAlpha", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["putQuadData"], handler: "modifyXrayAlpha", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4588;method_22920(Lnet/minecraft/class_4587$class_4665;Lnet/minecraft/class_777;[FFFFF[II)V","callee":{"kind":"method","owner":"com/mojang/blaze3d/vertex/VertexConsumer","name":"putBulkData","descriptor":"(Lnet/minecraft/class_4587$class_4665;Lnet/minecraft/class_777;[FFFFF[II)V","raw":"Lnet/minecraft/class_4588;method_22920(Lnet/minecraft/class_4587$class_4665;Lnet/minecraft/class_777;[FFFFF[II)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockModelRendererMixin", "modifyXrayAlpha(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522013,9 +522017,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockRenderLayersMixin",
         targets: ["net/minecraft/client/renderer/ItemBlockRenderTypes"], environment: "unknown",
         injections: [
-          { method: ["getChunkRenderType"], handler: "onGetBlockLayer", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getChunkRenderType"], handler: "onGetBlockLayer", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockRenderLayersMixin", "onGetBlockLayer(Lnet/minecraft/class_2680;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getRenderLayer"], handler: "onGetFluidLayer", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getRenderLayer"], handler: "onGetFluidLayer", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockRenderLayersMixin", "onGetFluidLayer(Lnet/minecraft/class_3610;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522024,7 +522028,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BlockRenderManagerMixin",
         targets: ["net/minecraft/client/renderer/block/BlockRenderDispatcher"], environment: "unknown",
         injections: [
-          { method: ["renderBreakingTexture"], handler: "renderDamage", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderBreakingTexture"], handler: "renderDamage", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BlockRenderManagerMixin", "renderDamage(Lnet/minecraft/class_2680;Lnet/minecraft/class_2338;Lnet/minecraft/class_1920;Lnet/minecraft/class_4587;Lnet/minecraft/class_4588;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522033,7 +522037,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BookEditScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/BookEditScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["init"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BookEditScreenMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522042,7 +522046,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BookScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/BookViewScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["init"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BookScreenMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522051,7 +522055,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BossBarHudMixin",
         targets: ["net/minecraft/client/gui/components/BossHealthOverlay"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["render"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BossBarHudMixin", "onRender(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
           { method: ["render"], handler: "modifySpacingConstant", kind: "modifyConstant", at: [], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BossBarHudMixin", "modifySpacingConstant(I)I", target, args.concat([info])); } },
@@ -522062,9 +522066,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BrightnessGetterMixin",
         targets: ["net/minecraft/client/renderer/LevelRenderer$BrightnessGetter"], environment: "unknown",
         injections: [
-          { method: ["lambda$static$0"], handler: "getLightmapCoordinatesModifySkyLight", kind: "modifyVariable", at: ["STORE"], cancellable: false,
+          { method: ["lambda$static$0"], handler: "getLightmapCoordinatesModifySkyLight", kind: "modifyVariable", at: [{"value":"STORE","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BrightnessGetterMixin", "getLightmapCoordinatesModifySkyLight(I)I", target, args.concat([info])); } },
-          { method: ["lambda$static$0"], handler: "getLightmapCoordinatesModifyBlockLight", kind: "modifyVariable", at: ["STORE"], cancellable: false,
+          { method: ["lambda$static$0"], handler: "getLightmapCoordinatesModifyBlockLight", kind: "modifyVariable", at: [{"value":"STORE","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BrightnessGetterMixin", "getLightmapCoordinatesModifyBlockLight(I)I", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522073,7 +522077,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/BundleItemMixin",
         targets: ["net/minecraft/world/item/BundleItem"], environment: "unknown",
         injections: [
-          { method: ["getTooltipImage"], handler: "onTooltipData", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getTooltipImage"], handler: "onTooltipData", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/BundleItemMixin", "onTooltipData(Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522082,17 +522086,17 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/CameraMixin",
         targets: ["net/minecraft/client/Camera"], environment: "unknown",
         injections: [
-          { method: ["getFluidInCamera"], handler: "getSubmergedFluidState", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getFluidInCamera"], handler: "getSubmergedFluidState", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CameraMixin", "getSubmergedFluidState(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getMaxZoom"], handler: "modifyClipToSpace", kind: "modifyVariable", at: ["HEAD"], cancellable: false,
+          { method: ["getMaxZoom"], handler: "modifyClipToSpace", kind: "modifyVariable", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CameraMixin", "modifyClipToSpace(F)F", target, args.concat([info])); } },
-          { method: ["getMaxZoom"], handler: "onClipToSpace", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getMaxZoom"], handler: "onClipToSpace", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CameraMixin", "onClipToSpace(FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["setup"], handler: "onUpdateTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["setup"], handler: "onUpdateTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CameraMixin", "onUpdateTail(Lnet/minecraft/class_1937;Lnet/minecraft/class_1297;ZZFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["setup"], handler: "onUpdateSetPosArgs", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["setup"], handler: "onUpdateSetPosArgs", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4184;method_19327(DDD)V","callee":{"kind":"method","owner":"net/minecraft/client/Camera","name":"setPosition","descriptor":"(DDD)V","raw":"Lnet/minecraft/class_4184;method_19327(DDD)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CameraMixin", "onUpdateSetPosArgs(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;F)V", target, args.concat([info])); } },
-          { method: ["setup"], handler: "onUpdateSetRotationArgs", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["setup"], handler: "onUpdateSetRotationArgs", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4184;method_19325(FF)V","callee":{"kind":"method","owner":"net/minecraft/client/Camera","name":"setRotation","descriptor":"(FF)V","raw":"Lnet/minecraft/class_4184;method_19325(FF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CameraMixin", "onUpdateSetRotationArgs(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;F)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522108,9 +522112,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChatHudInteractableMixin",
         targets: ["net/minecraft/client/gui/components/ChatComponent$DrawingFocusedGraphicsAccess"], environment: "unknown",
         injections: [
-          { method: ["handleMessage"], handler: "modifyX", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["handleMessage"], handler: "modifyX", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_12225;method_75766(Lnet/minecraft/class_11735;IILnet/minecraft/class_12225$class_12227;Lnet/minecraft/class_5481;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/ActiveTextCollector","name":"accept","descriptor":"(Lnet/minecraft/class_11735;IILnet/minecraft/class_12225$class_12227;Lnet/minecraft/class_5481;)V","raw":"Lnet/minecraft/class_12225;method_75766(Lnet/minecraft/class_11735;IILnet/minecraft/class_12225$class_12227;Lnet/minecraft/class_5481;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudInteractableMixin", "modifyX(I)I", target, args.concat([info])); } },
-          { method: ["handleMessage"], handler: "onRender_afterDrawTextWithShadow", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleMessage"], handler: "onRender_afterDrawTextWithShadow", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudInteractableMixin", "onRender_afterDrawTextWithShadow(IFLnet/minecraft/class_5481;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522119,7 +522123,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChatHudLineConsumerMixin",
         targets: ["net/minecraft/client/gui/components/ChatComponent$1"], environment: "unknown",
         injections: [
-          { method: ["accept"], handler: "setLine", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["accept"], handler: "setLine", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudLineConsumerMixin", "setLine(Lnet/minecraft/class_303$class_7590;IFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522128,19 +522132,19 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChatHudMixin",
         targets: ["net/minecraft/client/gui/components/ChatComponent"], environment: "unknown",
         injections: [
-          { method: ["addMessageToDisplayQueue"], handler: "onAddMessageAfterNewChatHudLineVisible", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["addMessageToDisplayQueue"], handler: "onAddMessageAfterNewChatHudLineVisible", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;addFirst(Ljava/lang/Object;)V","callee":{"kind":"method","owner":"java/util/List","name":"addFirst","descriptor":"(Ljava/lang/Object;)V","raw":"Ljava/util/List;addFirst(Ljava/lang/Object;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onAddMessageAfterNewChatHudLineVisible(Lnet/minecraft/class_303;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["addMessageToQueue"], handler: "onAddMessageAfterNewChatHudLine", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["addMessageToQueue"], handler: "onAddMessageAfterNewChatHudLine", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;addFirst(Ljava/lang/Object;)V","callee":{"kind":"method","owner":"java/util/List","name":"addFirst","descriptor":"(Ljava/lang/Object;)V","raw":"Ljava/util/List;addFirst(Ljava/lang/Object;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onAddMessageAfterNewChatHudLine(Lnet/minecraft/class_303;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["addMessage"], handler: "onAddMessage", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["addMessage"], handler: "onAddMessage", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onAddMessage(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalRef;Lcom/llamalad7/mixinextras/sugar/ref/LocalRef;)V", target, args.concat([info])); } },
-          { method: ["addMessageToDisplayQueue"], handler: "onBreakChatMessageLines", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["addMessageToDisplayQueue"], handler: "onBreakChatMessageLines", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_338;method_1819()Z","callee":{"kind":"method","owner":"net/minecraft/client/gui/components/ChatComponent","name":"isChatFocused","descriptor":"()Z","raw":"Lnet/minecraft/class_338;method_1819()Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onBreakChatMessageLines(Lnet/minecraft/class_303;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Ljava/util/List;)V", target, args.concat([info])); } },
-          { method: ["addMessageToQueue"], handler: "onRemoveMessage", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["addMessageToQueue"], handler: "onRemoveMessage", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;removeLast()Ljava/lang/Object;","callee":{"kind":"method","owner":"java/util/List","name":"removeLast","descriptor":"()Ljava/lang/Object;","raw":"Ljava/util/List;removeLast()Ljava/lang/Object;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onRemoveMessage(Lnet/minecraft/class_303;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["clearMessages"], handler: "onClear", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["clearMessages"], handler: "onClear", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onClear(ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["refreshTrimmedMessages"], handler: "onRefresh", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["refreshTrimmedMessages"], handler: "onRefresh", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudMixin", "onRefresh(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522149,9 +522153,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChatHudUnfocusedMixin",
         targets: ["net/minecraft/client/gui/components/ChatComponent$DrawingBackgroundGraphicsAccess"], environment: "unknown",
         injections: [
-          { method: ["handleMessage"], handler: "modifyX", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["handleMessage"], handler: "modifyX", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_12225;method_75766(Lnet/minecraft/class_11735;IILnet/minecraft/class_12225$class_12227;Lnet/minecraft/class_5481;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/ActiveTextCollector","name":"accept","descriptor":"(Lnet/minecraft/class_11735;IILnet/minecraft/class_12225$class_12227;Lnet/minecraft/class_5481;)V","raw":"Lnet/minecraft/class_12225;method_75766(Lnet/minecraft/class_11735;IILnet/minecraft/class_12225$class_12227;Lnet/minecraft/class_5481;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudUnfocusedMixin", "modifyX(I)I", target, args.concat([info])); } },
-          { method: ["handleMessage"], handler: "onRender_afterDrawText", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleMessage"], handler: "onRender_afterDrawText", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatHudUnfocusedMixin", "onRender_afterDrawText(IFLnet/minecraft/class_5481;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522160,7 +522164,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChatInputSuggestorMixin",
         targets: ["net/minecraft/client/gui/components/CommandSuggestions"], environment: "unknown",
         injections: [
-          { method: ["updateCommandInfo"], handler: "onRefresh", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["updateCommandInfo"], handler: "onRefresh", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lcom/mojang/brigadier/StringReader;canRead()Z","callee":{"kind":"method","owner":"com/mojang/brigadier/StringReader","name":"canRead","descriptor":"()Z","raw":"Lcom/mojang/brigadier/StringReader;canRead()Z"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatInputSuggestorMixin", "onRefresh(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/mojang/brigadier/StringReader;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522169,7 +522173,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChatScreenMixin",
         targets: ["net/minecraft/client/gui/screens/ChatScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "onInit", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["init"], handler: "onInit", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChatScreenMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522185,7 +522189,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ChunkOcclusionDataBuilderMixin",
         targets: ["net/minecraft/client/renderer/chunk/VisGraph"], environment: "unknown",
         injections: [
-          { method: ["setOpaque"], handler: "onMarkClosed", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["setOpaque"], handler: "onMarkClosed", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ChunkOcclusionDataBuilderMixin", "onMarkClosed(Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522215,19 +522219,19 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ClientConnectionMixin",
         targets: ["net/minecraft/network/Connection"], environment: "unknown",
         injections: [
-          { method: ["channelRead0"], handler: "onHandlePacket", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["channelRead0"], handler: "onHandlePacket", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2535;method_10759(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;)V","callee":{"kind":"method","owner":"net/minecraft/network/Connection","name":"genericsFtw","descriptor":"(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;)V","raw":"Lnet/minecraft/class_2535;method_10759(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "onHandlePacket(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/class_2596;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["disconnect"], handler: "disconnect", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["disconnect"], handler: "disconnect", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "disconnect(Lnet/minecraft/class_2561;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["connect"], handler: "onConnect", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["connect"], handler: "onConnect", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "onConnect(Ljava/net/InetSocketAddress;Lnet/minecraft/class_12239;Lnet/minecraft/class_2535;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["send"], handler: "onSendPacketHead", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["send"], handler: "onSendPacketHead", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "onSendPacketHead(Lnet/minecraft/class_2596;Lio/netty/channel/ChannelFutureListener;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["send"], handler: "onSendPacketTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["send"], handler: "onSendPacketTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "onSendPacketTail(Lnet/minecraft/class_2596;Lio/netty/channel/ChannelFutureListener;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["exceptionCaught"], handler: "exceptionCaught", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["exceptionCaught"], handler: "exceptionCaught", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "exceptionCaught(Lio/netty/channel/ChannelHandlerContext;Ljava/lang/Throwable;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["configureSerialization"], handler: "onAddHandlers", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["configureSerialization"], handler: "onAddHandlers", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientConnectionMixin", "onAddHandlers(Lio/netty/channel/ChannelPipeline;Lnet/minecraft/class_2598;ZLnet/minecraft/class_8762;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522243,33 +522247,33 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin",
         targets: ["net/minecraft/client/multiplayer/ClientPacketListener"], environment: "unknown",
         injections: [
-          { method: ["handleAddEntity"], handler: "onEntitySpawn", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["handleAddEntity"], handler: "onEntitySpawn", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onEntitySpawn(Lnet/minecraft/class_2604;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleLogin"], handler: "onGameJoinHead", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["handleLogin"], handler: "onGameJoinHead", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onGameJoinHead(Lnet/minecraft/class_2678;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalBooleanRef;)V", target, args.concat([info])); } },
-          { method: ["handleLogin"], handler: "onGameJoinTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleLogin"], handler: "onGameJoinTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onGameJoinTail(Lnet/minecraft/class_2678;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalBooleanRef;)V", target, args.concat([info])); } },
-          { method: ["handleConfigurationStart"], handler: "onEnterReconfiguration", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["handleConfigurationStart"], handler: "onEnterReconfiguration", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2600;method_11074(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;Lnet/minecraft/class_11980;)V","callee":{"kind":"method","owner":"net/minecraft/network/protocol/PacketUtils","name":"ensureRunningOnSameThread","descriptor":"(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;Lnet/minecraft/class_11980;)V","raw":"Lnet/minecraft/class_2600;method_11074(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;Lnet/minecraft/class_11980;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onEnterReconfiguration(Lnet/minecraft/class_8588;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleSoundEvent"], handler: "onPlaySound", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["handleSoundEvent"], handler: "onPlaySound", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onPlaySound(Lnet/minecraft/class_2767;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleLevelChunkWithLight"], handler: "onChunkData", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleLevelChunkWithLight"], handler: "onChunkData", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onChunkData(Lnet/minecraft/class_2672;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleContainerSetSlot"], handler: "onContainerSlotUpdate", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleContainerSetSlot"], handler: "onContainerSlotUpdate", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onContainerSlotUpdate(Lnet/minecraft/class_2653;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleContainerContent"], handler: "onInventory", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleContainerContent"], handler: "onInventory", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onInventory(Lnet/minecraft/class_2649;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleRemoveEntities"], handler: "onEntitiesDestroy", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["handleRemoveEntities"], handler: "onEntitiesDestroy", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2716;method_36548()Lit/unimi/dsi/fastutil/ints/IntList;","callee":{"kind":"method","owner":"net/minecraft/network/protocol/game/ClientboundRemoveEntitiesPacket","name":"getEntityIds","descriptor":"()Lit/unimi/dsi/fastutil/ints/IntList;","raw":"Lnet/minecraft/class_2716;method_36548()Lit/unimi/dsi/fastutil/ints/IntList;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onEntitiesDestroy(Lnet/minecraft/class_2716;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleExplosion"], handler: "onExplosionVelocity", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["handleExplosion"], handler: "onExplosionVelocity", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2600;method_11074(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;Lnet/minecraft/class_11980;)V","callee":{"kind":"method","owner":"net/minecraft/network/protocol/PacketUtils","name":"ensureRunningOnSameThread","descriptor":"(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;Lnet/minecraft/class_11980;)V","raw":"Lnet/minecraft/class_2600;method_11074(Lnet/minecraft/class_2596;Lnet/minecraft/class_2547;Lnet/minecraft/class_11980;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onExplosionVelocity(Lnet/minecraft/class_2664;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleTakeItemEntity"], handler: "onItemPickupAnimation", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["handleTakeItemEntity"], handler: "onItemPickupAnimation", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_638;method_8469(I)Lnet/minecraft/class_1297;","callee":{"kind":"method","owner":"net/minecraft/client/multiplayer/ClientLevel","name":"getEntity","descriptor":"(I)Lnet/minecraft/class_1297;","raw":"Lnet/minecraft/class_638;method_8469(I)Lnet/minecraft/class_1297;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onItemPickupAnimation(Lnet/minecraft/class_2775;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleMovePlayer"], handler: "onPlayerPositionLookHead", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["handleMovePlayer"], handler: "onPlayerPositionLookHead", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onPlayerPositionLookHead(Lnet/minecraft/class_2708;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalFloatRef;Lcom/llamalad7/mixinextras/sugar/ref/LocalFloatRef;)V", target, args.concat([info])); } },
-          { method: ["handleMovePlayer"], handler: "onPlayerPositionLookReturn", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["handleMovePlayer"], handler: "onPlayerPositionLookReturn", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onPlayerPositionLookReturn(Lnet/minecraft/class_2708;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalFloatRef;Lcom/llamalad7/mixinextras/sugar/ref/LocalFloatRef;)V", target, args.concat([info])); } },
-          { method: ["sendChat"], handler: "onSendChatMessage", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["sendChat"], handler: "onSendChatMessage", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayNetworkHandlerMixin", "onSendChatMessage(Ljava/lang/String;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalRef;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522285,25 +522289,25 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin",
         targets: ["net/minecraft/client/player/LocalPlayer"], environment: "unknown",
         injections: [
-          { method: ["drop"], handler: "onDropSelectedItem", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["drop"], handler: "onDropSelectedItem", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onDropSelectedItem(ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isShiftKeyDown"], handler: "onIsSneaking", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isShiftKeyDown"], handler: "onIsSneaking", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onIsSneaking(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isMovingSlowly"], handler: "onShouldSlowDown", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isMovingSlowly"], handler: "onShouldSlowDown", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onShouldSlowDown(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["moveTowardsClosestSpace"], handler: "onPushOutOfBlocks", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["moveTowardsClosestSpace"], handler: "onPushOutOfBlocks", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onPushOutOfBlocks(DDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["aiStep"], handler: "preTickMovement", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["aiStep"], handler: "preTickMovement", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "preTickMovement(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["jumpableVehicle"], handler: "changeJumpingMount", kind: "inject", at: ["RETURN"], cancellable: true,
+          { method: ["jumpableVehicle"], handler: "changeJumpingMount", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "changeJumpingMount(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["sendPosition"], handler: "onSendMovementPacketsHead", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["sendPosition"], handler: "onSendMovementPacketsHead", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onSendMovementPacketsHead(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["tick"], handler: "onTickHasVehicleBeforeSendPackets", kind: "inject", at: ["INVOKE:1"], cancellable: false,
+          { method: ["tick"], handler: "onTickHasVehicleBeforeSendPackets", kind: "inject", at: [{"value":"INVOKE","ordinal":1,"index":null,"target":"Lnet/minecraft/class_634;method_52787(Lnet/minecraft/class_2596;)V","callee":{"kind":"method","owner":"net/minecraft/client/multiplayer/ClientPacketListener","name":"send","descriptor":"(Lnet/minecraft/class_2596;)V","raw":"Lnet/minecraft/class_634;method_52787(Lnet/minecraft/class_2596;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onTickHasVehicleBeforeSendPackets(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["sendPosition"], handler: "onSendMovementPacketsTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["sendPosition"], handler: "onSendMovementPacketsTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onSendMovementPacketsTail(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["tick"], handler: "onTickHasVehicleAfterSendPackets", kind: "inject", at: ["INVOKE:1"], cancellable: false,
+          { method: ["tick"], handler: "onTickHasVehicleAfterSendPackets", kind: "inject", at: [{"value":"INVOKE","ordinal":1,"index":null,"target":"Lnet/minecraft/class_634;method_52787(Lnet/minecraft/class_2596;)V","callee":{"kind":"method","owner":"net/minecraft/client/multiplayer/ClientPacketListener","name":"send","descriptor":"(Lnet/minecraft/class_2596;)V","raw":"Lnet/minecraft/class_634;method_52787(Lnet/minecraft/class_2596;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerEntityMixin", "onTickHasVehicleAfterSendPackets(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522319,29 +522323,29 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin",
         targets: ["net/minecraft/client/multiplayer/MultiPlayerGameMode"], environment: "unknown",
         injections: [
-          { method: ["handleInventoryMouseClick"], handler: "onClickSlot", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["handleInventoryMouseClick"], handler: "onClickSlot", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onClickSlot(IIILnet/minecraft/class_1713;Lnet/minecraft/class_1657;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["startDestroyBlock"], handler: "onAttackBlock", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["startDestroyBlock"], handler: "onAttackBlock", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onAttackBlock(Lnet/minecraft/class_2338;Lnet/minecraft/class_2350;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["useItemOn"], handler: "interactBlock", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["useItemOn"], handler: "interactBlock", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "interactBlock(Lnet/minecraft/class_746;Lnet/minecraft/class_1268;Lnet/minecraft/class_3965;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["attack"], handler: "onAttackEntity", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["attack"], handler: "onAttackEntity", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onAttackEntity(Lnet/minecraft/class_1657;Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["interact"], handler: "onInteractEntity", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["interact"], handler: "onInteractEntity", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onInteractEntity(Lnet/minecraft/class_1657;Lnet/minecraft/class_1297;Lnet/minecraft/class_1268;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["handleCreativeModeItemDrop"], handler: "onDropCreativeStack", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["handleCreativeModeItemDrop"], handler: "onDropCreativeStack", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onDropCreativeStack(Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["continueDestroyBlock"], handler: "creativeBreakDelayChange", kind: "redirect", at: ["FIELD:1"], cancellable: false,
+          { method: ["continueDestroyBlock"], handler: "creativeBreakDelayChange", kind: "redirect", at: [{"value":"FIELD","ordinal":1,"index":null,"target":"Lnet/minecraft/class_636;field_3716:I","callee":{"kind":"field","owner":"net/minecraft/client/multiplayer/MultiPlayerGameMode","name":"destroyDelay","descriptor":"I","raw":"Lnet/minecraft/class_636;field_3716:I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "creativeBreakDelayChange(Lnet/minecraft/class_636;I)V", target, args.concat([info])); } },
-          { method: ["continueDestroyBlock"], handler: "survivalBreakDelayChange", kind: "redirect", at: ["FIELD:2"], cancellable: false,
+          { method: ["continueDestroyBlock"], handler: "survivalBreakDelayChange", kind: "redirect", at: [{"value":"FIELD","ordinal":2,"index":null,"target":"Lnet/minecraft/class_636;field_3716:I","callee":{"kind":"field","owner":"net/minecraft/client/multiplayer/MultiPlayerGameMode","name":"destroyDelay","descriptor":"I","raw":"Lnet/minecraft/class_636;field_3716:I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "survivalBreakDelayChange(Lnet/minecraft/class_636;I)V", target, args.concat([info])); } },
-          { method: ["startDestroyBlock"], handler: "creativeBreakDelayChange2", kind: "redirect", at: ["FIELD"], cancellable: false,
+          { method: ["startDestroyBlock"], handler: "creativeBreakDelayChange2", kind: "redirect", at: [{"value":"FIELD","ordinal":null,"index":null,"target":"Lnet/minecraft/class_636;field_3716:I","callee":{"kind":"field","owner":"net/minecraft/client/multiplayer/MultiPlayerGameMode","name":"destroyDelay","descriptor":"I","raw":"Lnet/minecraft/class_636;field_3716:I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "creativeBreakDelayChange2(Lnet/minecraft/class_636;I)V", target, args.concat([info])); } },
-          { method: ["destroyBlock"], handler: "onBreakBlock", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["destroyBlock"], handler: "onBreakBlock", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onBreakBlock(Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["useItem"], handler: "onInteractItem", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["useItem"], handler: "onInteractItem", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onInteractItem(Lnet/minecraft/class_1657;Lnet/minecraft/class_1268;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["stopDestroyBlock"], handler: "onCancelBlockBreaking", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["stopDestroyBlock"], handler: "onCancelBlockBreaking", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientPlayerInteractionManagerMixin", "onCancelBlockBreaking(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522350,15 +522354,15 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ClientWorldMixin",
         targets: ["net/minecraft/client/multiplayer/ClientLevel"], environment: "unknown",
         injections: [
-          { method: ["addEntity"], handler: "onAddEntity", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["addEntity"], handler: "onAddEntity", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientWorldMixin", "onAddEntity(Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["removeEntity"], handler: "onRemoveEntity", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["removeEntity"], handler: "onRemoveEntity", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientWorldMixin", "onRemoveEntity(ILnet/minecraft/class_1297$class_5529;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["animateTick"], handler: "doRandomBlockDisplayTicks", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["animateTick"], handler: "doRandomBlockDisplayTicks", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_638;method_2943(IIIILnet/minecraft/class_5819;Lnet/minecraft/class_2248;Lnet/minecraft/class_2338$class_2339;)V","callee":{"kind":"method","owner":"net/minecraft/client/multiplayer/ClientLevel","name":"doAnimateTick","descriptor":"(IIIILnet/minecraft/class_5819;Lnet/minecraft/class_2248;Lnet/minecraft/class_2338$class_2339;)V","raw":"Lnet/minecraft/class_638;method_2943(IIIILnet/minecraft/class_5819;Lnet/minecraft/class_2248;Lnet/minecraft/class_2338$class_2339;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientWorldMixin", "doRandomBlockDisplayTicks(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;)V", target, args.concat([info])); } },
-          { method: ["addDestroyBlockEffect"], handler: "onAddBlockBreakParticles", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["addDestroyBlockEffect"], handler: "onAddBlockBreakParticles", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientWorldMixin", "onAddBlockBreakParticles(Lnet/minecraft/class_2338;Lnet/minecraft/class_2680;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["addBreakingBlockEffect"], handler: "onAddBlockBreakingParticles", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["addBreakingBlockEffect"], handler: "onAddBlockBreakingParticles", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ClientWorldMixin", "onAddBlockBreakingParticles(Lnet/minecraft/class_2338;Lnet/minecraft/class_2350;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522367,7 +522371,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/CobwebBlockMixin",
         targets: ["net/minecraft/world/level/block/WebBlock"], environment: "unknown",
         injections: [
-          { method: ["entityInside","onEntityCollision","entityInside"], handler: "onEntityCollision", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["entityInside","onEntityCollision","entityInside"], handler: "onEntityCollision", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CobwebBlockMixin", "onEntityCollision(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_1297;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522376,7 +522380,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ConnectScreenMixin",
         targets: ["net/minecraft/client/gui/screens/ConnectScreen"], environment: "unknown",
         injections: [
-          { method: ["connect"], handler: "tryConnectEvent", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["connect"], handler: "tryConnectEvent", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ConnectScreenMixin", "tryConnectEvent(Lnet/minecraft/class_310;Lnet/minecraft/class_639;Lnet/minecraft/class_642;Lnet/minecraft/class_9112;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522392,7 +522396,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ContainerComponentMixin",
         targets: ["net/minecraft/world/item/component/ItemContainerContents"], environment: "unknown",
         injections: [
-          { method: ["addToTooltip"], handler: "onAppendTooltip", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["addToTooltip"], handler: "onAppendTooltip", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ContainerComponentMixin", "onAppendTooltip(Lnet/minecraft/class_1792$class_9635;Ljava/util/function/Consumer;Lnet/minecraft/class_1836;Lnet/minecraft/class_9473;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522401,7 +522405,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/CrashReportMixin",
         targets: ["net/minecraft/CrashReport"], environment: "unknown",
         injections: [
-          { method: ["getDetails"], handler: "onAddDetails", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["getDetails"], handler: "onAddDetails", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/CrashReportMixin", "onAddDetails(Ljava/lang/StringBuilder;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522431,7 +522435,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/DisconnectedScreenMixin",
         targets: ["net/minecraft/client/gui/screens/DisconnectedScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "addButtons", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["init"], handler: "addButtons", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_8667;method_48222()V","callee":{"kind":"method","owner":"net/minecraft/client/gui/layouts/LinearLayout","name":"arrangeElements","descriptor":"()V","raw":"Lnet/minecraft/class_8667;method_48222()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/DisconnectedScreenMixin", "addButtons(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522447,7 +522451,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/DrawContextMixin",
         targets: ["net/minecraft/client/gui/GuiGraphics"], environment: "unknown",
         injections: [
-          { method: ["setTooltipForNextFrame"], handler: "onDrawTooltip", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["setTooltipForNextFrame"], handler: "onDrawTooltip", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V","callee":{"kind":"method","owner":"java/util/Optional","name":"ifPresent","descriptor":"(Ljava/util/function/Consumer;)V","raw":"Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/DrawContextMixin", "onDrawTooltip(Lnet/minecraft/class_327;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/class_2960;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Ljava/util/List;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522456,11 +522460,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/EndCrystalEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/EndCrystalRenderer"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInit", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["<init>"], handler: "onInit", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EndCrystalEntityRendererMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submit"], handler: "render$renderLayer", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["submit"], handler: "render$renderLayer", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EndCrystalEntityRendererMixin", "render$renderLayer(Lnet/minecraft/class_10014;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submit"], handler: "render$scale", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["submit"], handler: "render$scale", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4587;method_22905(FFF)V","callee":{"kind":"method","owner":"com/mojang/blaze3d/vertex/PoseStack","name":"scale","descriptor":"(FFF)V","raw":"Lnet/minecraft/class_4587;method_22905(FFF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EndCrystalEntityRendererMixin", "render$scale(Lnet/minecraft/class_10014;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522483,27 +522487,27 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/EntityMixin",
         targets: ["net/minecraft/world/entity/Entity"], environment: "unknown",
         injections: [
-          { method: ["isInWater"], handler: "isTouchingWater", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isInWater"], handler: "isTouchingWater", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "isTouchingWater(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isInLava"], handler: "isInLava", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isInLava"], handler: "isInLava", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "isInLava(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["onAboveBubbleColumn"], handler: "onBubbleColumnSurfaceCollision", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["onAboveBubbleColumn"], handler: "onBubbleColumnSurfaceCollision", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "onBubbleColumnSurfaceCollision(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["onInsideBubbleColumn"], handler: "onBubbleColumnCollision", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["onInsideBubbleColumn"], handler: "onBubbleColumnCollision", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "onBubbleColumnCollision(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["push"], handler: "onPushAwayFrom", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["push"], handler: "onPushAwayFrom", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_1297;method_5762(DDD)V","callee":{"kind":"method","owner":"net/minecraft/world/entity/Entity","name":"push","descriptor":"(DDD)V","raw":"Lnet/minecraft/class_1297;method_5762(DDD)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "onPushAwayFrom(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;Lnet/minecraft/class_1297;)V", target, args.concat([info])); } },
-          { method: ["move"], handler: "onMove", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["move"], handler: "onMove", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "onMove(Lnet/minecraft/class_1313;Lnet/minecraft/class_243;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["isCurrentlyGlowing"], handler: "isGlowing", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isCurrentlyGlowing"], handler: "isGlowing", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "isGlowing(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getPickRadius"], handler: "onGetTargetingMargin", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getPickRadius"], handler: "onGetTargetingMargin", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "onGetTargetingMargin(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isInvisibleTo"], handler: "onIsInvisibleTo", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isInvisibleTo"], handler: "onIsInvisibleTo", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "onIsInvisibleTo(Lnet/minecraft/class_1657;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getPose"], handler: "getPoseHook", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getPose"], handler: "getPoseHook", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "getPoseHook(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["turn"], handler: "updateChangeLookDirection", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["turn"], handler: "updateChangeLookDirection", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityMixin", "updateChangeLookDirection(DDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522512,7 +522516,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/EntityRenderManagerMixin",
         targets: ["net/minecraft/client/renderer/entity/EntityRenderDispatcher"], environment: "unknown",
         injections: [
-          { method: ["submit"], handler: "render", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "render", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRenderManagerMixin", "render(Lnet/minecraft/class_10017;Lnet/minecraft/class_12075;DDDLnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522521,17 +522525,17 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/EntityRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/EntityRenderer"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRendererMixin", "onInit(Lnet/minecraft/class_5617$class_5618;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["getNameTag"], handler: "onRenderLabel", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getNameTag"], handler: "onRenderLabel", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRendererMixin", "onRenderLabel(Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["shouldRender"], handler: "shouldRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["shouldRender"], handler: "shouldRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRendererMixin", "shouldRender(Lnet/minecraft/class_1297;Lnet/minecraft/class_4604;DDDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["affectedByCulling"], handler: "canBeCulled", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["affectedByCulling"], handler: "canBeCulled", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRendererMixin", "canBeCulled(Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["extractRenderState"], handler: "onGetOutlineColor", kind: "inject", at: ["FIELD"], cancellable: false,
+          { method: ["extractRenderState"], handler: "onGetOutlineColor", kind: "inject", at: [{"value":"FIELD","ordinal":null,"index":null,"target":"Lnet/minecraft/class_10017;field_61821:I","callee":{"kind":"field","owner":"net/minecraft/client/renderer/entity/state/EntityRenderState","name":"outlineColor","descriptor":"I","raw":"Lnet/minecraft/class_10017;field_61821:I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRendererMixin", "onGetOutlineColor(Lnet/minecraft/class_1297;Lnet/minecraft/class_10017;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["finalizeRenderState"], handler: "updateShadow", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["finalizeRenderState"], handler: "updateShadow", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/EntityRendererMixin", "updateShadow(Lnet/minecraft/class_1297;Lnet/minecraft/class_10017;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522561,11 +522565,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/FireworkRocketEntityMixin",
         targets: ["net/minecraft/world/entity/projectile/FireworkRocketEntity"], environment: "unknown",
         injections: [
-          { method: ["tick"], handler: "onTick", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["tick"], handler: "onTick", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FireworkRocketEntityMixin", "onTick(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["onHitEntity"], handler: "onEntityHit", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["onHitEntity"], handler: "onEntityHit", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FireworkRocketEntityMixin", "onEntityHit(Lnet/minecraft/class_3966;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["onHitBlock"], handler: "onBlockHit", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["onHitBlock"], handler: "onBlockHit", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FireworkRocketEntityMixin", "onBlockHit(Lnet/minecraft/class_3965;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522574,7 +522578,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/FireworksSparkParticleMixin",
         targets: ["net/minecraft/client/particle/FireworkParticles$Starter"], environment: "unknown",
         injections: [
-          { method: ["createParticle"], handler: "onAddExplosion", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["createParticle"], handler: "onAddExplosion", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_677$class_680;method_3027(Z)V","callee":{"kind":"method","owner":"net/minecraft/client/particle/FireworkParticles$SparkParticle","name":"setTrail","descriptor":"(Z)V","raw":"Lnet/minecraft/class_677$class_680;method_3027(Z)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FireworksSparkParticleMixin", "onAddExplosion(DDDDDDLit/unimi/dsi/fastutil/ints/IntList;Lit/unimi/dsi/fastutil/ints/IntList;ZZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_677$class_680;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522583,7 +522587,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/FireworksSparkParticleSubMixin",
         targets: ["net/minecraft/client/particle/FireworkParticles$SparkParticle","net/minecraft/client/particle/FireworkParticles$OverlayParticle"], environment: "unknown",
         injections: [
-          { method: ["extract"], handler: "buildExplosionGeometry", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["extract"], handler: "buildExplosionGeometry", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FireworksSparkParticleSubMixin", "buildExplosionGeometry(Lnet/minecraft/class_11944;Lnet/minecraft/class_4184;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522599,9 +522603,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/FluidRendererMixin",
         targets: ["net/minecraft/client/renderer/block/LiquidBlockRenderer"], environment: "unknown",
         injections: [
-          { method: ["tesselate"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["tesselate"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FluidRendererMixin", "onRender(Lnet/minecraft/class_1920;Lnet/minecraft/class_2338;Lnet/minecraft/class_4588;Lnet/minecraft/class_2680;Lnet/minecraft/class_3610;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["vertex"], handler: "onVertex", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["vertex"], handler: "onVertex", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FluidRendererMixin", "onVertex(Lnet/minecraft/class_4588;FFFFFFFFILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522610,7 +522614,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/FogRendererMixin",
         targets: ["net/minecraft/client/renderer/fog/FogRenderer"], environment: "unknown",
         injections: [
-          { method: ["updateBuffer"], handler: "modifyFogDistance", kind: "modifyVariable", at: ["HEAD"], cancellable: false,
+          { method: ["updateBuffer"], handler: "modifyFogDistance", kind: "modifyVariable", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/FogRendererMixin", "modifyFogDistance(Lorg/joml/Vector4f;)Lorg/joml/Vector4f;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522619,9 +522623,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/GameOptionsMixin",
         targets: ["net/minecraft/client/Options"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInitAfterKeysAll", kind: "inject", at: ["FIELD"], cancellable: false,
+          { method: ["<init>"], handler: "onInitAfterKeysAll", kind: "inject", at: [{"value":"FIELD","ordinal":null,"index":null,"target":"Lnet/minecraft/class_315;field_1839:[Lnet/minecraft/class_304;","callee":{"kind":"field","owner":"net/minecraft/client/Options","name":"keyMappings","descriptor":"[Lnet/minecraft/class_304;","raw":"Lnet/minecraft/class_315;field_1839:[Lnet/minecraft/class_304;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameOptionsMixin", "onInitAfterKeysAll(Lnet/minecraft/class_310;Ljava/io/File;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["setCameraType"], handler: "setPerspective", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["setCameraType"], handler: "setPerspective", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameOptionsMixin", "setPerspective(Lnet/minecraft/class_5498;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522630,19 +522634,19 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/GameRendererMixin",
         targets: ["net/minecraft/client/renderer/GameRenderer"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "meteor$addSpecialRenderers", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["<init>"], handler: "meteor$addSpecialRenderers", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_11228;<init>(Lnet/minecraft/class_11246;Lnet/minecraft/class_4597$class_4598;Lnet/minecraft/class_11659;Lnet/minecraft/class_11684;Ljava/util/List;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/render/GuiRenderer","name":"<init>","descriptor":"(Lnet/minecraft/class_11246;Lnet/minecraft/class_4597$class_4598;Lnet/minecraft/class_11659;Lnet/minecraft/class_11684;Ljava/util/List;)V","raw":"Lnet/minecraft/class_11228;<init>(Lnet/minecraft/class_11246;Lnet/minecraft/class_4597$class_4598;Lnet/minecraft/class_11659;Lnet/minecraft/class_11684;Ljava/util/List;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "meteor$addSpecialRenderers(Ljava/util/List;)Ljava/util/List;", target, args.concat([info])); } },
-          { method: ["renderLevel"], handler: "onRenderWorld", kind: "inject", at: ["INVOKE_STRING"], cancellable: false,
+          { method: ["renderLevel"], handler: "onRenderWorld", kind: "inject", at: [{"value":"INVOKE_STRING","ordinal":null,"index":["ldc=hand"],"target":"Lnet/minecraft/class_3695;method_15405(Ljava/lang/String;)V","callee":{"kind":"method","owner":"net/minecraft/util/profiling/ProfilerFiller","name":"popPush","descriptor":"(Ljava/lang/String;)V","raw":"Lnet/minecraft/class_3695;method_15405(Ljava/lang/String;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "onRenderWorld(Lnet/minecraft/class_9779;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;FLnet/minecraft/class_4587;)V", target, args.concat([info])); } },
-          { method: ["renderLevel"], handler: "onRenderWorldTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["renderLevel"], handler: "onRenderWorldTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "onRenderWorldTail(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["render"], handler: "onRenderGui", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["render"], handler: "onRenderGui", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_11228;method_70890(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/render/GuiRenderer","name":"render","descriptor":"(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V","raw":"Lnet/minecraft/class_11228;method_70890(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "onRenderGui(Lnet/minecraft/class_9779;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["displayItemActivation"], handler: "onShowFloatingItem", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["displayItemActivation"], handler: "onShowFloatingItem", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "onShowFloatingItem(Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["pick"], handler: "updateTargetedEntityInvoke", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["pick"], handler: "updateTargetedEntityInvoke", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "updateTargetedEntityInvoke(FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderItemInHand"], handler: "renderHand", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderItemInHand"], handler: "renderHand", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GameRendererMixin", "renderHand(FZLorg/joml/Matrix4f;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522651,9 +522655,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/GlCommandEncoderMixin",
         targets: ["com/mojang/blaze3d/opengl/GlCommandEncoder"], environment: "unknown",
         injections: [
-          { method: ["createRenderPass"], handler: "createRenderPass$iGpuDevice", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["createRenderPass"], handler: "createRenderPass$iGpuDevice", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GlCommandEncoderMixin", "createRenderPass$iGpuDevice(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["applyPipelineState"], handler: "setPipelineAndApplyState$lineSmooth", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["applyPipelineState"], handler: "setPipelineAndApplyState$lineSmooth", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lcom/mojang/blaze3d/opengl/GlStateManager;_polygonMode(II)V","callee":{"kind":"method","owner":"com/mojang/blaze3d/opengl/GlStateManager","name":"_polygonMode","descriptor":"(II)V","raw":"Lcom/mojang/blaze3d/opengl/GlStateManager;_polygonMode(II)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/GlCommandEncoderMixin", "setPipelineAndApplyState$lineSmooth(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522669,15 +522673,15 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/HandledScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/AbstractContainerScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["init"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HandledScreenMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["mouseDragged"], handler: "onMouseDragged", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["mouseDragged"], handler: "onMouseDragged", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HandledScreenMixin", "onMouseDragged(Lnet/minecraft/class_11909;DDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["mouseClicked"], handler: "mouseClicked", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["mouseClicked"], handler: "mouseClicked", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HandledScreenMixin", "mouseClicked(Lnet/minecraft/class_11909;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["keyPressed"], handler: "keyPressed", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["keyPressed"], handler: "keyPressed", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HandledScreenMixin", "keyPressed(Lnet/minecraft/class_11908;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["renderSlot"], handler: "onDrawSlot", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["renderSlot"], handler: "onDrawSlot", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HandledScreenMixin", "onDrawSlot(Lnet/minecraft/class_332;Lnet/minecraft/class_1735;IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522686,7 +522690,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/HeadFeatureRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/layers/CustomHeadLayer"], environment: "unknown",
         injections: [
-          { method: ["submit"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HeadFeatureRendererMixin", "onRender(Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;ILnet/minecraft/class_10042;FFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522695,15 +522699,15 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/HeldItemRendererMixin",
         targets: ["net/minecraft/client/renderer/ItemInHandRenderer"], environment: "unknown",
         injections: [
-          { method: ["tick"], handler: "modifyEquipProgressMainhand", kind: "modifyArg", at: ["INVOKE:2"], cancellable: false,
+          { method: ["tick"], handler: "modifyEquipProgressMainhand", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":2,"index":null,"target":"Lnet/minecraft/class_3532;method_15363(FFF)F","callee":{"kind":"method","owner":"net/minecraft/util/Mth","name":"clamp","descriptor":"(FFF)F","raw":"Lnet/minecraft/class_3532;method_15363(FFF)F"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HeldItemRendererMixin", "modifyEquipProgressMainhand(F)F", target, args.concat([info])); } },
-          { method: ["tick"], handler: "modifyEquipProgressOffhand", kind: "modifyArg", at: ["INVOKE:3"], cancellable: false,
+          { method: ["tick"], handler: "modifyEquipProgressOffhand", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":3,"index":null,"target":"Lnet/minecraft/class_3532;method_15363(FFF)F","callee":{"kind":"method","owner":"net/minecraft/util/Mth","name":"clamp","descriptor":"(FFF)F","raw":"Lnet/minecraft/class_3532;method_15363(FFF)F"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HeldItemRendererMixin", "modifyEquipProgressOffhand(F)F", target, args.concat([info])); } },
-          { method: ["renderArmWithItem"], handler: "onRenderItem", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["renderArmWithItem"], handler: "onRenderItem", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_759;method_3233(Lnet/minecraft/class_1309;Lnet/minecraft/class_1799;Lnet/minecraft/class_811;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;I)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/ItemInHandRenderer","name":"renderItem","descriptor":"(Lnet/minecraft/class_1309;Lnet/minecraft/class_1799;Lnet/minecraft/class_811;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;I)V","raw":"Lnet/minecraft/class_759;method_3233(Lnet/minecraft/class_1309;Lnet/minecraft/class_1799;Lnet/minecraft/class_811;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;I)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HeldItemRendererMixin", "onRenderItem(Lnet/minecraft/class_742;FFLnet/minecraft/class_1268;FLnet/minecraft/class_1799;FLnet/minecraft/class_4587;Lnet/minecraft/class_11659;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderArmWithItem"], handler: "onRenderArm", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["renderArmWithItem"], handler: "onRenderArm", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_759;method_3219(Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;IFFLnet/minecraft/class_1306;)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/ItemInHandRenderer","name":"renderPlayerArm","descriptor":"(Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;IFFLnet/minecraft/class_1306;)V","raw":"Lnet/minecraft/class_759;method_3219(Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;IFFLnet/minecraft/class_1306;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HeldItemRendererMixin", "onRenderArm(Lnet/minecraft/class_742;FFLnet/minecraft/class_1268;FLnet/minecraft/class_1799;FLnet/minecraft/class_4587;Lnet/minecraft/class_11659;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["applyEatTransform"], handler: "cancelTransformations", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["applyEatTransform"], handler: "cancelTransformations", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/lang/Math;pow(DD)D","callee":{"kind":"method","owner":"java/lang/Math","name":"pow","descriptor":"(DD)D","raw":"Ljava/lang/Math;pow(DD)D"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/HeldItemRendererMixin", "cancelTransformations(Lnet/minecraft/class_4587;FLnet/minecraft/class_1306;Lnet/minecraft/class_1799;Lnet/minecraft/class_1657;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522712,33 +522716,33 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/InGameHudMixin",
         targets: ["net/minecraft/client/gui/Gui"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "onRender", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["render"], handler: "onRender", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRender(Lnet/minecraft/class_332;Lnet/minecraft/class_9779;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderEffects"], handler: "onRenderStatusEffectOverlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderEffects"], handler: "onRenderStatusEffectOverlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderStatusEffectOverlay(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderPortalOverlay"], handler: "onRenderPortalOverlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderPortalOverlay"], handler: "onRenderPortalOverlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderPortalOverlay(Lnet/minecraft/class_332;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderCameraOverlays"], handler: "onRenderPumpkinOverlay", kind: "modifyArgs", at: ["INVOKE:0"], cancellable: false,
+          { method: ["renderCameraOverlays"], handler: "onRenderPumpkinOverlay", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_329;method_31977(Lnet/minecraft/class_332;Lnet/minecraft/class_2960;F)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/Gui","name":"renderTextureOverlay","descriptor":"(Lnet/minecraft/class_332;Lnet/minecraft/class_2960;F)V","raw":"Lnet/minecraft/class_329;method_31977(Lnet/minecraft/class_332;Lnet/minecraft/class_2960;F)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderPumpkinOverlay(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;)V", target, args.concat([info])); } },
-          { method: ["renderCameraOverlays"], handler: "onRenderPowderedSnowOverlay", kind: "modifyArgs", at: ["INVOKE:1"], cancellable: false,
+          { method: ["renderCameraOverlays"], handler: "onRenderPowderedSnowOverlay", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":1,"index":null,"target":"Lnet/minecraft/class_329;method_31977(Lnet/minecraft/class_332;Lnet/minecraft/class_2960;F)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/Gui","name":"renderTextureOverlay","descriptor":"(Lnet/minecraft/class_332;Lnet/minecraft/class_2960;F)V","raw":"Lnet/minecraft/class_329;method_31977(Lnet/minecraft/class_332;Lnet/minecraft/class_2960;F)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderPowderedSnowOverlay(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;)V", target, args.concat([info])); } },
-          { method: ["renderVignette"], handler: "onRenderVignetteOverlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderVignette"], handler: "onRenderVignetteOverlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderVignetteOverlay(Lnet/minecraft/class_332;Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["displayScoreboardSidebar"], handler: "onRenderScoreboardSidebar", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["displayScoreboardSidebar"], handler: "onRenderScoreboardSidebar", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderScoreboardSidebar(Lnet/minecraft/class_332;Lnet/minecraft/class_266;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderScoreboardSidebar"], handler: "onRenderScoreboardSidebar", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderScoreboardSidebar"], handler: "onRenderScoreboardSidebar", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderScoreboardSidebar(Lnet/minecraft/class_332;Lnet/minecraft/class_9779;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderSpyglassOverlay"], handler: "onRenderSpyglassOverlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderSpyglassOverlay"], handler: "onRenderSpyglassOverlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderSpyglassOverlay(Lnet/minecraft/class_332;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderCrosshair"], handler: "onRenderCrosshair", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderCrosshair"], handler: "onRenderCrosshair", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderCrosshair(Lnet/minecraft/class_332;Lnet/minecraft/class_9779;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderTitle"], handler: "onRenderTitle", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderTitle"], handler: "onRenderTitle", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderTitle(Lnet/minecraft/class_332;Lnet/minecraft/class_9779;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderSelectedItemName"], handler: "onRenderHeldItemTooltip", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderSelectedItemName"], handler: "onRenderHeldItemTooltip", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderHeldItemTooltip(Lnet/minecraft/class_332;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["onDisconnected"], handler: "onClear", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["onDisconnected"], handler: "onClear", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_338;method_1808(Z)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/components/ChatComponent","name":"clearMessages","descriptor":"(Z)V","raw":"Lnet/minecraft/class_338;method_1808(Z)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onClear(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderConfusionOverlay"], handler: "onRenderNausea", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderConfusionOverlay"], handler: "onRenderNausea", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameHudMixin", "onRenderNausea(Lnet/minecraft/class_332;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522747,11 +522751,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/InGameOverlayRendererMixin",
         targets: ["net/minecraft/client/renderer/ScreenEffectRenderer"], environment: "unknown",
         injections: [
-          { method: ["renderFire"], handler: "onRenderFireOverlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderFire"], handler: "onRenderFireOverlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameOverlayRendererMixin", "onRenderFireOverlay(Lnet/minecraft/class_4587;Lnet/minecraft/class_4597;Lnet/minecraft/class_1058;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderWater"], handler: "onRenderUnderwaterOverlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderWater"], handler: "onRenderUnderwaterOverlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameOverlayRendererMixin", "onRenderUnderwaterOverlay(Lnet/minecraft/class_310;Lnet/minecraft/class_4587;Lnet/minecraft/class_4597;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderTex"], handler: "render", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderTex"], handler: "render", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/InGameOverlayRendererMixin", "render(Lnet/minecraft/class_1058;Lnet/minecraft/class_4587;Lnet/minecraft/class_4597;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522760,7 +522764,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ItemEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/ItemEntityRenderer"], environment: "unknown",
         injections: [
-          { method: ["submit"], handler: "renderStack", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "renderStack", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ItemEntityRendererMixin", "renderStack(Lnet/minecraft/class_10039;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522776,7 +522780,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ItemMixin",
         targets: ["net/minecraft/world/item/Item"], environment: "unknown",
         injections: [
-          { method: ["getTooltipImage"], handler: "onTooltipData", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getTooltipImage"], handler: "onTooltipData", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ItemMixin", "onTooltipData(Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522792,7 +522796,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ItemRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/ItemRenderer"], environment: "unknown",
         injections: [
-          { method: ["renderItem"], handler: "modifyEnchant", kind: "modifyVariable", at: ["HEAD"], cancellable: false,
+          { method: ["renderItem"], handler: "modifyEnchant", kind: "modifyVariable", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ItemRendererMixin", "modifyEnchant(Lnet/minecraft/class_10444$class_10445;)Lnet/minecraft/class_10444$class_10445;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522801,9 +522805,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ItemStackMixin",
         targets: ["net/minecraft/world/item/ItemStack"], environment: "unknown",
         injections: [
-          { method: ["finishUsingItem"], handler: "onFinishUsing", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["finishUsingItem"], handler: "onFinishUsing", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ItemStackMixin", "onFinishUsing(Lnet/minecraft/class_1937;Lnet/minecraft/class_1309;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["releaseUsing"], handler: "onStoppedUsing", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["releaseUsing"], handler: "onStoppedUsing", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ItemStackMixin", "onStoppedUsing(Lnet/minecraft/class_1937;Lnet/minecraft/class_1309;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522819,7 +522823,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/KeyboardInputMixin",
         targets: ["net/minecraft/client/player/KeyboardInput"], environment: "unknown",
         injections: [
-          { method: ["tick"], handler: "isPressed", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["tick"], handler: "isPressed", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/KeyboardInputMixin", "isPressed(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522828,9 +522832,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/KeyboardMixin",
         targets: ["net/minecraft/client/KeyboardHandler"], environment: "unknown",
         injections: [
-          { method: ["keyPress"], handler: "onKey", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["keyPress"], handler: "onKey", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/KeyboardMixin", "onKey(JILnet/minecraft/class_11908;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["charTyped"], handler: "onChar", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["charTyped"], handler: "onChar", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/KeyboardMixin", "onChar(JLnet/minecraft/class_11905;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522846,9 +522850,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/LightmapTextureManagerMixin",
         targets: ["net/minecraft/client/renderer/LightTexture"], environment: "unknown",
         injections: [
-          { method: ["updateLightTexture"], handler: "update$skip", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["updateLightTexture"], handler: "update$skip", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_3695;method_15396(Ljava/lang/String;)V","callee":{"kind":"method","owner":"net/minecraft/util/profiling/ProfilerFiller","name":"push","descriptor":"(Ljava/lang/String;)V","raw":"Lnet/minecraft/class_3695;method_15396(Ljava/lang/String;)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LightmapTextureManagerMixin", "update$skip(FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_3695;)V", target, args.concat([info])); } },
-          { method: ["calculateDarknessScale"], handler: "getDarknessFactor", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["calculateDarknessScale"], handler: "getDarknessFactor", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LightmapTextureManagerMixin", "getDarknessFactor(Lnet/minecraft/class_1309;FFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522857,7 +522861,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/LightningEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/LightningBoltRenderer"], environment: "unknown",
         injections: [
-          { method: ["quad"], handler: "onSetLightningVertex", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["quad"], handler: "onSetLightningVertex", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LightningEntityRendererMixin", "onSetLightningVertex(Lorg/joml/Matrix4f;Lnet/minecraft/class_4588;FFIFFFFFFFZZZZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522873,13 +522877,13 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/LivingEntityMixin",
         targets: ["net/minecraft/world/entity/LivingEntity"], environment: "unknown",
         injections: [
-          { method: ["spawnItemParticles"], handler: "spawnItemParticles", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["spawnItemParticles"], handler: "spawnItemParticles", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityMixin", "spawnItemParticles(Lnet/minecraft/class_1799;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["onEquipItem"], handler: "onEquipStack", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["onEquipItem"], handler: "onEquipStack", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityMixin", "onEquipStack(Lnet/minecraft/class_1304;Lnet/minecraft/class_1799;Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["swing"], handler: "setHand", kind: "modifyVariable", at: ["HEAD"], cancellable: false,
+          { method: ["swing"], handler: "setHand", kind: "modifyVariable", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityMixin", "setHand(Lnet/minecraft/class_1268;)Lnet/minecraft/class_1268;", target, args.concat([info])); } },
-          { method: ["isFallFlying"], handler: "recastOnLand", kind: "inject", at: ["TAIL"], cancellable: true,
+          { method: ["isFallFlying"], handler: "recastOnLand", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityMixin", "recastOnLand(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
           { method: ["jumpFromGround"], handler: "modifyJumpConstant", kind: "modifyConstant", at: [], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityMixin", "modifyJumpConstant(F)F", target, args.concat([info])); } },
@@ -522890,11 +522894,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/LivingEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/LivingEntityRenderer"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "init$chams", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["<init>"], handler: "init$chams", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityRendererMixin", "init$chams(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submit"], handler: "render$Head", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submit"], handler: "render$Head", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityRendererMixin", "render$Head(Lnet/minecraft/class_10042;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submit"], handler: "render$Tail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["submit"], handler: "render$Tail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/LivingEntityRendererMixin", "render$Tail(Lnet/minecraft/class_10042;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;Lnet/minecraft/class_12075;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522903,7 +522907,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/MapRendererMixin",
         targets: ["net/minecraft/client/renderer/MapRenderer"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "onDraw", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["render"], handler: "onDraw", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MapRendererMixin", "onDraw(Lnet/minecraft/class_10090;Lnet/minecraft/class_4587;Lnet/minecraft/class_11659;ZILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522919,9 +522923,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/MessageHandlerMixin",
         targets: ["net/minecraft/client/multiplayer/chat/ChatListener"], environment: "unknown",
         injections: [
-          { method: ["showMessageToPlayer"], handler: "onProcessChatMessageInternal_beforeAddMessage", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["showMessageToPlayer"], handler: "onProcessChatMessageInternal_beforeAddMessage", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_338;method_44811(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/components/ChatComponent","name":"addMessage","descriptor":"(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;)V","raw":"Lnet/minecraft/class_338;method_44811(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MessageHandlerMixin", "onProcessChatMessageInternal_beforeAddMessage(Lnet/minecraft/class_2556$class_7602;Lnet/minecraft/class_7471;Lnet/minecraft/class_2561;Lcom/mojang/authlib/GameProfile;ZLjava/time/Instant;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["showMessageToPlayer"], handler: "onProcessChatMessageInternal_afterAddMessage", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["showMessageToPlayer"], handler: "onProcessChatMessageInternal_afterAddMessage", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_338;method_44811(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/components/ChatComponent","name":"addMessage","descriptor":"(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;)V","raw":"Lnet/minecraft/class_338;method_44811(Lnet/minecraft/class_2561;Lnet/minecraft/class_7469;Lnet/minecraft/class_7591;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MessageHandlerMixin", "onProcessChatMessageInternal_afterAddMessage(Lnet/minecraft/class_2556$class_7602;Lnet/minecraft/class_7471;Lnet/minecraft/class_2561;Lcom/mojang/authlib/GameProfile;ZLjava/time/Instant;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522937,33 +522941,33 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/MinecraftClientMixin",
         targets: ["net/minecraft/client/Minecraft"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["tick"], handler: "onPreTick", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["tick"], handler: "onPreTick", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onPreTick(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["tick"], handler: "onTick", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["tick"], handler: "onTick", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onTick(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["startAttack"], handler: "onAttack", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["startAttack"], handler: "onAttack", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onAttack(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["startUseItem"], handler: "onDoItemUse", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["startUseItem"], handler: "onDoItemUse", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onDoItemUse(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["disconnect"], handler: "onDisconnect", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["disconnect"], handler: "onDisconnect", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onDisconnect(Lnet/minecraft/class_437;ZZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["setScreen"], handler: "onSetScreen", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["setScreen"], handler: "onSetScreen", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onSetScreen(Lnet/minecraft/class_437;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["startUseItem"], handler: "onDoItemUseHand", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["startUseItem"], handler: "onDoItemUseHand", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_1799;method_45435(Lnet/minecraft/class_7699;)Z","callee":{"kind":"method","owner":"net/minecraft/world/item/ItemStack","name":"isItemEnabled","descriptor":"(Lnet/minecraft/class_7699;)Z","raw":"Lnet/minecraft/class_1799;method_45435(Lnet/minecraft/class_7699;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onDoItemUseHand(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_1799;)V", target, args.concat([info])); } },
-          { method: ["startUseItem"], handler: "onDoItemUseBeforeHands", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["startUseItem"], handler: "onDoItemUseBeforeHands", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_1268;values()[Lnet/minecraft/class_1268;","callee":{"kind":"method","owner":"net/minecraft/world/InteractionHand","name":"values","descriptor":"()[Lnet/minecraft/class_1268;","raw":"Lnet/minecraft/class_1268;values()[Lnet/minecraft/class_1268;"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onDoItemUseBeforeHands(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["updateTitle"], handler: "setTitle", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["updateTitle"], handler: "setTitle", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_1041;method_24286(Ljava/lang/String;)V","callee":{"kind":"method","owner":"com/mojang/blaze3d/platform/Window","name":"setTitle","descriptor":"(Ljava/lang/String;)V","raw":"Lnet/minecraft/class_1041;method_24286(Ljava/lang/String;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "setTitle(Ljava/lang/String;)Ljava/lang/String;", target, args.concat([info])); } },
-          { method: ["resizeDisplay"], handler: "onResolutionChanged", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["resizeDisplay"], handler: "onResolutionChanged", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onResolutionChanged(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["runTick"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["runTick"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "onRender(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleKeybinds"], handler: "handleInputEventsInjectStopUsingItem", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["handleKeybinds"], handler: "handleInputEventsInjectStopUsingItem", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_746;method_6115()Z","callee":{"kind":"method","owner":"net/minecraft/client/player/LocalPlayer","name":"isUsingItem","descriptor":"()Z","raw":"Lnet/minecraft/class_746;method_6115()Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "handleInputEventsInjectStopUsingItem(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["tick"], handler: "afterHandleInputEvents", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["tick"], handler: "afterHandleInputEvents", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_310;method_1508()V","callee":{"kind":"method","owner":"net/minecraft/client/Minecraft","name":"handleKeybinds","descriptor":"()V","raw":"Lnet/minecraft/class_310;method_1508()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MinecraftClientMixin", "afterHandleInputEvents(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522979,7 +522983,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/MobSpawnerBlockEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/blockentity/SpawnerRenderer"], environment: "unknown",
         injections: [
-          { method: ["submitEntityInSpawner"], handler: "onRenderDisplayEntity", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["submitEntityInSpawner"], handler: "onRenderDisplayEntity", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MobSpawnerBlockEntityRendererMixin", "onRenderDisplayEntity(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -522995,9 +522999,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/MouseMixin",
         targets: ["net/minecraft/client/MouseHandler"], environment: "unknown",
         injections: [
-          { method: ["onButton"], handler: "onMouseButton", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["onButton"], handler: "onMouseButton", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MouseMixin", "onMouseButton(JLnet/minecraft/class_11910;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["onScroll"], handler: "onMouseScroll", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["onScroll"], handler: "onMouseScroll", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MouseMixin", "onMouseScroll(JDDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523006,7 +523010,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/MultiplayerScreenMixin",
         targets: ["net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen"], environment: "unknown",
         injections: [
-          { method: ["repositionElements"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["repositionElements"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/MultiplayerScreenMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523015,7 +523019,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/PacketByteBufMixin",
         targets: ["net/minecraft/network/FriendlyByteBuf"], environment: "unknown",
         injections: [
-          { method: ["readNbt"], handler: "xlPackets", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["readNbt"], handler: "xlPackets", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2540;method_56340(Lio/netty/buffer/ByteBuf;Lnet/minecraft/class_2505;)Lnet/minecraft/class_2520;","callee":{"kind":"method","owner":"net/minecraft/network/FriendlyByteBuf","name":"readNbt","descriptor":"(Lio/netty/buffer/ByteBuf;Lnet/minecraft/class_2505;)Lnet/minecraft/class_2520;","raw":"Lnet/minecraft/class_2540;method_56340(Lio/netty/buffer/ByteBuf;Lnet/minecraft/class_2505;)Lnet/minecraft/class_2520;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PacketByteBufMixin", "xlPackets(Lnet/minecraft/class_2505;)Lnet/minecraft/class_2505;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523024,7 +523028,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ParticleManagerMixin",
         targets: ["net/minecraft/client/particle/ParticleEngine"], environment: "unknown",
         injections: [
-          { method: ["createParticle"], handler: "onAddParticle", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["createParticle"], handler: "onAddParticle", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ParticleManagerMixin", "onAddParticle(Lnet/minecraft/class_2394;DDDDDDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523040,15 +523044,15 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/PlayerEntityMixin",
         targets: ["net/minecraft/world/entity/player/Player"], environment: "unknown",
         injections: [
-          { method: ["isStayingOnGroundSurface"], handler: "clipAtLedge", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isStayingOnGroundSurface"], handler: "clipAtLedge", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityMixin", "clipAtLedge(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["drop"], handler: "onDropItem", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["drop"], handler: "onDropItem", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityMixin", "onDropItem(Lnet/minecraft/class_1799;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isSpectator"], handler: "onIsSpectator", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isSpectator"], handler: "onIsSpectator", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityMixin", "onIsSpectator(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isCreative"], handler: "onIsCreative", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isCreative"], handler: "onIsCreative", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityMixin", "onIsCreative(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getFlyingSpeed"], handler: "onGetOffGroundSpeed", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getFlyingSpeed"], handler: "onGetOffGroundSpeed", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityMixin", "onGetOffGroundSpeed(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523057,11 +523061,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/PlayerEntityRendererMixin",
         targets: ["net/minecraft/client/renderer/entity/player/AvatarRenderer"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "init$chams", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["<init>"], handler: "init$chams", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityRendererMixin", "init$chams(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["extractRenderState"], handler: "updateRenderState$scale", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["extractRenderState"], handler: "updateRenderState$scale", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityRendererMixin", "updateRenderState$scale(Lnet/minecraft/class_11890;Lnet/minecraft/class_10055;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["extractRenderState"], handler: "updateRenderState$rotations", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["extractRenderState"], handler: "updateRenderState$rotations", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerEntityRendererMixin", "updateRenderState$rotations(Lnet/minecraft/class_11890;Lnet/minecraft/class_10055;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523070,7 +523074,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/PlayerInteractEntityC2SPacketMixin",
         targets: ["net/minecraft/network/protocol/game/ServerboundInteractPacket"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "setSneaking", kind: "modifyVariable", at: ["HEAD"], cancellable: false,
+          { method: ["<init>"], handler: "setSneaking", kind: "modifyVariable", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerInteractEntityC2SPacketMixin", "setSneaking(Z)Z", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523079,7 +523083,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/PlayerListEntryMixin",
         targets: ["net/minecraft/client/multiplayer/PlayerInfo"], environment: "unknown",
         injections: [
-          { method: ["getSkin"], handler: "onGetTexture", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getSkin"], handler: "onGetTexture", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerListEntryMixin", "onGetTexture(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523090,13 +523094,13 @@
         injections: [
           { method: ["getPlayerInfos"], handler: "modifyCount", kind: "modifyConstant", at: [], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerListHudMixin", "modifyCount(J)J", target, args.concat([info])); } },
-          { method: ["getNameForDisplay"], handler: "getPlayerName", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getNameForDisplay"], handler: "getPlayerName", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerListHudMixin", "getPlayerName(Lnet/minecraft/class_640;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["render"], handler: "modifyWidth", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["render"], handler: "modifyWidth", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/lang/Math;min(II)I","callee":{"kind":"method","owner":"java/lang/Math","name":"min","descriptor":"(II)I","raw":"Ljava/lang/Math;min(II)I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerListHudMixin", "modifyWidth(I)I", target, args.concat([info])); } },
-          { method: ["render"], handler: "modifyHeight", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["render"], handler: "modifyHeight", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/lang/Math;min(II)I","callee":{"kind":"method","owner":"java/lang/Math","name":"min","descriptor":"(II)I","raw":"Ljava/lang/Math;min(II)I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerListHudMixin", "modifyHeight(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lcom/llamalad7/mixinextras/sugar/ref/LocalIntRef;Lcom/llamalad7/mixinextras/sugar/ref/LocalIntRef;)V", target, args.concat([info])); } },
-          { method: ["renderPingIcon"], handler: "onRenderLatencyIcon", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderPingIcon"], handler: "onRenderLatencyIcon", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/PlayerListHudMixin", "onRenderLatencyIcon(Lnet/minecraft/class_332;IIILnet/minecraft/class_640;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523133,7 +523137,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/RegistriesMixin",
         targets: ["net/minecraft/core/registries/BuiltInRegistries"], environment: "unknown",
         injections: [
-          { method: ["internalRegister"], handler: "ignoreBootstrap", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["internalRegister"], handler: "ignoreBootstrap", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2966;method_36235(Ljava/util/function/Supplier;)V","callee":{"kind":"method","owner":"net/minecraft/server/Bootstrap","name":"checkBootstrapCalled","descriptor":"(Ljava/util/function/Supplier;)V","raw":"Lnet/minecraft/class_2966;method_36235(Ljava/util/function/Supplier;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/RegistriesMixin", "ignoreBootstrap(Ljava/util/function/Supplier;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523156,7 +523160,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/RenderSystemMixin",
         targets: ["com/mojang/blaze3d/systems/RenderSystem"], environment: "unknown",
         injections: [
-          { method: ["flipFrame"], handler: "meteor$flipFrame", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["flipFrame"], handler: "meteor$flipFrame", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/RenderSystemMixin", "meteor$flipFrame(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523165,7 +523169,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/RenderTickCounterDynamicMixin",
         targets: ["net/minecraft/client/DeltaTracker$Timer"], environment: "unknown",
         injections: [
-          { method: ["advanceGameTime"], handler: "onBeingRenderTick", kind: "inject", at: ["FIELD"], cancellable: false,
+          { method: ["advanceGameTime"], handler: "onBeingRenderTick", kind: "inject", at: [{"value":"FIELD","ordinal":null,"index":null,"target":"Lnet/minecraft/class_9779$class_9781;field_51962:J","callee":{"kind":"field","owner":"net/minecraft/client/DeltaTracker$Timer","name":"lastMs","descriptor":"J","raw":"Lnet/minecraft/class_9779$class_9781;field_51962:J"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/RenderTickCounterDynamicMixin", "onBeingRenderTick(JLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523181,11 +523185,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ScreenMixin",
         targets: ["net/minecraft/client/gui/screens/Screen"], environment: "unknown",
         injections: [
-          { method: ["renderTransparentBackground"], handler: "onRenderInGameBackground", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderTransparentBackground"], handler: "onRenderInGameBackground", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ScreenMixin", "onRenderInGameBackground(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["defaultHandleClickEvent"], handler: "onHandleBasicClickEvent", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["defaultHandleClickEvent"], handler: "onHandleBasicClickEvent", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;)V","callee":{"kind":"method","owner":"org/slf4j/Logger","name":"error","descriptor":"(Ljava/lang/String;Ljava/lang/Object;)V","raw":"Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ScreenMixin", "onHandleBasicClickEvent(Lnet/minecraft/class_2558;Lnet/minecraft/class_310;Lnet/minecraft/class_437;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["keyPressed"], handler: "onKeyPressed", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["keyPressed"], handler: "onKeyPressed", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ScreenMixin", "onKeyPressed(Lnet/minecraft/class_11908;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523201,7 +523205,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ServerPlayerEntityMixin",
         targets: ["net/minecraft/server/level/ServerPlayer"], environment: "unknown",
         injections: [
-          { method: ["jumpFromGround"], handler: "dontJump", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["jumpFromGround"], handler: "dontJump", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ServerPlayerEntityMixin", "dontJump(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523210,7 +523214,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ServerResourcePackLoaderMixin",
         targets: ["net/minecraft/client/resources/server/DownloadedPackSource"], environment: "unknown",
         injections: [
-          { method: ["onReloadSuccess"], handler: "removeInactivePacksTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["onReloadSuccess"], handler: "removeInactivePacksTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ServerResourcePackLoaderMixin", "removeInactivePacksTail(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523219,7 +523223,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ShaderLoaderMixin",
         targets: ["net/minecraft/client/renderer/ShaderManager"], environment: "unknown",
         injections: [
-          { method: ["apply"], handler: "meteor$reloadPipelines", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["apply"], handler: "meteor$reloadPipelines", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ShaderLoaderMixin", "meteor$reloadPipelines(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523228,7 +523232,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/ShadowPiecesCommandRendererMixin",
         targets: ["net/minecraft/client/renderer/feature/ShadowFeatureRenderer"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "meteor$onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["render"], handler: "meteor$onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/ShadowPiecesCommandRendererMixin", "meteor$onRender(Lnet/minecraft/class_11788;Lnet/minecraft/class_4597$class_4598;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523251,9 +523255,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/SkyRenderingMixin",
         targets: ["net/minecraft/client/renderer/SkyRenderer"], environment: "unknown",
         injections: [
-          { method: ["extractRenderState"], handler: "updateRenderState", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["extractRenderState"], handler: "updateRenderState", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SkyRenderingMixin", "updateRenderState(Lnet/minecraft/class_638;FLnet/minecraft/class_4184;Lnet/minecraft/class_12076;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderEndSky"], handler: "modifyEndSkyColor", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["renderEndSky"], handler: "modifyEndSkyColor", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_11282;method_71106(Lorg/joml/Matrix4fc;Lorg/joml/Vector4fc;Lorg/joml/Vector3fc;Lorg/joml/Matrix4fc;)Lcom/mojang/blaze3d/buffers/GpuBufferSlice;","callee":{"kind":"method","owner":"net/minecraft/client/renderer/DynamicUniforms","name":"writeTransform","descriptor":"(Lorg/joml/Matrix4fc;Lorg/joml/Vector4fc;Lorg/joml/Vector3fc;Lorg/joml/Matrix4fc;)Lcom/mojang/blaze3d/buffers/GpuBufferSlice;","raw":"Lnet/minecraft/class_11282;method_71106(Lorg/joml/Matrix4fc;Lorg/joml/Vector4fc;Lorg/joml/Vector3fc;Lorg/joml/Matrix4fc;)Lcom/mojang/blaze3d/buffers/GpuBufferSlice;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SkyRenderingMixin", "modifyEndSkyColor(Lorg/joml/Vector4fc;)Lorg/joml/Vector4fc;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523262,7 +523266,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/SlimeBlockMixin",
         targets: ["net/minecraft/world/level/block/SlimeBlock"], environment: "unknown",
         injections: [
-          { method: ["stepOn"], handler: "onSteppedOn", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["stepOn"], handler: "onSteppedOn", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SlimeBlockMixin", "onSteppedOn(Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_2680;Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523271,9 +523275,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/SoundSystemMixin",
         targets: ["net/minecraft/client/sounds/SoundEngine"], environment: "unknown",
         injections: [
-          { method: ["play"], handler: "onPlay", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["play"], handler: "onPlay", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SoundSystemMixin", "onPlay(Lnet/minecraft/class_1113;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["tickInGameSound"], handler: "onTick", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["tickInGameSound"], handler: "onTick", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_1117;method_16896()V","callee":{"kind":"method","owner":"net/minecraft/client/resources/sounds/TickableSoundInstance","name":"tick","descriptor":"()V","raw":"Lnet/minecraft/class_1117;method_16896()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SoundSystemMixin", "onTick(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_1117;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523282,7 +523286,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/SplashTextResourceSupplierMixin",
         targets: ["net/minecraft/client/resources/SplashManager"], environment: "unknown",
         injections: [
-          { method: ["getSplash"], handler: "onApply", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getSplash"], handler: "onApply", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SplashTextResourceSupplierMixin", "onApply(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523298,7 +523302,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/StatusEffectInstanceMixin",
         targets: ["net/minecraft/world/effect/MobEffectInstance"], environment: "unknown",
         injections: [
-          { method: ["tickDownDuration"], handler: "tick", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["tickDownDuration"], handler: "tick", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/StatusEffectInstanceMixin", "tick(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523307,7 +523311,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/StringHelperMixin",
         targets: ["net/minecraft/util/StringUtil"], environment: "unknown",
         injections: [
-          { method: ["trimChatMessage"], handler: "injected", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["trimChatMessage"], handler: "injected", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_3544;method_34963(Ljava/lang/String;IZ)Ljava/lang/String;","callee":{"kind":"method","owner":"net/minecraft/util/StringUtil","name":"truncateStringIfNecessary","descriptor":"(Ljava/lang/String;IZ)Ljava/lang/String;","raw":"Lnet/minecraft/class_3544;method_34963(Ljava/lang/String;IZ)Ljava/lang/String;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/StringHelperMixin", "injected(I)I", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523316,7 +523320,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/SweetBerryBushBlockMixin",
         targets: ["net/minecraft/world/level/block/SweetBerryBushBlock"], environment: "unknown",
         injections: [
-          { method: ["entityInside","onEntityCollision","entityInside"], handler: "onEntityCollision", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["entityInside","onEntityCollision","entityInside"], handler: "onEntityCollision", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/SweetBerryBushBlockMixin", "onEntityCollision(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_1297;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523332,7 +523336,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/TextVisitFactoryMixin",
         targets: ["net/minecraft/util/StringDecomposer"], environment: "unknown",
         injections: [
-          { method: ["iterateFormatted"], handler: "adjustText", kind: "modifyArg", at: ["INVOKE:0"], cancellable: false,
+          { method: ["iterateFormatted"], handler: "adjustText", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_5223;method_27473(Ljava/lang/String;ILnet/minecraft/class_2583;Lnet/minecraft/class_2583;Lnet/minecraft/class_5224;)Z","callee":{"kind":"method","owner":"net/minecraft/util/StringDecomposer","name":"iterateFormatted","descriptor":"(Ljava/lang/String;ILnet/minecraft/class_2583;Lnet/minecraft/class_2583;Lnet/minecraft/class_5224;)Z","raw":"Lnet/minecraft/class_5223;method_27473(Ljava/lang/String;ILnet/minecraft/class_2583;Lnet/minecraft/class_2583;Lnet/minecraft/class_5224;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TextVisitFactoryMixin", "adjustText(Ljava/lang/String;)Ljava/lang/String;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523341,9 +523345,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/TitleScreenMixin",
         targets: ["net/minecraft/client/gui/screens/TitleScreen"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "onRender", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["render"], handler: "onRender", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TitleScreenMixin", "onRender(Lnet/minecraft/class_332;IIFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["mouseClicked"], handler: "onMouseClicked", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["mouseClicked"], handler: "onMouseClicked", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TitleScreenMixin", "onMouseClicked(Lnet/minecraft/class_11909;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523352,7 +523356,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/TooltipComponentMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent"], environment: "unknown",
         injections: [
-          { method: ["create"], handler: "shortcutMeteorTooltipData", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["create"], handler: "shortcutMeteorTooltipData", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TooltipComponentMixin", "shortcutMeteorTooltipData(Lnet/minecraft/class_5632;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523361,7 +523365,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/TransformationMixin",
         targets: ["net/minecraft/client/renderer/block/model/ItemTransform"], environment: "unknown",
         injections: [
-          { method: ["apply"], handler: "onApply", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["apply"], handler: "onApply", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TransformationMixin", "onApply(ZLnet/minecraft/class_4587$class_4665;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523370,11 +523374,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/TridentItemMixin",
         targets: ["net/minecraft/world/item/TridentItem"], environment: "unknown",
         injections: [
-          { method: ["releaseUsing"], handler: "onStoppedUsingHead", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["releaseUsing"], handler: "onStoppedUsingHead", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TridentItemMixin", "onStoppedUsingHead(Lnet/minecraft/class_1799;Lnet/minecraft/class_1937;Lnet/minecraft/class_1309;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["releaseUsing"], handler: "onStoppedUsingTail", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["releaseUsing"], handler: "onStoppedUsingTail", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TridentItemMixin", "onStoppedUsingTail(Lnet/minecraft/class_1799;Lnet/minecraft/class_1937;Lnet/minecraft/class_1309;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["releaseUsing"], handler: "modifyVelocity", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["releaseUsing"], handler: "modifyVelocity", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_1657;method_5762(DDD)V","callee":{"kind":"method","owner":"net/minecraft/world/entity/player/Player","name":"push","descriptor":"(DDD)V","raw":"Lnet/minecraft/class_1657;method_5762(DDD)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/TridentItemMixin", "modifyVelocity(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523390,9 +523394,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/WorldBorderMixin",
         targets: ["net/minecraft/world/level/border/WorldBorder"], environment: "unknown",
         injections: [
-          { method: ["isInsideCloseToBorder"], handler: "canCollide", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isInsideCloseToBorder"], handler: "canCollide", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldBorderMixin", "canCollide(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["isWithinBounds"], handler: "contains", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isWithinBounds"], handler: "contains", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldBorderMixin", "contains(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523401,7 +523405,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/WorldChunkMixin",
         targets: ["net/minecraft/world/level/chunk/LevelChunk"], environment: "unknown",
         injections: [
-          { method: ["setBlockState"], handler: "onSetBlockState", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["setBlockState"], handler: "onSetBlockState", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldChunkMixin", "onSetBlockState(Lnet/minecraft/class_2338;Lnet/minecraft/class_2680;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523417,27 +523421,27 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/WorldRendererMixin",
         targets: ["net/minecraft/client/renderer/LevelRenderer"], environment: "unknown",
         injections: [
-          { method: ["setLevel"], handler: "onSetWorld", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["setLevel"], handler: "onSetWorld", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onSetWorld(Lnet/minecraft/class_638;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["checkPoseStack"], handler: "onCheckEmpty", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["checkPoseStack"], handler: "onCheckEmpty", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onCheckEmpty(Lnet/minecraft/class_4587;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderHitOutline"], handler: "onDrawHighlightedBlockOutline", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderHitOutline"], handler: "onDrawHighlightedBlockOutline", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onDrawHighlightedBlockOutline(Lnet/minecraft/class_4587;Lnet/minecraft/class_4588;DDDLnet/minecraft/class_12074;IFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderLevel"], handler: "renderSetupTerrainModifyArg", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["renderLevel"], handler: "renderSetupTerrainModifyArg", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_761;method_74752(Lnet/minecraft/class_4184;Lnet/minecraft/class_4604;Z)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/LevelRenderer","name":"cullTerrain","descriptor":"(Lnet/minecraft/class_4184;Lnet/minecraft/class_4604;Z)V","raw":"Lnet/minecraft/class_761;method_74752(Lnet/minecraft/class_4184;Lnet/minecraft/class_4604;Z)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "renderSetupTerrainModifyArg(Z)Z", target, args.concat([info])); } },
-          { method: ["doesMobEffectBlockSky"], handler: "hasBlindnessOrDarkness", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["doesMobEffectBlockSky"], handler: "hasBlindnessOrDarkness", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "hasBlindnessOrDarkness(Lnet/minecraft/class_4184;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["renderLevel"], handler: "onRenderHead", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["renderLevel"], handler: "onRenderHead", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onRenderHead(Lnet/minecraft/class_9922;Lnet/minecraft/class_9779;ZLnet/minecraft/class_4184;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submitEntities"], handler: "onPushEntityRenders", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["submitEntities"], handler: "onPushEntityRenders", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onPushEntityRenders(Lnet/minecraft/class_4587;Lnet/minecraft/class_11658;Lnet/minecraft/class_11659;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["lambda$addMainPass$1"], handler: "onRender", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["lambda$addMainPass$1"], handler: "onRender", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4618;method_23285()V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/OutlineBufferSource","name":"endOutlineBatch","descriptor":"()V","raw":"Lnet/minecraft/class_4618;method_23285()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onRender(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["resize"], handler: "onResized", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["resize"], handler: "onResized", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "onResized(IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["lambda$addCloudsPass$3"], handler: "modifyColor", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["lambda$addCloudsPass$3"], handler: "modifyColor", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_9955;method_62168(ILnet/minecraft/class_4063;FLnet/minecraft/class_243;JF)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/CloudRenderer","name":"render","descriptor":"(ILnet/minecraft/class_4063;FLnet/minecraft/class_243;JF)V","raw":"Lnet/minecraft/class_9955;method_62168(ILnet/minecraft/class_4063;FLnet/minecraft/class_243;JF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "modifyColor(I)I", target, args.concat([info])); } },
-          { method: ["<init>"], handler: "init$IWorldRenderer", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "init$IWorldRenderer", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/WorldRendererMixin", "init$IWorldRenderer(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523453,7 +523457,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/baritone/ComeCommandMixin",
         targets: ["baritone/command/defaults/ComeCommand"], environment: "unknown",
         injections: [
-          { method: ["execute"], handler: "getComeCommandTarget", kind: "modifyArgs", at: ["INVOKE"], cancellable: false,
+          { method: ["execute"], handler: "getComeCommandTarget", kind: "modifyArgs", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lbaritone/api/process/ICustomGoalProcess;setGoalAndPath(Lbaritone/api/pathing/goals/Goal;)V","callee":{"kind":"method","owner":"baritone/api/process/ICustomGoalProcess","name":"setGoalAndPath","descriptor":"(Lbaritone/api/pathing/goals/Goal;)V","raw":"Lbaritone/api/process/ICustomGoalProcess;setGoalAndPath(Lbaritone/api/pathing/goals/Goal;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/baritone/ComeCommandMixin", "getComeCommandTarget(Lorg/spongepowered/asm/mixin/injection/invoke/arg/Args;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523462,7 +523466,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/indigo/AbstractTerrainRenderContextMixin",
         targets: ["net/fabricmc/fabric/impl/client/indigo/renderer/render/AbstractTerrainRenderContext"], environment: "unknown",
         injections: [
-          { method: ["bufferQuad"], handler: "onBufferQuad", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["bufferQuad"], handler: "onBufferQuad", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/fabricmc/fabric/impl/client/indigo/renderer/render/AbstractTerrainRenderContext;bufferQuad(Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;Lnet/minecraft/class_4588;)V","callee":{"kind":"method","owner":"net/fabricmc/fabric/impl/client/indigo/renderer/render/AbstractTerrainRenderContext","name":"bufferQuad","descriptor":"(Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;Lnet/minecraft/class_4588;)V","raw":"Lnet/fabricmc/fabric/impl/client/indigo/renderer/render/AbstractTerrainRenderContext;bufferQuad(Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;Lnet/minecraft/class_4588;)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/indigo/AbstractTerrainRenderContextMixin", "onBufferQuad(Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523471,7 +523475,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/lithium/LithiumEntityCollisionsMixin",
         targets: ["net/caffeinemc/mods/lithium/common/entity/LithiumEntityCollisions"], environment: "unknown",
         injections: [
-          { method: ["isWithinWorldBorder"], handler: "onIsWithinWorldBorder", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isWithinWorldBorder"], handler: "onIsWithinWorldBorder", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/lithium/LithiumEntityCollisionsMixin", "onIsWithinWorldBorder(Lnet/minecraft/class_2784;Lnet/minecraft/class_238;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523480,9 +523484,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumBlockOcclusionCacheMixin",
         targets: ["net/caffeinemc/mods/sodium/client/render/model/AbstractBlockRenderContext"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumBlockOcclusionCacheMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["shouldDrawSide"], handler: "meteor$forceXrayFace", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["shouldDrawSide"], handler: "meteor$forceXrayFace", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumBlockOcclusionCacheMixin", "meteor$forceXrayFace(Lnet/minecraft/class_2350;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523491,11 +523495,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumBlockRendererMixin",
         targets: ["net/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer"], environment: "unknown",
         injections: [
-          { method: ["renderModel"], handler: "onRenderModel", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderModel"], handler: "onRenderModel", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumBlockRendererMixin", "onRenderModel(Lnet/minecraft/class_1087;Lnet/minecraft/class_2680;Lnet/minecraft/class_2338;Lnet/minecraft/class_2338;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["bufferQuad"], handler: "onBufferQuad", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["bufferQuad"], handler: "onBufferQuad", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumBlockRendererMixin", "onBufferQuad(Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;[FLnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["processQuad"], handler: "modifyMaterial", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["processQuad"], handler: "modifyMaterial", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;bufferQuad(Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;[FLnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;)V","callee":{"kind":"method","owner":"net/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer","name":"bufferQuad","descriptor":"(Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;[FLnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;)V","raw":"Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;bufferQuad(Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;[FLnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumBlockRendererMixin", "modifyMaterial(Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;)Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523504,11 +523508,11 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumDefaultFluidRendererMixin",
         targets: ["net/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/DefaultFluidRenderer"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["render"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumDefaultFluidRendererMixin", "onRender(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/class_2680;Lnet/minecraft/class_3610;Lnet/minecraft/class_2338;Lnet/minecraft/class_2338;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/buffers/ChunkModelBuilder;Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;Lnet/caffeinemc/mods/sodium/client/model/color/ColorProvider;[Lnet/minecraft/class_1058;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["updateQuad"], handler: "onUpdateQuad", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["updateQuad"], handler: "onUpdateQuad", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumDefaultFluidRendererMixin", "onUpdateQuad(Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadViewMutable;Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/class_2338;Lnet/caffeinemc/mods/sodium/client/model/light/LightPipeline;Lnet/minecraft/class_2350;Lnet/caffeinemc/mods/sodium/client/model/quad/properties/ModelQuadFacing;FLnet/caffeinemc/mods/sodium/client/model/color/ColorProvider;Lnet/minecraft/class_3610;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["render"], handler: "modifyMaterial", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["render"], handler: "modifyMaterial", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/DefaultFluidRenderer;writeQuad(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/buffers/ChunkModelBuilder;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;Lnet/minecraft/class_2338;Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;Lnet/caffeinemc/mods/sodium/client/model/quad/properties/ModelQuadFacing;Z)V","callee":{"kind":"method","owner":"net/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/DefaultFluidRenderer","name":"writeQuad","descriptor":"(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/buffers/ChunkModelBuilder;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;Lnet/minecraft/class_2338;Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;Lnet/caffeinemc/mods/sodium/client/model/quad/properties/ModelQuadFacing;Z)V","raw":"Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/DefaultFluidRenderer;writeQuad(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/buffers/ChunkModelBuilder;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;Lnet/minecraft/class_2338;Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;Lnet/caffeinemc/mods/sodium/client/model/quad/properties/ModelQuadFacing;Z)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumDefaultFluidRendererMixin", "modifyMaterial(Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;)Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523517,9 +523521,9 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumFluidRendererImplDefaultRenderContextMixin",
         targets: ["net/caffeinemc/mods/sodium/fabric/render/FluidRendererImpl$DefaultRenderContext"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumFluidRendererImplDefaultRenderContextMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["getColorProvider"], handler: "onGetColorProvider", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getColorProvider"], handler: "onGetColorProvider", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumFluidRendererImplDefaultRenderContextMixin", "onGetColorProvider(Lnet/minecraft/class_3611;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523528,7 +523532,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumFluidRendererImplMixin",
         targets: ["net/caffeinemc/mods/sodium/fabric/render/FluidRendererImpl"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "onRender", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["render"], handler: "onRender", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumFluidRendererImplMixin", "onRender(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/class_2680;Lnet/minecraft/class_3610;Lnet/minecraft/class_2338;Lnet/minecraft/class_2338;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildBuffers;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523537,7 +523541,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumInnerPartitionBSPNodeMixin",
         targets: ["net/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/bsp_tree/InnerPartitionBSPNode"], environment: "unknown",
         injections: [
-          { method: ["interpolateAttributes"], handler: "onInterpolateAttributes", kind: "inject", at: ["MIXINEXTRAS:EXPRESSION"], cancellable: true,
+          { method: ["interpolateAttributes"], handler: "onInterpolateAttributes", kind: "inject", at: [{"value":"MIXINEXTRAS:EXPRESSION","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumInnerPartitionBSPNodeMixin", "onInterpolateAttributes(FLorg/joml/Vector3fc;Lnet/caffeinemc/mods/sodium/client/render/chunk/vertex/format/ChunkVertexEncoder$Vertex;Lnet/caffeinemc/mods/sodium/client/render/chunk/vertex/format/ChunkVertexEncoder$Vertex;Lnet/caffeinemc/mods/sodium/client/render/chunk/vertex/format/ChunkVertexEncoder$Vertex;Lnet/caffeinemc/mods/sodium/client/render/chunk/vertex/format/ChunkVertexEncoder$Vertex;Lnet/caffeinemc/mods/sodium/client/render/chunk/vertex/format/ChunkVertexEncoder$Vertex;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;F)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523546,13 +523550,13 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumLightDataAccessMixin",
         targets: ["net/caffeinemc/mods/sodium/client/model/light/data/LightDataAccess"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "onInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "onInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumLightDataAccessMixin", "onInit(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["compute"], handler: "compute_modifyBL", kind: "modifyVariable", at: ["TAIL"], cancellable: false,
+          { method: ["compute"], handler: "compute_modifyBL", kind: "modifyVariable", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumLightDataAccessMixin", "compute_modifyBL(I)I", target, args.concat([info])); } },
-          { method: ["compute"], handler: "compute_assignSL", kind: "modifyVariable", at: ["STORE"], cancellable: false,
+          { method: ["compute"], handler: "compute_assignSL", kind: "modifyVariable", at: [{"value":"STORE","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumLightDataAccessMixin", "compute_assignSL(I)I", target, args.concat([info])); } },
-          { method: ["compute"], handler: "compute_assignBL", kind: "modifyVariable", at: ["STORE"], cancellable: false,
+          { method: ["compute"], handler: "compute_assignBL", kind: "modifyVariable", at: [{"value":"STORE","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumLightDataAccessMixin", "compute_assignBL(I)I", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523561,7 +523565,7 @@
         modId: "meteor-client", mixin: "meteordevelopment/meteorclient/mixin/sodium/SodiumWorldRendererMixin",
         targets: ["net/caffeinemc/mods/sodium/client/render/SodiumWorldRenderer"], environment: "unknown",
         injections: [
-          { method: ["setupTerrain"], handler: "modifyFogParameters", kind: "modifyVariable", at: ["HEAD"], cancellable: false,
+          { method: ["setupTerrain"], handler: "modifyFogParameters", kind: "modifyVariable", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("meteordevelopment/meteorclient/mixin/sodium/SodiumWorldRendererMixin", "modifyFogParameters(Lnet/caffeinemc/mods/sodium/client/util/FogParameters;)Lnet/caffeinemc/mods/sodium/client/util/FogParameters;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523570,9 +523574,9 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/DataPackCommandMixin",
         targets: ["net/minecraft/server/commands/DataPackCommand"], environment: "unknown",
         injections: [
-          { method: ["lambda$static$10"], handler: "filterEnabledPackSuggestions", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["lambda$static$10"], handler: "filterEnabledPackSuggestions", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_3283;method_29210()Ljava/util/Collection;","callee":{"kind":"method","owner":"net/minecraft/server/packs/repository/PackRepository","name":"getSelectedIds","descriptor":"()Ljava/util/Collection;","raw":"Lnet/minecraft/class_3283;method_29210()Ljava/util/Collection;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/DataPackCommandMixin", "filterEnabledPackSuggestions(Lnet/minecraft/class_3283;)Ljava/util/Collection;", target, args.concat([info])); } },
-          { method: ["getPack"], handler: "errorOnInternalPack", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["getPack"], handler: "errorOnInternalPack", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/Collection;contains(Ljava/lang/Object;)Z","callee":{"kind":"method","owner":"java/util/Collection","name":"contains","descriptor":"(Ljava/lang/Object;)Z","raw":"Ljava/util/Collection;contains(Ljava/lang/Object;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/DataPackCommandMixin", "errorOnInternalPack(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;Lnet/minecraft/class_3288;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523581,7 +523585,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/DedicatedServerPropertiesMixin",
         targets: ["net/minecraft/server/dedicated/DedicatedServerProperties"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "replaceDefaultDataConfiguration", kind: "redirect", at: ["FIELD"], cancellable: false,
+          { method: ["<init>"], handler: "replaceDefaultDataConfiguration", kind: "redirect", at: [{"value":"FIELD","ordinal":null,"index":null,"target":"Lnet/minecraft/class_7712;field_40260:Lnet/minecraft/class_7712;","callee":{"kind":"field","owner":"net/minecraft/world/level/WorldDataConfiguration","name":"DEFAULT","descriptor":"Lnet/minecraft/class_7712;","raw":"Lnet/minecraft/class_7712;field_40260:Lnet/minecraft/class_7712;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/DedicatedServerPropertiesMixin", "replaceDefaultDataConfiguration()Lnet/minecraft/class_7712;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523590,7 +523594,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/GameTestServerMixin",
         targets: ["net/minecraft/gametest/framework/GameTestServer"], environment: "unknown",
         injections: [
-          { method: ["create"], handler: "replaceDefaultDataPackSettings", kind: "redirect", at: ["NEW"], cancellable: false,
+          { method: ["create"], handler: "replaceDefaultDataPackSettings", kind: "redirect", at: [{"value":"NEW","ordinal":null,"index":null,"target":"(Ljava/util/List;Ljava/util/List;)Lnet/minecraft/class_5359;","callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/GameTestServerMixin", "replaceDefaultDataPackSettings(Ljava/util/List;Ljava/util/List;)Lnet/minecraft/class_5359;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523599,9 +523603,9 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/MinecraftServerMixin",
         targets: ["net/minecraft/server/MinecraftServer"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "init", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "init", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/MinecraftServerMixin", "init(Ljava/lang/Thread;Lnet/minecraft/class_32$class_5143;Lnet/minecraft/class_3283;Lnet/minecraft/class_6904;Ljava/net/Proxy;Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/class_7497;Lnet/minecraft/class_11545;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["method_29736"], handler: "onCheckDisabled", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["method_29736"], handler: "onCheckDisabled", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;contains(Ljava/lang/Object;)Z","callee":{"kind":"method","owner":"java/util/List","name":"contains","descriptor":"(Ljava/lang/Object;)Z","raw":"Ljava/util/List;contains(Ljava/lang/Object;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/MinecraftServerMixin", "onCheckDisabled(Ljava/util/List;Ljava/lang/Object;Lnet/minecraft/class_3283;)Z", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523610,7 +523614,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/MultiPackResourceManagerMixin",
         targets: ["net/minecraft/server/packs/resources/MultiPackResourceManager"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "init", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "init", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/MultiPackResourceManagerMixin", "init(Lnet/minecraft/class_3264;Ljava/util/List;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523619,7 +523623,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/PackMixin",
         targets: ["net/minecraft/server/packs/repository/Pack"], environment: "unknown",
         injections: [
-          { method: ["open"], handler: "onCreateResourcePack", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["open"], handler: "onCreateResourcePack", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/PackMixin", "onCreateResourcePack(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523628,13 +523632,13 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/PackRepositoryMixin",
         targets: ["net/minecraft/server/packs/repository/PackRepository"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "construct", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["<init>"], handler: "construct", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/PackRepositoryMixin", "construct([Lnet/minecraft/class_3285;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["rebuildSelected"], handler: "handleAutoEnableDisable", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["rebuildSelected"], handler: "handleAutoEnableDisable", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lcom/google/common/collect/ImmutableList;copyOf(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableList;","callee":{"kind":"method","owner":"com/google/common/collect/ImmutableList","name":"copyOf","descriptor":"(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableList;","raw":"Lcom/google/common/collect/ImmutableList;copyOf(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableList;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/PackRepositoryMixin", "handleAutoEnableDisable(Ljava/util/Collection;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;Ljava/util/List;)V", target, args.concat([info])); } },
-          { method: ["addPack"], handler: "handleAutoEnable", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["addPack"], handler: "handleAutoEnable", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;add(Ljava/lang/Object;)Z","callee":{"kind":"method","owner":"java/util/List","name":"add","descriptor":"(Ljava/lang/Object;)Z","raw":"Ljava/util/List;add(Ljava/lang/Object;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/PackRepositoryMixin", "handleAutoEnable(Ljava/lang/String;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;Ljava/util/List;)V", target, args.concat([info])); } },
-          { method: ["removePack"], handler: "handleAutoDisable", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["removePack"], handler: "handleAutoDisable", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/List;remove(Ljava/lang/Object;)Z","callee":{"kind":"method","owner":"java/util/List","name":"remove","descriptor":"(Ljava/lang/Object;)Z","raw":"Ljava/util/List;remove(Ljava/lang/Object;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/PackRepositoryMixin", "handleAutoDisable(Ljava/lang/String;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;Ljava/util/List;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523643,7 +523647,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/ReloadableServerResourcesMixin",
         targets: ["net/minecraft/server/ReloadableServerResources"], environment: "unknown",
         injections: [
-          { method: ["lambda$loadResources$1"], handler: "onSetupDataReloaders", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["lambda$loadResources$1"], handler: "onSetupDataReloaders", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4014;method_40087(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/class_4011;","callee":{"kind":"method","owner":"net/minecraft/server/packs/resources/SimpleReloadInstance","name":"create","descriptor":"(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/class_4011;","raw":"Lnet/minecraft/class_4014;method_40087(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/class_4011;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/ReloadableServerResourcesMixin", "onSetupDataReloaders(Ljava/util/List;Lnet/minecraft/class_9383$class_9842;Lnet/minecraft/class_7699;Lnet/minecraft/class_5350;)Ljava/util/List;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523652,7 +523656,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/ServerConfigurationPacketListenerImplMixin",
         targets: ["net/minecraft/server/network/ServerConfigurationPacketListenerImpl"], environment: "unknown",
         injections: [
-          { method: ["startConfiguration"], handler: "filterKnownPacks", kind: "modifyArg", at: ["INVOKE:0"], cancellable: false,
+          { method: ["startConfiguration"], handler: "filterKnownPacks", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_9223;<init>(Ljava/util/List;Lnet/minecraft/class_7780;)V","callee":{"kind":"method","owner":"net/minecraft/server/network/config/SynchronizeRegistriesTask","name":"<init>","descriptor":"(Ljava/util/List;Lnet/minecraft/class_7780;)V","raw":"Lnet/minecraft/class_9223;<init>(Ljava/util/List;Lnet/minecraft/class_7780;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/ServerConfigurationPacketListenerImplMixin", "filterKnownPacks(Ljava/util/List;)Ljava/util/List;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523661,7 +523665,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/ServerboundSelectKnownPacksMixin",
         targets: ["net/minecraft/network/protocol/configuration/ServerboundSelectKnownPacks"], environment: "unknown",
         injections: [
-          { method: ["<clinit>"], handler: "setMaxKnownPacks", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["<clinit>"], handler: "setMaxKnownPacks", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_9135;method_58000(I)Lnet/minecraft/class_9139$class_9140;","callee":{"kind":"method","owner":"net/minecraft/network/codec/ByteBufCodecs","name":"list","descriptor":"(I)Lnet/minecraft/class_9139$class_9140;","raw":"Lnet/minecraft/class_9135;method_58000(I)Lnet/minecraft/class_9139$class_9140;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/ServerboundSelectKnownPacksMixin", "setMaxKnownPacks(I)I", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523670,11 +523674,11 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/SimpleReloadInstanceMixin",
         targets: ["net/minecraft/server/packs/resources/SimpleReloadInstance"], environment: "unknown",
         injections: [
-          { method: ["create"], handler: "sortSimple", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["create"], handler: "sortSimple", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4014;method_18369(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/class_4011;","callee":{"kind":"method","owner":"net/minecraft/server/packs/resources/SimpleReloadInstance","name":"of","descriptor":"(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/class_4011;","raw":"Lnet/minecraft/class_4014;method_18369(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/class_4011;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/SimpleReloadInstanceMixin", "sortSimple(Ljava/util/List;Lnet/minecraft/class_3300;)Ljava/util/List;", target, args.concat([info])); } },
-          { method: ["create"], handler: "sortProfiled", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["create"], handler: "sortProfiled", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_4010;method_67569(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/class_4011;","callee":{"kind":"method","owner":"net/minecraft/server/packs/resources/ProfiledReloadInstance","name":"of","descriptor":"(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/class_4011;","raw":"Lnet/minecraft/class_4010;method_67569(Lnet/minecraft/class_3300;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/class_4011;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/SimpleReloadInstanceMixin", "sortProfiled(Ljava/util/List;Lnet/minecraft/class_3300;)Ljava/util/List;", target, args.concat([info])); } },
-          { method: ["create"], handler: "adjustProfiledCheck", kind: "modifyVariable", at: ["LOAD:0"], cancellable: false,
+          { method: ["create"], handler: "adjustProfiledCheck", kind: "modifyVariable", at: [{"value":"LOAD","ordinal":0,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/SimpleReloadInstanceMixin", "adjustProfiledCheck(Z)Z", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523683,11 +523687,11 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/SynchronizeRegistriesTaskMixin",
         targets: ["net/minecraft/server/network/config/SynchronizeRegistriesTask"], environment: "unknown",
         injections: [
-          { method: ["handleResponse"], handler: "onSelectKnownPacks", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["handleResponse"], handler: "onSelectKnownPacks", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/SynchronizeRegistriesTaskMixin", "onSelectKnownPacks(Ljava/util/List;Ljava/util/function/Consumer;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["sendRegistries"], handler: "syncRegistryAndTags", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["sendRegistries"], handler: "syncRegistryAndTags", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/SynchronizeRegistriesTaskMixin", "syncRegistryAndTags(Ljava/util/function/Consumer;Ljava/util/Set;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["start"], handler: "sendPacket", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["start"], handler: "sendPacket", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/SynchronizeRegistriesTaskMixin", "sendPacket(Ljava/util/function/Consumer;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523696,7 +523700,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/BuiltInPackSourceMixin",
         targets: ["net/minecraft/server/packs/repository/BuiltInPackSource"], environment: "unknown",
         injections: [
-          { method: ["loadPacks"], handler: "addBuiltinResourcePacks", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["loadPacks"], handler: "addBuiltinResourcePacks", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/BuiltInPackSourceMixin", "addBuiltinResourcePacks(Ljava/util/function/Consumer;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523705,7 +523709,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/ClientTooltipComponentMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent"], environment: "unknown",
         injections: [
-          { method: ["create"], handler: "onCreate", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["create"], handler: "onCreate", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/ClientTooltipComponentMixin", "onCreate(Lnet/minecraft/class_5632;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523714,11 +523718,11 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/CreateWorldScreenMixin",
         targets: ["net/minecraft/client/gui/screens/worldselection/CreateWorldScreen"], environment: "unknown",
         injections: [
-          { method: ["openCreateWorldScreen"], handler: "onCreateResManagerInit", kind: "modifyVariable", at: ["INVOKE"], cancellable: false,
+          { method: ["openCreateWorldScreen"], handler: "onCreateResManagerInit", kind: "modifyVariable", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_525;method_41849(Lnet/minecraft/class_3283;Lnet/minecraft/class_7712;)Lnet/minecraft/class_7237$class_6906;","callee":{"kind":"method","owner":"net/minecraft/client/gui/screens/worldselection/CreateWorldScreen","name":"createDefaultLoadConfig","descriptor":"(Lnet/minecraft/class_3283;Lnet/minecraft/class_7712;)Lnet/minecraft/class_7237$class_6906;","raw":"Lnet/minecraft/class_525;method_41849(Lnet/minecraft/class_3283;Lnet/minecraft/class_7712;)Lnet/minecraft/class_7237$class_6906;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/CreateWorldScreenMixin", "onCreateResManagerInit(Lnet/minecraft/class_3283;)Lnet/minecraft/class_3283;", target, args.concat([info])); } },
-          { method: ["openCreateWorldScreen"], handler: "replaceDefaultSettings", kind: "redirect", at: ["FIELD:0"], cancellable: false,
+          { method: ["openCreateWorldScreen"], handler: "replaceDefaultSettings", kind: "redirect", at: [{"value":"FIELD","ordinal":0,"index":null,"target":"Lnet/minecraft/class_7712;field_40260:Lnet/minecraft/class_7712;","callee":{"kind":"field","owner":"net/minecraft/world/level/WorldDataConfiguration","name":"DEFAULT","descriptor":"Lnet/minecraft/class_7712;","raw":"Lnet/minecraft/class_7712;field_40260:Lnet/minecraft/class_7712;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/CreateWorldScreenMixin", "replaceDefaultSettings()Lnet/minecraft/class_7712;", target, args.concat([info])); } },
-          { method: ["getDataPackSelectionSettings"], handler: "onScanPacks", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["getDataPackSelectionSettings"], handler: "onScanPacks", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_3283;method_14445()V","callee":{"kind":"method","owner":"net/minecraft/server/packs/repository/PackRepository","name":"reload","descriptor":"()V","raw":"Lnet/minecraft/class_3283;method_14445()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/CreateWorldScreenMixin", "onScanPacks(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523727,7 +523731,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/GameOptionsWriteVisitorMixin",
         targets: ["net/minecraft/client/Options$3"], environment: "unknown",
         injections: [
-          { method: ["process"], handler: "skipHiddenPacks", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["process"], handler: "skipHiddenPacks", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/function/Function;apply(Ljava/lang/Object;)Ljava/lang/Object;","callee":{"kind":"method","owner":"java/util/function/Function","name":"apply","descriptor":"(Ljava/lang/Object;)Ljava/lang/Object;","raw":"Ljava/util/function/Function;apply(Ljava/lang/Object;)Ljava/lang/Object;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/GameOptionsWriteVisitorMixin", "skipHiddenPacks(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523736,7 +523740,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/KnownPacksManagerMixin",
         targets: ["net/minecraft/client/multiplayer/KnownPacksManager"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "createClientManager", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["<init>"], handler: "createClientManager", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_3286;method_52443()Lnet/minecraft/class_3283;","callee":{"kind":"method","owner":"net/minecraft/server/packs/repository/ServerPacksSource","name":"createVanillaTrustedRepository","descriptor":"()Lnet/minecraft/class_3283;","raw":"Lnet/minecraft/class_3286;method_52443()Lnet/minecraft/class_3283;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/KnownPacksManagerMixin", "createClientManager()Lnet/minecraft/class_3283;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523745,7 +523749,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/OptionsMixin",
         targets: ["net/minecraft/client/Options"], environment: "unknown",
         injections: [
-          { method: ["load"], handler: "onLoad", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["load"], handler: "onLoad", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/OptionsMixin", "onLoad(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523754,9 +523758,9 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/PackSelectionModelMixin",
         targets: ["net/minecraft/client/gui/screens/packs/PackSelectionModel"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "removeHiddenPacksInit", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["<init>"], handler: "removeHiddenPacksInit", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/PackSelectionModelMixin", "removeHiddenPacksInit(Ljava/util/function/Consumer;Ljava/util/function/Function;Lnet/minecraft/class_3283;Ljava/util/function/Consumer;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["findNewPacks"], handler: "removeHiddenPacksRefresh", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["findNewPacks"], handler: "removeHiddenPacksRefresh", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/PackSelectionModelMixin", "removeHiddenPacksRefresh(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523765,7 +523769,7 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/client/TransferableSelectionListPackEntryMixin",
         targets: ["net/minecraft/client/gui/screens/packs/TransferableSelectionList$PackEntry"], environment: "unknown",
         injections: [
-          { method: ["renderContent"], handler: "onRenderContent", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["renderContent"], handler: "onRenderContent", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/client/TransferableSelectionListPackEntryMixin", "onRenderContent(Lnet/minecraft/class_332;IIZFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -523774,9 +523778,9 @@
         modId: "meteor-client", mixin: "net/fabricmc/fabric/mixin/resource/server/LanguageMixin",
         targets: ["net/minecraft/locale/Language"], environment: "unknown",
         injections: [
-          { method: ["loadDefault"], handler: "create", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["loadDefault"], handler: "create", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/util/Map;copyOf(Ljava/util/Map;)Ljava/util/Map;","callee":{"kind":"method","owner":"java/util/Map","name":"copyOf","descriptor":"(Ljava/util/Map;)Ljava/util/Map;","raw":"Ljava/util/Map;copyOf(Ljava/util/Map;)Ljava/util/Map;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/server/LanguageMixin", "create(Ljava/util/Map;)Ljava/util/Map;", target, args.concat([info])); } },
-          { method: ["parseTranslations"], handler: "readCorrectVanillaResource", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["parseTranslations"], handler: "readCorrectVanillaResource", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Ljava/lang/Class;getResourceAsStream(Ljava/lang/String;)Ljava/io/InputStream;","callee":{"kind":"method","owner":"java/lang/Class","name":"getResourceAsStream","descriptor":"(Ljava/lang/String;)Ljava/io/InputStream;","raw":"Ljava/lang/Class;getResourceAsStream(Ljava/lang/String;)Ljava/io/InputStream;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("net/fabricmc/fabric/mixin/resource/server/LanguageMixin", "readCorrectVanillaResource(Ljava/lang/Class;Ljava/lang/String;)Ljava/io/InputStream;", target, args.concat([info])); } },
         ],
         accessors: []

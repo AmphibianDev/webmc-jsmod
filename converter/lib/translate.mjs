@@ -161,6 +161,10 @@ const NATIVE_SOURCE = [
   ["java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;", "function (api, self, a) { return ''; }"],
   ["java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V", "function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } }"],
   ["java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V", "function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); }"],
+  ["org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;", "function (api, self, a) { return self.__args[a[0]]; }"],
+  ["org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V", "function (api, self, a) { self.__args[a[0]] = a[1]; }"],
+  ["org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I", "function (api, self) { return (self.__args || []).length; }"],
+  ["org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;", "function (api, self) { return (self.__args || []).slice(); }"],
   ["org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z", "function (api, self) { return !!self.cancellable; }"],
   ["org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V", "function (api, self) { self.cancelled = true; }"],
   ["org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z", "function (api, self) { return !!self.cancelled; }"],
@@ -729,10 +733,19 @@ export function translate(analysis, options = {}) {
       push("        targets: " + JSON.stringify(mixin.targets) + ", environment: " + JSON.stringify(mixin.environment) + ",");
       push("        injections: [");
       for (const injection of mixin.injectionPoints) {
+        // The at-points keep their target member reference: a @Redirect/@ModifyArg needs to know
+        // *which call* to intercept, and the runtime turns that into a compiled function.
+        const points = injection.at.map((point) => ({
+          value: point.value,
+          ordinal: point.ordinal == null ? null : point.ordinal,
+          index: point.index == null ? null : point.index,
+          target: point.target || null,
+          callee: point.target ? memberReference(point.target, mappings) : null
+        }));
         push("          { method: " + JSON.stringify(injection.target) +
              ", handler: " + JSON.stringify(injection.method) +
              ", kind: " + JSON.stringify(injection.kind) +
-             ", at: " + JSON.stringify(injection.at.map((point) => point.value + (point.ordinal != null ? ":" + point.ordinal : ""))) +
+             ", at: " + JSON.stringify(points) +
              ", cancellable: " + (injection.cancellable ? "true" : "false") + ",");
         push("            run: function (target, args, info) { return RT.method(" + JSON.stringify(mixin.className) + ", " + JSON.stringify(injection.method + injection.descriptor) + ", target, args.concat([info])); } },");
       }
@@ -779,6 +792,33 @@ export function translate(analysis, options = {}) {
   };
   const source = lines.join("\n").replace("__WEBMC_MOD_DESCRIPTION__", JSON.stringify(modDescription, null, 2).replace(/\n/g, "\n  ")) + "\n";
   return { source, manifest, report, plan };
+}
+
+/** `Lnet/minecraft/class_310;method_1574()V` (method) or `Lnet/minecraft/class_636;field_3716:I`
+ * (field) -> `{ kind, owner, name, descriptor }` in named form where the mappings know it. */
+function memberReference(reference, mappings) {
+  const text = String(reference || "");
+  const method = /^L([^;]+);([A-Za-z0-9_$<>]+)(\(.*)$/.exec(text);
+  if (method) {
+    return {
+      kind: "method",
+      owner: mappings ? mappings.class(method[1]) : method[1],
+      name: mappings ? mappings.method(method[1], method[2]) : method[2],
+      descriptor: method[3],
+      raw: text
+    };
+  }
+  const field = /^L([^;]+);([A-Za-z0-9_$]+):(.*)$/.exec(text);
+  if (field) {
+    return {
+      kind: "field",
+      owner: mappings ? mappings.class(field[1]) : field[1],
+      name: mappings ? mappings.field(field[1], field[2]) : field[2],
+      descriptor: field[3],
+      raw: text
+    };
+  }
+  return null;
 }
 
 function indent(source, spaces) {

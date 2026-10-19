@@ -19629,6 +19629,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -19813,11 +19817,11 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/AbstractContainerScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/AbstractContainerScreen"], environment: "unknown",
         injections: [
-          { method: ["isHovering"], handler: "forceFocusSlot", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["isHovering"], handler: "forceFocusSlot", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/AbstractContainerScreenMixin", "forceFocusSlot(Lnet/minecraft/class_1735;DDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["renderTooltip"], handler: "enableLockKeyHints", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["renderTooltip"], handler: "enableLockKeyHints", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/AbstractContainerScreenMixin", "enableLockKeyHints(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderTooltip"], handler: "disableLockKeyHints", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["renderTooltip"], handler: "disableLockKeyHints", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/AbstractContainerScreenMixin", "disableLockKeyHints(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19833,7 +19837,7 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/ItemContainerContentsMixin",
         targets: ["net/minecraft/world/item/component/ItemContainerContents"], environment: "unknown",
         injections: [
-          { method: ["addToTooltip"], handler: "addToTooltip", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["addToTooltip"], handler: "addToTooltip", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/ItemContainerContentsMixin", "addToTooltip(Lnet/minecraft/class_1792$class_9635;Ljava/util/function/Consumer;Lnet/minecraft/class_1836;Lnet/minecraft/class_9473;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19842,7 +19846,7 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/ItemStackMixin",
         targets: ["net/minecraft/world/item/ItemStack"], environment: "unknown",
         injections: [
-          { method: ["addToTooltip"], handler: "removeLore", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["addToTooltip"], handler: "removeLore", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/ItemStackMixin", "removeLore(Lnet/minecraft/class_9331;Lnet/minecraft/class_1792$class_9635;Lnet/minecraft/class_10712;Ljava/util/function/Consumer;Lnet/minecraft/class_1836;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19851,7 +19855,7 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/KeyboardHandlerMixin",
         targets: ["net/minecraft/client/KeyboardHandler"], environment: "unknown",
         injections: [
-          { method: ["keyPress"], handler: "onKey", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["keyPress"], handler: "onKey", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/KeyboardHandlerMixin", "onKey(JILnet/minecraft/class_11908;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19860,7 +19864,7 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/ScreenMixin",
         targets: ["net/minecraft/client/gui/screens/Screen"], environment: "unknown",
         injections: [
-          { method: ["renderWithTooltipAndSubtitles"], handler: "captureMousePosition", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["renderWithTooltipAndSubtitles"], handler: "captureMousePosition", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_437;method_25394(Lnet/minecraft/class_332;IIF)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/screens/Screen","name":"render","descriptor":"(Lnet/minecraft/class_332;IIF)V","raw":"Lnet/minecraft/class_437;method_25394(Lnet/minecraft/class_332;IIF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/ScreenMixin", "captureMousePosition(Lnet/minecraft/class_332;IIFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19869,7 +19873,7 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/AbstractContainerScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/AbstractContainerScreen"], environment: "unknown",
         injections: [
-          { method: ["renderTooltip"], handler: "lockTooltipPosition", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["renderTooltip"], handler: "lockTooltipPosition", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_332;method_51437(Lnet/minecraft/class_327;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/class_2960;)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/GuiGraphics","name":"setTooltipForNextFrame","descriptor":"(Lnet/minecraft/class_327;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/class_2960;)V","raw":"Lnet/minecraft/class_332;method_51437(Lnet/minecraft/class_327;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/class_2960;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/AbstractContainerScreenMixin", "lockTooltipPosition(Lnet/minecraft/class_332;Lnet/minecraft/class_327;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/class_2960;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19878,7 +19882,7 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/GuiGraphicsMixin",
         targets: ["net/minecraft/client/gui/GuiGraphics"], environment: "unknown",
         injections: [
-          { method: ["renderTooltip"], handler: "captureTooltipYPosition", kind: "redirect", at: ["INVOKE"], cancellable: false,
+          { method: ["renderTooltip"], handler: "captureTooltipYPosition", kind: "redirect", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_8000;method_47944(IIIIII)Lorg/joml/Vector2ic;","callee":{"kind":"method","owner":"net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner","name":"positionTooltip","descriptor":"(IIIIII)Lorg/joml/Vector2ic;","raw":"Lnet/minecraft/class_8000;method_47944(IIIIII)Lorg/joml/Vector2ic;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/GuiGraphicsMixin", "captureTooltipYPosition(Lnet/minecraft/class_8000;IIIIII)Lorg/joml/Vector2ic;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -19887,9 +19891,9 @@
         modId: "shulkerboxtooltip", mixin: "com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/ItemStackMixin",
         targets: ["net/minecraft/world/item/ItemStack"], environment: "unknown",
         injections: [
-          { method: ["getTooltipImage"], handler: "onGetTooltipData", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getTooltipImage"], handler: "onGetTooltipData", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/ItemStackMixin", "onGetTooltipData(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["getTooltipLines"], handler: "onGetTooltip", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["getTooltipLines"], handler: "onGetTooltip", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("com/misterpemodder/shulkerboxtooltip/mixin/client/fabric/ItemStackMixin", "onGetTooltip(Lnet/minecraft/class_1792$class_9635;Lnet/minecraft/class_1657;Lnet/minecraft/class_1836;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []

@@ -9185,6 +9185,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -9371,9 +9375,9 @@
         modId: "gammautils", mixin: "io/github/sjouwer/gammautils/mixin/MixinClientPlayNetworkHandler",
         targets: ["net/minecraft/client/multiplayer/ClientPacketListener"], environment: "unknown",
         injections: [
-          { method: ["handlePlayerAbilities"], handler: "onPlayerAbilities", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handlePlayerAbilities"], handler: "onPlayerAbilities", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinClientPlayNetworkHandler", "onPlayerAbilities(Lnet/minecraft/class_2696;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleRespawn"], handler: "onPlayerRespawn", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["handleRespawn"], handler: "onPlayerRespawn", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinClientPlayNetworkHandler", "onPlayerRespawn(Lnet/minecraft/class_2724;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -9382,7 +9386,7 @@
         modId: "gammautils", mixin: "io/github/sjouwer/gammautils/mixin/MixinInGameHud",
         targets: ["net/minecraft/client/gui/Gui"], environment: "unknown",
         injections: [
-          { method: ["getMobEffectSprite"], handler: "getGammaTexture", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getMobEffectSprite"], handler: "getGammaTexture", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinInGameHud", "getGammaTexture(Lnet/minecraft/class_6880;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -9391,7 +9395,7 @@
         modId: "gammautils", mixin: "io/github/sjouwer/gammautils/mixin/MixinMinecraftClient",
         targets: ["net/minecraft/client/Minecraft"], environment: "unknown",
         injections: [
-          { method: ["close"], handler: "saveOnClose", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["close"], handler: "saveOnClose", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinMinecraftClient", "saveOnClose(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -9400,9 +9404,9 @@
         modId: "gammautils", mixin: "io/github/sjouwer/gammautils/mixin/MixinSimpleOption",
         targets: ["net/minecraft/client/OptionInstance"], environment: "unknown",
         injections: [
-          { method: ["get"], handler: "getModValue", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["get"], handler: "getModValue", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinSimpleOption", "getModValue(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["set"], handler: "setModValue", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["set"], handler: "setModValue", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinSimpleOption", "setModValue(Ljava/lang/Object;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -9411,7 +9415,7 @@
         modId: "gammautils", mixin: "io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil",
         targets: ["net/minecraft/world/effect/MobEffectUtil"], environment: "unknown",
         injections: [
-          { method: ["formatDuration"], handler: "getPercentageText", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["formatDuration"], handler: "getPercentageText", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("io/github/sjouwer/gammautils/mixin/MixinStatusEffectUtil", "getPercentageText(Lnet/minecraft/class_1293;FFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []

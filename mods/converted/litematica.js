@@ -291501,6 +291501,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -291716,7 +291720,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/block/MixinBlock",
         targets: ["net/minecraft/world/level/block/Block"], environment: "unknown",
         injections: [
-          { method: ["popResource"], handler: "litematica_preventItemDrops", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["popResource"], handler: "litematica_preventItemDrops", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/block/MixinBlock", "litematica_preventItemDrops(Lnet/minecraft/class_1937;Ljava/util/function/Supplier;Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291725,7 +291729,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/block/MixinBlockStateData",
         targets: ["net/minecraft/util/datafix/fixes/BlockStateData"], environment: "unknown",
         injections: [
-          { method: ["register"], handler: "litematica_onAddEntry", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["register"], handler: "litematica_onAddEntry", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/block/MixinBlockStateData", "litematica_onAddEntry(ILcom/mojang/serialization/Dynamic;[Lcom/mojang/serialization/Dynamic;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291734,7 +291738,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/block/MixinBlockStateDefinitions",
         targets: ["net/minecraft/client/resources/model/BlockStateDefinitions"], environment: "unknown",
         injections: [
-          { method: ["<clinit>"], handler: "litematica$fillFallbackBlocks", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["<clinit>"], handler: "litematica$fillFallbackBlocks", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/block/MixinBlockStateDefinitions", "litematica$fillFallbackBlocks(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291743,7 +291747,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/block/MixinChestBlock",
         targets: ["net/minecraft/world/level/block/ChestBlock"], environment: "unknown",
         injections: [
-          { method: ["mirror"], handler: "litematica_fixChestMirror", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["mirror"], handler: "litematica_fixChestMirror", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/block/MixinChestBlock", "litematica_fixChestMirror(Lnet/minecraft/class_2680;Lnet/minecraft/class_2415;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291752,7 +291756,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/block/MixinRailBlocks",
         targets: ["net/minecraft/world/level/block/RailBlock","net/minecraft/world/level/block/DetectorRailBlock","net/minecraft/world/level/block/PoweredRailBlock"], environment: "unknown",
         injections: [
-          { method: ["rotate"], handler: "litematica_fixRailRotation", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["rotate"], handler: "litematica_fixRailRotation", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/block/MixinRailBlocks", "litematica_fixRailRotation(Lnet/minecraft/class_2680;Lnet/minecraft/class_2470;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291761,7 +291765,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/block/MixinStairsBlock",
         targets: ["net/minecraft/world/level/block/StairBlock"], environment: "unknown",
         injections: [
-          { method: ["mirror"], handler: "litematica_fixStairsMirror", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["mirror"], handler: "litematica_fixStairsMirror", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/block/MixinStairsBlock", "litematica_fixStairsMirror(Lnet/minecraft/class_2680;Lnet/minecraft/class_2415;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291777,9 +291781,9 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/client/MixinMinecraft",
         targets: ["net/minecraft/client/Minecraft"], environment: "unknown",
         injections: [
-          { method: ["tick"], handler: "litematica_onRunTickStart", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["tick"], handler: "litematica_onRunTickStart", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/client/MixinMinecraft", "litematica_onRunTickStart(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["stop"], handler: "litematica_onRunStop", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["stop"], handler: "litematica_onRunStop", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/client/MixinMinecraft", "litematica_onRunStop(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291788,7 +291792,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/easyplace/MixinBlockItem_easyPlace",
         targets: ["net/minecraft/world/item/BlockItem"], environment: "unknown",
         injections: [
-          { method: ["getPlacementState"], handler: "litematica_modifyPlacementState", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["getPlacementState"], handler: "litematica_modifyPlacementState", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/easyplace/MixinBlockItem_easyPlace", "litematica_modifyPlacementState(Lnet/minecraft/class_1750;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291797,9 +291801,9 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/easyplace/MixinClientPlayerInteractionManager_easyPlace",
         targets: ["net/minecraft/client/multiplayer/MultiPlayerGameMode"], environment: "unknown",
         injections: [
-          { method: ["useItemOn"], handler: "litematica_onInteractBlock", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["useItemOn"], handler: "litematica_onInteractBlock", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/easyplace/MixinClientPlayerInteractionManager_easyPlace", "litematica_onInteractBlock(Lnet/minecraft/class_746;Lnet/minecraft/class_1268;Lnet/minecraft/class_3965;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["performUseItemOn"], handler: "litematica_onInteractBlockInternal", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["performUseItemOn"], handler: "litematica_onInteractBlockInternal", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_746;method_5998(Lnet/minecraft/class_1268;)Lnet/minecraft/class_1799;","callee":{"kind":"method","owner":"net/minecraft/client/player/LocalPlayer","name":"getItemInHand","descriptor":"(Lnet/minecraft/class_1268;)Lnet/minecraft/class_1799;","raw":"Lnet/minecraft/class_746;method_5998(Lnet/minecraft/class_1268;)Lnet/minecraft/class_1799;"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/easyplace/MixinClientPlayerInteractionManager_easyPlace", "litematica_onInteractBlockInternal(Lnet/minecraft/class_746;Lnet/minecraft/class_1268;Lnet/minecraft/class_3965;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291808,11 +291812,11 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/easyplace/MixinMinecraft_easyPlace",
         targets: ["net/minecraft/client/Minecraft"], environment: "unknown",
         injections: [
-          { method: ["startUseItem"], handler: "litematica_handlePlacementRestriction", kind: "inject", at: ["INVOKE:0"], cancellable: true,
+          { method: ["startUseItem"], handler: "litematica_handlePlacementRestriction", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_1799;method_7947()I","callee":{"kind":"method","owner":"net/minecraft/world/item/ItemStack","name":"getCount","descriptor":"()I","raw":"Lnet/minecraft/class_1799;method_7947()I"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/easyplace/MixinMinecraft_easyPlace", "litematica_handlePlacementRestriction(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleKeybinds"], handler: "onUseKeyPre", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["handleKeybinds"], handler: "onUseKeyPre", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_310;method_1583()V","callee":{"kind":"method","owner":"net/minecraft/client/Minecraft","name":"startUseItem","descriptor":"()V","raw":"Lnet/minecraft/class_310;method_1583()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/easyplace/MixinMinecraft_easyPlace", "onUseKeyPre(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["startUseItem"], handler: "onUseKeyPost", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["startUseItem"], handler: "onUseKeyPost", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/easyplace/MixinMinecraft_easyPlace", "onUseKeyPost(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291835,7 +291839,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/entity/MixinAbstractSignEditScreen",
         targets: ["net/minecraft/client/gui/screens/inventory/AbstractSignEditScreen"], environment: "unknown",
         injections: [
-          { method: ["init"], handler: "litematica_insertSignText", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["init"], handler: "litematica_insertSignText", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/entity/MixinAbstractSignEditScreen", "litematica_insertSignText(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291844,7 +291848,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/hud/MixinDebugScreenEntryList",
         targets: ["net/minecraft/client/gui/components/debug/DebugScreenEntryList"], environment: "unknown",
         injections: [
-          { method: ["rebuildCurrentList"], handler: "litematica_updateVisibleEntries", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["rebuildCurrentList"], handler: "litematica_updateVisibleEntries", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/hud/MixinDebugScreenEntryList", "litematica_updateVisibleEntries(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291853,7 +291857,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/hud/MixinDebugScreenOverlay",
         targets: ["net/minecraft/client/gui/components/DebugScreenOverlay"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "litematica_addDebugLines_Left", kind: "modifyArg", at: ["INVOKE:0"], cancellable: false,
+          { method: ["render"], handler: "litematica_addDebugLines_Left", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_340;method_51745(Lnet/minecraft/class_332;Ljava/util/List;Z)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/components/DebugScreenOverlay","name":"renderLines","descriptor":"(Lnet/minecraft/class_332;Ljava/util/List;Z)V","raw":"Lnet/minecraft/class_340;method_51745(Lnet/minecraft/class_332;Ljava/util/List;Z)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/hud/MixinDebugScreenOverlay", "litematica_addDebugLines_Left(Ljava/util/List;)Ljava/util/List;", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291869,7 +291873,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/network/MixinClientCommonPacketListenerImpl",
         targets: ["net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl"], environment: "unknown",
         injections: [
-          { method: ["handleCustomPayload"], handler: "litematica_onCustomPayload", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["handleCustomPayload"], handler: "litematica_onCustomPayload", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientCommonPacketListenerImpl", "litematica_onCustomPayload(Lnet/minecraft/class_2658;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291878,17 +291882,17 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/network/MixinClientPacketListener",
         targets: ["net/minecraft/client/multiplayer/ClientPacketListener"], environment: "unknown",
         injections: [
-          { method: ["handleLevelChunkWithLight"], handler: "litematica_onUpdateChunk", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["handleLevelChunkWithLight"], handler: "litematica_onUpdateChunk", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientPacketListener", "litematica_onUpdateChunk(Lnet/minecraft/class_2672;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleForgetLevelChunk"], handler: "litematica_onChunkUnload", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["handleForgetLevelChunk"], handler: "litematica_onChunkUnload", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientPacketListener", "litematica_onChunkUnload(Lnet/minecraft/class_2666;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleSystemChat"], handler: "litematica_onGameMessage", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["handleSystemChat"], handler: "litematica_onGameMessage", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_7594;method_44736(Lnet/minecraft/class_2561;Z)V","callee":{"kind":"method","owner":"net/minecraft/client/multiplayer/chat/ChatListener","name":"handleSystemMessage","descriptor":"(Lnet/minecraft/class_2561;Z)V","raw":"Lnet/minecraft/class_7594;method_44736(Lnet/minecraft/class_2561;Z)V"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientPacketListener", "litematica_onGameMessage(Lnet/minecraft/class_7439;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleCustomPayload"], handler: "litematica_onCustomPayload", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["handleCustomPayload"], handler: "litematica_onCustomPayload", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientPacketListener", "litematica_onCustomPayload(Lnet/minecraft/class_8710;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleTagQueryPacket"], handler: "litematica_onQueryResponse", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["handleTagQueryPacket"], handler: "litematica_onQueryResponse", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_300;method_1404(ILnet/minecraft/class_2487;)Z","callee":{"kind":"method","owner":"net/minecraft/client/DebugQueryHandler","name":"handleResponse","descriptor":"(ILnet/minecraft/class_2487;)Z","raw":"Lnet/minecraft/class_300;method_1404(ILnet/minecraft/class_2487;)Z"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientPacketListener", "litematica_onQueryResponse(Lnet/minecraft/class_2774;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["handleCommands"], handler: "minihud_onCommandTree", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["handleCommands"], handler: "minihud_onCommandTree", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/network/MixinClientPacketListener", "minihud_onCommandTree(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291911,7 +291915,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/render/MixinBlockRenderDispatcher",
         targets: ["net/minecraft/client/renderer/block/BlockRenderDispatcher"], environment: "unknown",
         injections: [
-          { method: ["onResourceManagerReload"], handler: "litematica_onBlockRenderManagerReload", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["onResourceManagerReload"], handler: "litematica_onBlockRenderManagerReload", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinBlockRenderDispatcher", "litematica_onBlockRenderManagerReload(Lnet/minecraft/class_3300;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291920,7 +291924,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/render/MixinBufferBuilder",
         targets: ["com/mojang/blaze3d/vertex/BufferBuilder"], environment: "unknown",
         injections: [
-          { method: ["addVertex"], handler: "litematica_modifyOffsetY", kind: "modifyArg", at: ["INVOKE:1"], cancellable: false,
+          { method: ["addVertex"], handler: "litematica_modifyOffsetY", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":1,"index":null,"target":"Lorg/lwjgl/system/MemoryUtil;memPutFloat(JF)V","callee":{"kind":"method","owner":"org/lwjgl/system/MemoryUtil","name":"memPutFloat","descriptor":"(JF)V","raw":"Lorg/lwjgl/system/MemoryUtil;memPutFloat(JF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinBufferBuilder", "litematica_modifyOffsetY(F)F", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291929,7 +291933,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/render/MixinEntityHitboxDebugRenderer",
         targets: ["net/minecraft/client/renderer/debug/EntityHitboxDebugRenderer"], environment: "unknown",
         injections: [
-          { method: ["emitGizmos"], handler: "litematica_renderEntityHitboxes", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["emitGizmos"], handler: "litematica_renderEntityHitboxes", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinEntityHitboxDebugRenderer", "litematica_renderEntityHitboxes(DDDLnet/minecraft/class_12021;Lnet/minecraft/class_4604;FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291938,7 +291942,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/render/MixinGameRenderer",
         targets: ["net/minecraft/client/renderer/GameRenderer"], environment: "unknown",
         injections: [
-          { method: ["extractCamera"], handler: "litematica_updateCameraState", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["extractCamera"], handler: "litematica_updateCameraState", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinGameRenderer", "litematica_updateCameraState(FLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291947,35 +291951,35 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/render/MixinWorldRenderer",
         targets: ["net/minecraft/client/renderer/LevelRenderer"], environment: "unknown",
         injections: [
-          { method: ["allChanged"], handler: "litematica_onLoadRenderers", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["allChanged"], handler: "litematica_onLoadRenderers", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onLoadRenderers(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["cullTerrain"], handler: "litematica_onPostSetupTerrain", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["cullTerrain"], handler: "litematica_onPostSetupTerrain", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPostSetupTerrain(Lnet/minecraft/class_4184;Lnet/minecraft/class_4604;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["compileSections"], handler: "litematica_onPostUpdateChunks", kind: "inject", at: ["INVOKE:1"], cancellable: false,
+          { method: ["compileSections"], handler: "litematica_onPostUpdateChunks", kind: "inject", at: [{"value":"INVOKE","ordinal":1,"index":null,"target":"Lnet/minecraft/class_3695;method_15407()V","callee":{"kind":"method","owner":"net/minecraft/util/profiling/ProfilerFiller","name":"pop","descriptor":"()V","raw":"Lnet/minecraft/class_3695;method_15407()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPostUpdateChunks(Lnet/minecraft/class_4184;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["scheduleTranslucentSectionResort"], handler: "litematica_onScheduleTranslucentSort", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["scheduleTranslucentSectionResort"], handler: "litematica_onScheduleTranslucentSort", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onScheduleTranslucentSort(Lnet/minecraft/class_243;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderLevel"], handler: "litematica_onPreRenderMain", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["renderLevel"], handler: "litematica_onPreRenderMain", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_761;method_62202(Lnet/minecraft/class_9909;Lnet/minecraft/class_4604;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;ZLnet/minecraft/class_11658;Lnet/minecraft/class_9779;Lnet/minecraft/class_3695;)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/LevelRenderer","name":"addMainPass","descriptor":"(Lnet/minecraft/class_9909;Lnet/minecraft/class_4604;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;ZLnet/minecraft/class_11658;Lnet/minecraft/class_9779;Lnet/minecraft/class_3695;)V","raw":"Lnet/minecraft/class_761;method_62202(Lnet/minecraft/class_9909;Lnet/minecraft/class_4604;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;ZLnet/minecraft/class_11658;Lnet/minecraft/class_9779;Lnet/minecraft/class_3695;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPreRenderMain(Lnet/minecraft/class_9922;Lnet/minecraft/class_9779;ZLnet/minecraft/class_4184;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_3695;)V", target, args.concat([info])); } },
-          { method: ["prepareChunkRenders"], handler: "litematica_onPrepareBlockLayers", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["prepareChunkRenders"], handler: "litematica_onPrepareBlockLayers", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPrepareBlockLayers(Lorg/joml/Matrix4fc;DDDLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["lambda$addMainPass$1"], handler: "litematica_renderMainSection_Opaque", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["lambda$addMainPass$1"], handler: "litematica_renderMainSection_Opaque", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_11532;method_72170(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/chunk/ChunkSectionsToRender","name":"renderGroup","descriptor":"(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V","raw":"Lnet/minecraft/class_11532;method_72170(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_renderMainSection_Opaque(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/class_11658;Lnet/minecraft/class_3695;Lorg/joml/Matrix4f;Lnet/minecraft/class_9925;Lnet/minecraft/class_9925;ZLnet/minecraft/class_9925;Lnet/minecraft/class_9925;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["lambda$addMainPass$1"], handler: "litematica_renderMainSection_Translucent", kind: "inject", at: ["INVOKE:1"], cancellable: false,
+          { method: ["lambda$addMainPass$1"], handler: "litematica_renderMainSection_Translucent", kind: "inject", at: [{"value":"INVOKE","ordinal":1,"index":null,"target":"Lnet/minecraft/class_11532;method_72170(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/chunk/ChunkSectionsToRender","name":"renderGroup","descriptor":"(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V","raw":"Lnet/minecraft/class_11532;method_72170(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_renderMainSection_Translucent(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/class_11658;Lnet/minecraft/class_3695;Lorg/joml/Matrix4f;Lnet/minecraft/class_9925;Lnet/minecraft/class_9925;ZLnet/minecraft/class_9925;Lnet/minecraft/class_9925;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["lambda$addMainPass$1"], handler: "litematica_renderMainSection_Tripwire", kind: "inject", at: ["INVOKE:2"], cancellable: false,
+          { method: ["lambda$addMainPass$1"], handler: "litematica_renderMainSection_Tripwire", kind: "inject", at: [{"value":"INVOKE","ordinal":2,"index":null,"target":"Lnet/minecraft/class_11532;method_72170(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V","callee":{"kind":"method","owner":"net/minecraft/client/renderer/chunk/ChunkSectionsToRender","name":"renderGroup","descriptor":"(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V","raw":"Lnet/minecraft/class_11532;method_72170(Lnet/minecraft/class_11531;Lnet/minecraft/class_12137;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_renderMainSection_Tripwire(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/class_11658;Lnet/minecraft/class_3695;Lorg/joml/Matrix4f;Lnet/minecraft/class_9925;Lnet/minecraft/class_9925;ZLnet/minecraft/class_9925;Lnet/minecraft/class_9925;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["extractVisibleEntities"], handler: "litematica_onPostPrepareEntities", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["extractVisibleEntities"], handler: "litematica_onPostPrepareEntities", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPostPrepareEntities(Lnet/minecraft/class_4184;Lnet/minecraft/class_4604;Lnet/minecraft/class_9779;Lnet/minecraft/class_11658;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submitEntities"], handler: "litematica_onPostRenderEntities", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["submitEntities"], handler: "litematica_onPostRenderEntities", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPostRenderEntities(Lnet/minecraft/class_4587;Lnet/minecraft/class_11658;Lnet/minecraft/class_11659;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["extractVisibleBlockEntities"], handler: "litematica_onPostPrepareBlockEntities", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["extractVisibleBlockEntities"], handler: "litematica_onPostPrepareBlockEntities", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPostPrepareBlockEntities(Lnet/minecraft/class_4184;FLnet/minecraft/class_11658;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["submitBlockEntities"], handler: "litematica_onPostRenderBlockEntities", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["submitBlockEntities"], handler: "litematica_onPostRenderBlockEntities", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onPostRenderBlockEntities(Lnet/minecraft/class_4587;Lnet/minecraft/class_11658;Lnet/minecraft/class_11661;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["endFrame"], handler: "litematica_onEndFrame", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["endFrame"], handler: "litematica_onEndFrame", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onEndFrame(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["close"], handler: "litematica_onClose", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["close"], handler: "litematica_onClose", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/render/MixinWorldRenderer", "litematica_onClose(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -291991,7 +291995,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/server/MixinMinecraftServer",
         targets: ["net/minecraft/server/MinecraftServer"], environment: "unknown",
         injections: [
-          { method: ["method_56602"], handler: "litematica_onServerTickOmegaHackFixBecauseLunarBreaksMinecraftEvenThoughABooleanSupplierIsAlwaysSupposedToBeThereEvenAccordingToMojangMappingsButIsNotWhenYouAreRunningLunarAndTheyCannotExplainWhyThisWouldBreakButItDoesEvenThoughNothingHasChangedInMinecraftUnlessYouArePlayingWithLunar", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["method_56602"], handler: "litematica_onServerTickOmegaHackFixBecauseLunarBreaksMinecraftEvenThoughABooleanSupplierIsAlwaysSupposedToBeThereEvenAccordingToMojangMappingsButIsNotWhenYouAreRunningLunarAndTheyCannotExplainWhyThisWouldBreakButItDoesEvenThoughNothingHasChangedInMinecraftUnlessYouArePlayingWithLunar", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/server/MixinMinecraftServer", "litematica_onServerTickOmegaHackFixBecauseLunarBreaksMinecraftEvenThoughABooleanSupplierIsAlwaysSupposedToBeThereEvenAccordingToMojangMappingsButIsNotWhenYouAreRunningLunarAndTheyCannotExplainWhyThisWouldBreakButItDoesEvenThoughNothingHasChangedInMinecraftUnlessYouArePlayingWithLunar(JLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -292014,7 +292018,7 @@
         modId: "litematica", mixin: "fi/dy/masa/litematica/mixin/world/MixinClientLevel",
         targets: ["net/minecraft/client/multiplayer/ClientLevel"], environment: "unknown",
         injections: [
-          { method: ["setServerVerifiedBlockState"], handler: "litematica_onHandleBlockUpdate", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["setServerVerifiedBlockState"], handler: "litematica_onHandleBlockUpdate", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("fi/dy/masa/litematica/mixin/world/MixinClientLevel", "litematica_onHandleBlockUpdate(Lnet/minecraft/class_2338;Lnet/minecraft/class_2680;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []

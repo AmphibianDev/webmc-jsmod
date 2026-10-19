@@ -270,6 +270,30 @@ So the honest summary of "will mods work": **UI/QoL/info mods do** (JEI, Jade, Z
 AppleSkin, Mod Menu, Litematica's logic, Xaero partly); **renderer and perf mods do not** (Iris,
 Sodium, Lithium — by nature, not by tuning); **deep client-hook mods are partial** (Meteor, Flashback).
 
+## 2026-10-19 (later) — redirects, overwrites, and where the wall is
+
+Runtime support for the other mixin kinds landed: `@Overwrite` (the handler's return value becomes
+the method's), and `@Redirect`/`@ModifyArg`/`@ModifyArgs` implemented by wrapping the **callee** and
+marking the target "on the stack" while it runs — an approximation that is exact for how these mixins
+are written in practice, and reported as `approximate`. Two new tests cover redirect and modifyArg
+end to end (29 runtime tests now).
+
+With that, Meteor's own plan census reads:
+
+| kind | injections | target named | callee named |
+| --- | --- | --- | --- |
+| `@Inject` | 266 | **190** | — |
+| `@ModifyArg` | 23 | 9 | 5 |
+| `@ModifyArgs` | 9 | 8 | 3 |
+| `@Redirect` | 12 | 5 | 0 |
+| `@ModifyVariable` / `@ModifyConstant` | 17 | 8 | — |
+| accessors | 83 | — | — |
+
+Applied in a live client: **56 plans / 57 injections + 83 accessors**, client publishing state at the
+control rate. The wall is no longer mixin kinds — it is **naming**: 76 of Meteor's 266 `@Inject`
+targets (and most of Flashback's) have no function yet, and a redirect needs *both* sides named.
+Everything else is policy, and the policy is what keeps the client alive.
+
 ## Next
 
 1. **The internals layer**: a derived client build that exposes its TeaVM class table

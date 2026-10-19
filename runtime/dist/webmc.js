@@ -17,7 +17,7 @@
   var WebMC = global.webmc = global.webmc || {};
   WebMC.version = "0.1.0";
   WebMC.apiVersion = 1;
-  WebMC.build = "202610191243";
+  WebMC.build = "202610191324";
 
   /* ------------------------------------------------------------------ small utilities -------- */
 
@@ -833,7 +833,7 @@
   var rolledBack = 0;
   var allHandles = [];
   // Tuning knobs, exposed through the internals object so a test (or a mod author) can change them.
-  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256, maxPlans: 32 };
+  var limits = { hotPerSecond: 40, sampleCalls: 20, runsPerSecond: 200, maxWrapped: 256, maxPlans: 128 };
   if (internal.boot && internal.boot.patchCap) { limits.maxPlans = Math.max(0, Number(internal.boot.patchCap) || limits.maxPlans); }
   var wrappedBy = new Map();       // fn symbol -> the plan that wrapped it first
 
@@ -877,10 +877,133 @@
     };
   }
 
+  /* ------------------------------------------------------------------ redirect sites ---------- *
+   * `@Redirect` and `@ModifyArg(s)` change one call *inside* a method. There is no call-site map to
+   * rewrite, but the effect can be had at run time: mark the target as "on the stack" while it runs,
+   * and wrap the callee so that while it is called from inside the target, the mod's handler is
+   * consulted. A callee called twice inside the same target is redirected both times — the report
+   * says "approximate" for those, and the wrapper is rollback-able like any other.
+   */
+  var activeTargets = new Map();      // target fn -> stack of `this` values
+  var calleeSites = new Map();        // callee fn -> [{ targetFn, run, kind, index, plan }]
+  var bookkeeping = new Map();        // target fn -> { original, wrapper }
+
+  function enterTarget(fn, self) {
+    var stack = activeTargets.get(fn);
+    if (!stack) { stack = []; activeTargets.set(fn, stack); }
+    stack.push(self);
+  }
+  function leaveTarget(fn) {
+    var stack = activeTargets.get(fn);
+    if (stack) { stack.pop(); if (!stack.length) { activeTargets.delete(fn); } }
+  }
+  function installBookkeeping(targetFn) {
+    if (bookkeeping.has(targetFn)) { return; }
+    var original = state.teaVM[targetFn];
+    var wrapper = function (self) {
+      enterTarget(targetFn, self);
+      try { return original.apply(this, arguments); }
+      finally { leaveTarget(targetFn); }
+    };
+    bookkeeping.set(targetFn, { original: original, wrapper: wrapper });
+    state.teaVM[targetFn] = wrapper;
+  }
+  function installCalleeSite(calleeFn, site) {
+    var sites = calleeSites.get(calleeFn);
+    if (sites) { sites.push(site); return; }
+    sites = [site];
+    calleeSites.set(calleeFn, sites);
+    var original = state.teaVM[calleeFn];
+    var wrapper = function () {
+      var list = calleeSites.get(calleeFn);
+      var active = null;
+      for (var i = list.length - 1; i >= 0; i--) {
+        var stack = activeTargets.get(list[i].targetFn);
+        if (stack && stack.length) { active = list[i]; active.self = stack[stack.length - 1]; break; }
+      }
+      if (!active) { return original.apply(this, arguments); }
+      var args = Array.prototype.slice.call(arguments, 1);       // TeaVM passes `self` first
+      var info = { cancellable: false, cancelled: false, returnValue: undefined };
+      try {
+        if (active.kind === "modifyArgs") {
+          var box = { __args: args.slice() };
+          active.run(active.self, [box], info);
+          args = box.__args;
+        } else if (active.kind === "modifyArg") {
+          var index = active.index == null ? 0 : active.index;
+          var changed = active.run(active.self, [args[Math.max(0, index - 1)]], info);
+          if (changed !== undefined) { args[Math.max(0, index - 1)] = changed; }
+        } else {
+          var result = active.run(active.self, args, info);
+          if (result !== undefined) { return result; }
+        }
+      } catch (error) {
+        internal.reportError("site:" + active.label, error);
+      }
+      return original.apply(this, args.concat([]).length === args.length ? [arguments[0]].concat(args) : arguments);
+    };
+    state.teaVM[calleeFn] = wrapper;
+    bookkeeping.set("callee:" + calleeFn, { original: original, wrapper: wrapper });
+  }
+
+  function applySite(plan, injection) {
+    var kind = injection.kind;
+    var point = (injection.at || [])[0] || {};
+    var callee = point.callee || null;
+    if (point.value !== "INVOKE" || !callee || callee.kind !== "method") {
+      return { ok: false, kind: kind, why: kind + " at " + (point.value || "?") + " needs a call-site rewrite this layer does not do (" + (point.target || "no target") + ")" };
+    }
+    var targets = Array.isArray(injection.method) ? injection.method : [injection.method];
+    var targetEntry = null;
+    for (var t = 0; t < targets.length && !targetEntry; t++) { targetEntry = resolve(plan.targets[0], targets[t]); }
+    if (!targetEntry) { return { ok: false, kind: kind, why: "no anchor for the method being redirected (" + plan.targets[0] + "." + targets.join("/") + ")" }; }
+    var calleeEntry = resolve(callee.owner, callee.name);
+    if (!calleeEntry) { return { ok: false, kind: kind, why: "no anchor for the redirected call " + callee.owner + "." + callee.name }; }
+    if (typeof injection.run !== "function") { return { ok: false, kind: kind, why: "the plan carries no runnable handler" }; }
+    installBookkeeping(targetEntry.fn);
+    if (!calleeSites.has(calleeEntry.fn)) { /* installed below */ }
+    installCalleeSite(calleeEntry.fn, {
+      targetFn: targetEntry.fn,
+      run: injection.run,
+      kind: kind,
+      index: point.index != null ? point.index : point.ordinal,
+      label: plan.mixin + " -> " + plan.targets[0] + "." + callee.name,
+      plan: plan
+    });
+    return {
+      ok: true, kind: kind, target: targets[0], callee: callee.owner + "." + callee.name,
+      fn: calleeEntry.fn, note: "approximate: the callee is redirected while the target is on the stack",
+      rollback: { fn: calleeEntry.fn, original: bookkeeping.get("callee:" + calleeEntry.fn).original, label: "site" }
+    };
+  }
+
   function applyInjection(plan, injection) {
     var kind = injection.kind || "inject";
+    if (kind === "overwrite") {
+      var overwriteTargets = Array.isArray(injection.method) ? injection.method : [injection.method];
+      for (var o = 0; o < overwriteTargets.length; o++) {
+        var overwriteEntry = resolve(plan.targets[0], overwriteTargets[o]);
+        if (!overwriteEntry) { continue; }
+        var overwriteOriginal = overwriteEntry.callable;
+        if (typeof injection.run !== "function") { return { ok: false, kind: kind, why: "the plan carries no runnable handler" }; }
+        state.teaVM[overwriteEntry.fn] = (function (original, run) {
+          return function (self) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            var info = { cancellable: false, cancelled: false, returnValue: undefined };
+            try { return run(self, args, info); }
+            catch (error) { internal.reportError("overwrite:" + overwriteEntry.fn, error); return original.apply(this, arguments); }
+          };
+        })(overwriteOriginal, injection.run);
+        return { ok: true, kind: kind, target: overwriteTargets[o], fn: overwriteEntry.fn, note: "the handler replaces the method body",
+          rollback: { fn: overwriteEntry.fn, original: overwriteOriginal, label: "overwrite" } };
+      }
+      return { ok: false, kind: kind, why: "no anchor for " + plan.targets[0] + "." + overwriteTargets.join("/") };
+    }
+    if (kind === "redirect" || kind === "modifyArg" || kind === "modifyArgs") {
+      return applySite(plan, injection);
+    }
     if (kind !== "inject") {
-      return { ok: false, kind: kind, why: kind + " rewrites inside the target method; this layer can only wrap whole methods" };
+      return { ok: false, kind: kind, why: kind + " rewrites inside the target method; this layer does not carry it yet" };
     }
     var targets = Array.isArray(injection.method) ? injection.method : [injection.method];
     var points = Array.isArray(injection.at) ? injection.at : [injection.at];
@@ -2666,6 +2789,17 @@
       internal.notifyPanel({ kind: "webmc:patches", count: plans.length, applied: applied, planned: refused });
     }
     pending = pending.filter(function (record) { return !(record.accessors || []).length || (record.injections || []).length; });
+    // Order matters when the budget is smaller than the plan list: a plan that installs an accessor
+    // or a plain @Inject has a compiled method behind it, while a redirect also needs the callee
+    // named. The cheap ones go first so the budget is spent where it applies.
+    function priority(record) {
+      var kinds = (record.injections || []).map(function (injection) { return injection.kind || "inject"; });
+      if (kinds.indexOf("overwrite") >= 0) { return 4; }
+      if (kinds.indexOf("redirect") >= 0 || kinds.indexOf("modifyArg") >= 0 || kinds.indexOf("modifyArgs") >= 0) { return 3; }
+      if (kinds.length && kinds.every(function (kind) { return kind === "inject"; })) { return 1; }
+      return 2;
+    }
+    pending.sort(function (a, b) { return priority(a) - priority(b); });
     // A conservative default: the first N methods, in plan order, and then stop. A browser tab
     // tolerates a few dozen wrappers comfortably; the number is tunable and reported.
     var cap = (internal.internals && internal.internals.limits ? internal.internals.limits.maxPlans : 32) || 32;

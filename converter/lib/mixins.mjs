@@ -210,8 +210,10 @@ function normalizeAt(value) {
       by: values && values.by != null ? values.by : null,
       target: values && values.target != null ? values.target : null,
       ordinal: values && values.ordinal != null ? values.ordinal : null,
-      args: values && values.args != null ? values.args : null,
-      slice: values && values.slice != null ? values.slice : null
+      index: values && values.index != null ? values.index : (values && values.args != null ? values.args : null),
+      constant: values && values.constant != null ? values.constant : null,
+      slice: values && values.slice != null ? values.slice : null,
+      opcode: values && values.opcode != null ? values.opcode : null
     };
   });
 }

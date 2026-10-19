@@ -81,6 +81,26 @@ they are applied outside the wrapper budget.
 For Meteor that is the difference between 16 and **69 of its 191 plans** on the running client, with
 83 accessors installed and the client still publishing state at the control rate.
 
+## Redirects, argument edits and overwrites
+
+Not every mixin changes a method whole. `@Redirect` and `@ModifyArg(s)` change one *call* inside a
+method, and `@Overwrite` replaces the body. There is no call-site map to rewrite, so the layer gets
+the same effect at run time:
+
+* **`@Overwrite`** — the target is wrapped and the handler's return value becomes the method's; if
+  the handler throws, the original runs.
+* **`@Redirect` / `@ModifyArg` / `@ModifyArgs`** — the *callee* is wrapped and the target is marked
+  "on the stack" while it runs. When the callee is called from inside the target, the mod's handler
+  is consulted: it supplies the call's result, or replaces one argument, or edits an `Args` object.
+  This is an approximation — a callee called twice inside the same target is redirected both times —
+  and every such plan says `approximate` in its report. It is exact enough for the way these mixins
+  are written in practice.
+
+Both are wrappers, so they are subject to the same sampling, rate limits, bisection and rollback as
+`@Inject`. Plans whose at-point is a `FIELD`, `STORE`/`LOAD` or a constant are refused by name: a
+field read is a property access in the compiled code and a local variable is a register, and neither
+is a call this layer can stand in front of.
+
 ## Applying a plan
 
 `@Inject` at `HEAD` or `RETURN`/`TAIL` is a wrapper around the target function. TeaVM calls methods

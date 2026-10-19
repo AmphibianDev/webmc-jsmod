@@ -544140,6 +544140,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -544328,7 +544332,7 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/AbstractContainerScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/AbstractContainerScreen"], environment: "unknown",
         injections: [
-          { method: ["renderCarriedItem"], handler: "drawForeground", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["renderCarriedItem"], handler: "drawForeground", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/AbstractContainerScreenMixin", "drawForeground(Lnet/minecraft/class_332;IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544337,7 +544341,7 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/AmecsKeyModifiersEarlyInitMixin",
         targets: ["de/siphalor/amecs/key_modifiers/impl/AmecsKeyModifiersEarlyInit"], environment: "unknown",
         injections: [
-          { method: ["onInitialize"], handler: "beforeSeal", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["onInitialize"], handler: "beforeSeal", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lde/siphalor/amecs/key_modifiers/api/AmecsKeyModifiers;seal()V","callee":{"kind":"method","owner":"de/siphalor/amecs/key_modifiers/api/AmecsKeyModifiers","name":"seal","descriptor":"()V","raw":"Lde/siphalor/amecs/key_modifiers/api/AmecsKeyModifiers;seal()V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/AmecsKeyModifiersEarlyInitMixin", "beforeSeal(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544346,7 +544350,7 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/ClientPacketListenerRecipeUpdateMixin",
         targets: ["net/minecraft/client/multiplayer/ClientPacketListener"], environment: "unknown",
         injections: [
-          { method: ["handleUpdateRecipes"], handler: "handleUpdateRecipes", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["handleUpdateRecipes"], handler: "handleUpdateRecipes", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/ClientPacketListenerRecipeUpdateMixin", "handleUpdateRecipes(Lnet/minecraft/class_2788;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544355,7 +544359,7 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/EffectsInInventoryMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/EffectsInInventory"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "modifyEffectWidth", kind: "modifyVariable", at: ["STORE"], cancellable: false,
+          { method: ["render"], handler: "modifyEffectWidth", kind: "modifyVariable", at: [{"value":"STORE","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/EffectsInInventoryMixin", "modifyEffectWidth(I)I", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544364,9 +544368,9 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/GuiGraphicsMixin",
         targets: ["net/minecraft/client/gui/GuiGraphics"], environment: "unknown",
         injections: [
-          { method: ["setTooltipForNextFrameInternal"], handler: "jei$setTooltipForNextFrameInternal", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["setTooltipForNextFrameInternal"], handler: "jei$setTooltipForNextFrameInternal", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/GuiGraphicsMixin", "jei$setTooltipForNextFrameInternal(Lnet/minecraft/class_327;Ljava/util/List;IILnet/minecraft/class_8000;Lnet/minecraft/class_2960;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderComponentHoverEffect"], handler: "jei$componentHoverEffect", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["renderComponentHoverEffect"], handler: "jei$componentHoverEffect", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/GuiGraphicsMixin", "jei$componentHoverEffect(Lnet/minecraft/class_327;Lnet/minecraft/class_2583;IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544375,9 +544379,9 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/KeyBindsScreenMixin",
         targets: ["net/minecraft/client/gui/screens/options/controls/KeyBindsScreen"], environment: "unknown",
         injections: [
-          { method: ["keyPressed"], handler: "bindJeiKeyboard", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["keyPressed"], handler: "bindJeiKeyboard", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/KeyBindsScreenMixin", "bindJeiKeyboard(Lnet/minecraft/class_11908;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["mouseClicked"], handler: "bindJeiMouse", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["mouseClicked"], handler: "bindJeiMouse", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/KeyBindsScreenMixin", "bindJeiMouse(Lnet/minecraft/class_11909;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544386,9 +544390,9 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/KeyboardHandlerMixin",
         targets: ["net/minecraft/client/KeyboardHandler"], environment: "unknown",
         injections: [
-          { method: ["charTyped"], handler: "beforeCharTypedEvent", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["charTyped"], handler: "beforeCharTypedEvent", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/KeyboardHandlerMixin", "beforeCharTypedEvent(JLnet/minecraft/class_11905;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["charTyped"], handler: "afterCharTypedEvent", kind: "inject", at: ["TAIL"], cancellable: true,
+          { method: ["charTyped"], handler: "afterCharTypedEvent", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/KeyboardHandlerMixin", "afterCharTypedEvent(JLnet/minecraft/class_11905;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544397,9 +544401,9 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/MinecraftMixin",
         targets: ["net/minecraft/client/Minecraft"], environment: "unknown",
         injections: [
-          { method: ["<init>"], handler: "beforeInitialResourceReload", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["<init>"], handler: "beforeInitialResourceReload", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_6360;method_36563(Lnet/minecraft/class_6360$class_6362;Ljava/util/List;)V","callee":{"kind":"method","owner":"net/minecraft/client/ResourceLoadStateTracker","name":"startReload","descriptor":"(Lnet/minecraft/class_6360$class_6362;Ljava/util/List;)V","raw":"Lnet/minecraft/class_6360;method_36563(Lnet/minecraft/class_6360$class_6362;Ljava/util/List;)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/MinecraftMixin", "beforeInitialResourceReload(Lnet/minecraft/class_542;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["updateLevelInEngines"], handler: "updateLevelInEngines", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["updateLevelInEngines"], handler: "updateLevelInEngines", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/MinecraftMixin", "updateLevelInEngines(Lnet/minecraft/class_638;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544408,11 +544412,11 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/OptionsMixin",
         targets: ["net/minecraft/client/Options"], environment: "unknown",
         injections: [
-          { method: ["load"], handler: "beforeLoad", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["load"], handler: "beforeLoad", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/OptionsMixin", "beforeLoad(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["load"], handler: "afterLoad", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["load"], handler: "afterLoad", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/OptionsMixin", "afterLoad(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["processOptions"], handler: "processJeiModifiers", kind: "inject", at: ["TAIL"], cancellable: false,
+          { method: ["processOptions"], handler: "processJeiModifiers", kind: "inject", at: [{"value":"TAIL","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/OptionsMixin", "processJeiModifiers(Lnet/minecraft/class_315$class_5823;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -544421,9 +544425,9 @@
         modId: "jei", mixin: "mezz/jei/fabric/mixin/ScreenMixin",
         targets: ["net/minecraft/client/gui/screens/Screen"], environment: "unknown",
         injections: [
-          { method: ["renderWithTooltipAndSubtitles"], handler: "drawBackground", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["renderWithTooltipAndSubtitles"], handler: "drawBackground", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_437;method_25420(Lnet/minecraft/class_332;IIF)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/screens/Screen","name":"renderBackground","descriptor":"(Lnet/minecraft/class_332;IIF)V","raw":"Lnet/minecraft/class_437;method_25420(Lnet/minecraft/class_332;IIF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/ScreenMixin", "drawBackground(Lnet/minecraft/class_332;IIFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["renderWithTooltipAndSubtitles"], handler: "drawForeground", kind: "inject", at: ["INVOKE:0"], cancellable: false,
+          { method: ["renderWithTooltipAndSubtitles"], handler: "drawForeground", kind: "inject", at: [{"value":"INVOKE","ordinal":0,"index":null,"target":"Lnet/minecraft/class_437;method_25394(Lnet/minecraft/class_332;IIF)V","callee":{"kind":"method","owner":"net/minecraft/client/gui/screens/Screen","name":"render","descriptor":"(Lnet/minecraft/class_332;IIF)V","raw":"Lnet/minecraft/class_437;method_25394(Lnet/minecraft/class_332;IIF)V"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("mezz/jei/fabric/mixin/ScreenMixin", "drawForeground(Lnet/minecraft/class_332;IIFLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []

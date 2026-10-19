@@ -22942,6 +22942,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -23121,9 +23125,9 @@
         modId: "zoomify", mixin: "dev/isxander/zoomify/mixins/zoom/MouseMixin",
         targets: ["net/minecraft/client/MouseHandler"], environment: "unknown",
         injections: [
-          { method: ["onScroll"], handler: "scrollStepCounter", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["onScroll"], handler: "scrollStepCounter", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_746;method_7325()Z","callee":{"kind":"method","owner":"net/minecraft/client/player/LocalPlayer","name":"isSpectator","descriptor":"()Z","raw":"Lnet/minecraft/class_746;method_7325()Z"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("dev/isxander/zoomify/mixins/zoom/MouseMixin", "scrollStepCounter(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lorg/joml/Vector2i;)V", target, args.concat([info])); } },
-          { method: ["turnPlayer"], handler: "modifyCinematicSmoothness", kind: "modifyArg", at: ["INVOKE"], cancellable: false,
+          { method: ["turnPlayer"], handler: "modifyCinematicSmoothness", kind: "modifyArg", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_3540;method_15429(DD)D","callee":{"kind":"method","owner":"net/minecraft/util/SmoothDouble","name":"getNewDeltaValue","descriptor":"(DD)D","raw":"Lnet/minecraft/class_3540;method_15429(DD)D"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("dev/isxander/zoomify/mixins/zoom/MouseMixin", "modifyCinematicSmoothness(D)D", target, args.concat([info])); } },
         ],
         accessors: []

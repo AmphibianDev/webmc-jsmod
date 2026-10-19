@@ -59891,6 +59891,10 @@
       "java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;": function (api, self, a) { return ''; },
       "java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V": function (api, self, a) { var src = a[0], srcPos = a[1], dst = a[2], dstPos = a[3], len = a[4]; for (var i = 0; i < len; i++) { dst[dstPos + i] = src[srcPos + i]; } },
       "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V": function (api, self, a) { (self || []).forEach(function (item) { a[0](item); }); },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.get(I)Ljava/lang/Object;": function (api, self, a) { return self.__args[a[0]]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(ILjava/lang/Object;)V": function (api, self, a) { self.__args[a[0]] = a[1]; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.size()I": function (api, self) { return (self.__args || []).length; },
+      "org/spongepowered/asm/mixin/injection/invoke/arg/Args.getAll()Ljava/util/List;": function (api, self) { return (self.__args || []).slice(); },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancellable()Z": function (api, self) { return !!self.cancellable; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.cancel()V": function (api, self) { self.cancelled = true; },
       "org/spongepowered/asm/mixin/injection/callback/CallbackInfo.isCancelled()Z": function (api, self) { return !!self.cancelled; },
@@ -60087,9 +60091,9 @@
         modId: "jade", mixin: "snownee/jade/mixin/BossHealthOverlayMixin",
         targets: ["net/minecraft/client/gui/components/BossHealthOverlay"], environment: "unknown",
         injections: [
-          { method: ["render"], handler: "jade$render", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["render"], handler: "jade$render", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/BossHealthOverlayMixin", "jade$render(Lnet/minecraft/class_332;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["render"], handler: "jade$captureHeight", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["render"], handler: "jade$captureHeight", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_332;method_51443()I","callee":{"kind":"method","owner":"net/minecraft/client/gui/GuiGraphics","name":"guiHeight","descriptor":"()I","raw":"Lnet/minecraft/class_332;method_51443()I"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/BossHealthOverlayMixin", "jade$captureHeight(Lnet/minecraft/class_332;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;Lnet/minecraft/class_345;I)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60098,7 +60102,7 @@
         modId: "jade", mixin: "snownee/jade/mixin/CreativeModeInventoryScreenMixin",
         targets: ["net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen"], environment: "unknown",
         injections: [
-          { method: ["getTooltipFromContainerItem"], handler: "jade$initTabNames", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["getTooltipFromContainerItem"], handler: "jade$initTabNames", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_7706;method_47335()Ljava/util/List;","callee":{"kind":"method","owner":"net/minecraft/world/item/CreativeModeTabs","name":"tabs","descriptor":"()Ljava/util/List;","raw":"Lnet/minecraft/class_7706;method_47335()Ljava/util/List;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/CreativeModeInventoryScreenMixin", "jade$initTabNames(Lnet/minecraft/class_1799;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;ILcom/llamalad7/mixinextras/sugar/ref/LocalIntRef;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60114,7 +60118,7 @@
         modId: "jade", mixin: "snownee/jade/mixin/FogRendererMixin",
         targets: ["net/minecraft/client/renderer/fog/FogRenderer"], environment: "unknown",
         injections: [
-          { method: ["setupFog"], handler: "jade$setupFog", kind: "inject", at: ["INVOKE"], cancellable: false,
+          { method: ["setupFog"], handler: "jade$setupFog", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lcom/mojang/blaze3d/systems/RenderSystem;getDevice()Lcom/mojang/blaze3d/systems/GpuDevice;","callee":{"kind":"method","owner":"com/mojang/blaze3d/systems/RenderSystem","name":"getDevice","descriptor":"()Lcom/mojang/blaze3d/systems/GpuDevice;","raw":"Lcom/mojang/blaze3d/systems/RenderSystem;getDevice()Lcom/mojang/blaze3d/systems/GpuDevice;"}}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/FogRendererMixin", "jade$setupFog(Lnet/minecraft/class_4184;ILnet/minecraft/class_9779;FLnet/minecraft/class_638;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;Lnet/minecraft/class_7285;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60123,9 +60127,9 @@
         modId: "jade", mixin: "snownee/jade/mixin/GuiGraphicsMixin",
         targets: ["net/minecraft/client/gui/GuiGraphics"], environment: "unknown",
         injections: [
-          { method: ["containsPointInScissor"], handler: "jade$containsPointInScissor", kind: "inject", at: ["HEAD"], cancellable: true,
+          { method: ["containsPointInScissor"], handler: "jade$containsPointInScissor", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: true,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/GuiGraphicsMixin", "jade$containsPointInScissor(IILorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
-          { method: ["setTooltipForNextFrameInternal"], handler: "jade$appendModName", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["setTooltipForNextFrameInternal"], handler: "jade$appendModName", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/GuiGraphicsMixin", "jade$appendModName(Lnet/minecraft/class_327;Ljava/util/List;IILnet/minecraft/class_8000;Lnet/minecraft/class_2960;ZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60141,7 +60145,7 @@
         modId: "jade", mixin: "snownee/jade/mixin/LanguageManagerMixin",
         targets: ["net/minecraft/client/resources/language/LanguageManager"], environment: "unknown",
         injections: [
-          { method: ["onResourceManagerReload"], handler: "jade$onResourceManagerReload", kind: "inject", at: ["RETURN"], cancellable: false,
+          { method: ["onResourceManagerReload"], handler: "jade$onResourceManagerReload", kind: "inject", at: [{"value":"RETURN","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/LanguageManagerMixin", "jade$onResourceManagerReload(Lnet/minecraft/class_3300;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60150,7 +60154,7 @@
         modId: "jade", mixin: "snownee/jade/mixin/LivingEntityMixin",
         targets: ["net/minecraft/world/entity/LivingEntity"], environment: "unknown",
         injections: [
-          { method: ["addEffect"], handler: "jade$addEffect", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["addEffect"], handler: "jade$addEffect", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/LivingEntityMixin", "jade$addEffect(Lnet/minecraft/class_1293;Lnet/minecraft/class_1297;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60159,7 +60163,7 @@
         modId: "jade", mixin: "snownee/jade/mixin/MobEffectInstanceMixin",
         targets: ["net/minecraft/world/effect/MobEffectInstance"], environment: "unknown",
         injections: [
-          { method: ["onEffectAdded"], handler: "jade$onEffectAdded", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["onEffectAdded"], handler: "jade$onEffectAdded", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/MobEffectInstanceMixin", "jade$onEffectAdded(Lnet/minecraft/class_1309;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60168,7 +60172,7 @@
         modId: "jade", mixin: "snownee/jade/mixin/PreparedTextBuilderMixin",
         targets: ["net/minecraft/client/gui/Font$PreparedTextBuilder"], environment: "unknown",
         injections: [
-          { method: ["accept"], handler: "jade$accept", kind: "inject", at: ["INVOKE"], cancellable: true,
+          { method: ["accept"], handler: "jade$accept", kind: "inject", at: [{"value":"INVOKE","ordinal":null,"index":null,"target":"Lnet/minecraft/class_2583;method_10984()Z","callee":{"kind":"method","owner":"net/minecraft/network/chat/Style","name":"isBold","descriptor":"()Z","raw":"Lnet/minecraft/class_2583;method_10984()Z"}}], cancellable: true,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/PreparedTextBuilderMixin", "jade$accept(ILnet/minecraft/class_2583;Lnet/minecraft/class_11768;Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable;)V", target, args.concat([info])); } },
         ],
         accessors: []
@@ -60177,9 +60181,9 @@
         modId: "jade", mixin: "snownee/jade/mixin/key_extension/KeyMappingMixin",
         targets: ["net/minecraft/client/KeyMapping"], environment: "unknown",
         injections: [
-          { method: ["click","set"], handler: "keyEx$checkDirty", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["click","set"], handler: "keyEx$checkDirty", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/key_extension/KeyMappingMixin", "keyEx$checkDirty(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
-          { method: ["resetMapping"], handler: "keyEx$resetMapping", kind: "inject", at: ["HEAD"], cancellable: false,
+          { method: ["resetMapping"], handler: "keyEx$resetMapping", kind: "inject", at: [{"value":"HEAD","ordinal":null,"index":null,"target":null,"callee":null}], cancellable: false,
             run: function (target, args, info) { return RT.method("snownee/jade/mixin/key_extension/KeyMappingMixin", "keyEx$resetMapping(Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V", target, args.concat([info])); } },
         ],
         accessors: []
