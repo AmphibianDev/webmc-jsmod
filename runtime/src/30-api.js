@@ -469,6 +469,19 @@
   internal.modules = moduleRegistry;
   internal.snapshotScreen = snapshotScreen;
   internal.storageFor = storageFor;
+  // One event surface for anything that is not a mod: the shell script, diagnostics, converted code.
+  WebMC.events = {
+    on: function (event, fn, options) { return internal.stateBus.on(event, fn, options); },
+    onTick: function (fn, options) { return internal.frameBus.on("tick", fn, options); },
+    onFrame: function (fn, options) { return internal.frameBus.on("frame", fn, options); },
+    onState: function (fn, options) { return internal.stateBus.on("state", fn, options); },
+    onWorldJoin: function (fn, options) { return internal.stateBus.on("world:join", fn, options); },
+    onScreenOpen: function (fn, options) { return internal.stateBus.on("screen:open", fn, options); }
+  };
+  WebMC.isClientRunning = function () {
+    var latest = internal.state.latest;
+    return !!(latest && (latest.screen || latest.level));
+  };
   WebMC.player = { snapshot: snapshotPlayer };
   WebMC.world = { snapshot: snapshotWorld, screen: snapshotScreen };
   WebMC.camera = { snapshot: snapshotCamera };

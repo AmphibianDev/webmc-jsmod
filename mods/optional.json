@@ -1,0 +1,90 @@
+{
+ "note": "Written by tools/build-gallery.mjs. Mods the launcher can fetch and hand to a running game.",
+ "count": 7,
+ "mods": [
+  {
+   "id": "appleskin",
+   "name": "AppleSkin",
+   "version": "3.0.8",
+   "summary": "Food and hunger information, converted.",
+   "categories": [
+    "HUD",
+    "Information"
+   ],
+   "entry": "converted/appleskin.js",
+   "bytes": 314300
+  },
+  {
+   "id": "jade",
+   "name": "Jade",
+   "version": "21.1.6",
+   "summary": "What am I looking at: 11 Fabric events and its keybind translated.",
+   "categories": [
+    "HUD",
+    "Information"
+   ],
+   "entry": "converted/jade.js",
+   "bytes": 2157904
+  },
+  {
+   "id": "jei",
+   "name": "JEI",
+   "version": "27.53.0.108",
+   "summary": "Item and recipe viewer, converted; 11 Fabric events translated.",
+   "categories": [
+    "Recipe",
+    "UI"
+   ],
+   "entry": "converted/jei.js",
+   "bytes": 19304750
+  },
+  {
+   "id": "litematica",
+   "name": "Litematica",
+   "version": "0.26.16",
+   "summary": "Schematic mod, converted: all of its plans apply (25 injections + 20 accessors).",
+   "categories": [
+    "Building",
+    "Schematic"
+   ],
+   "entry": "converted/litematica.js",
+   "bytes": 10914173
+  },
+  {
+   "id": "meteor-client",
+   "name": "Meteor Client",
+   "version": "1.21.11-86",
+   "summary": "The real Meteor Client, converted: 171 modules, 191 patch plans, accessors live. Heavy mixin behaviour is partial.",
+   "categories": [
+    "Utility",
+    "Modules"
+   ],
+   "entry": "converted/meteor.js",
+   "bytes": 21655584
+  },
+  {
+   "id": "shulkerboxtooltip",
+   "name": "Shulker Box Tooltip",
+   "version": "5.2.16",
+   "summary": "Shulker contents in the tooltip, converted.",
+   "categories": [
+    "UI",
+    "Information"
+   ],
+   "entry": "converted/shulkerboxtooltip.js",
+   "bytes": 823673
+  },
+  {
+   "id": "zoomify",
+   "name": "Zoomify",
+   "version": "2.15.2",
+   "summary": "Zoom keybind and smooth camera, converted; its FOV hook applies.",
+   "categories": [
+    "Utility",
+    "Camera"
+   ],
+   "entry": "converted/zoomify.js",
+   "bytes": 946715
+  }
+ ]
+}

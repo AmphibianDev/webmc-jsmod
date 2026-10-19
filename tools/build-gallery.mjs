@@ -68,3 +68,21 @@ writeFileSync(join(root, "gallery", "mods.json"), JSON.stringify({
   mods
 }, null, 1) + "\n");
 console.log(`gallery/mods.json: ${mods.length} mods`);
+
+// The launcher reads this to offer the heavy mods as "load on demand": they are far too large to put
+// in the client's bootstrap, so the page fetches one only when a player asks for it by name.
+const onDemand = mods.filter((mod) => mod.optional).map((mod) => ({
+  id: mod.id,
+  name: mod.name,
+  version: mod.version,
+  summary: mod.summary,
+  categories: mod.categories,
+  entry: mod.entry,
+  bytes: mod.bytes
+}));
+writeFileSync(join(root, "mods", "optional.json"), JSON.stringify({
+  note: "Written by tools/build-gallery.mjs. Mods the launcher can fetch and hand to a running game.",
+  count: onDemand.length,
+  mods: onDemand
+}, null, 1) + "\n");
+console.log(`mods/optional.json: ${onDemand.length} on-demand mods`);

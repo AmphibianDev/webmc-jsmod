@@ -101,6 +101,9 @@
     this.source = description.source || null;
     this.enabled = false;
     this.suspended = false;
+    // pending -> the mod is registered but the client is not running yet; ready -> its init finished;
+    // failed -> init threw (the reason is in `errors`).
+    this.state = "pending";
     this.failures = 0;
     this.loadedAt = Date.now();
     this.api = null;
@@ -174,6 +177,7 @@
     internal.reportError(where + "@" + mod.id, error, mod.id);
     if (mod.failures >= 25) {
       mod.suspended = true;
+      mod.state = "failed";
       mod.disable();
       WebMC.hud.message("Mod “" + mod.name + "” was suspended after repeated errors", { color: "#fca5a5", ttl: 6000 });
       publish();
@@ -190,12 +194,14 @@
       authors: mod.authors,
       capabilities: mod.capabilities || WebMC.defaultCapabilities.slice(),
       risky: risky,
+      state: mod.state,
       enabled: mod.enabled,
       suspended: mod.suspended,
       errors: mod.errors.slice(-6),
       from: mod.package || "index",
       patches: internal.patches ? internal.patches.plans.filter(function (plan) { return plan.mod === mod.id; }).length : 0,
       trusted: !!mod.trusted,
+      ready: mod.state === "ready",
       loadedAt: mod.loadedAt
     };
   }
@@ -209,6 +215,33 @@
     });
     internal.notifyPanel({ kind: "webmc:ready", count: registry.filter(function (m) { return m.enabled; }).length });
   }
+
+  /* ------------------------------------------------------------- readiness ---------------------- */
+
+  /** Is the client far enough along that a mod can act on it? A screen or a level is the signal: it
+   *  is the first moment the game has something a mod could touch. */
+  function clientIsRunning() {
+    var latest = internal.state && internal.state.latest;
+    return !!(latest && (latest.screen || latest.level));
+  }
+
+  /** A mod is "ready" once it is enabled *and* the client is running. Before that it is "pending":
+   *  registered, its hooks installed, waiting for something to hook. Reporting the difference is what
+   *  keeps a half-loaded client visible instead of looking like a mod that works. */
+  function settle(mod) {
+    if (!mod || mod.suspended) { return mod && mod.state; }
+    if (!mod.enabled) { return mod.state; }
+    var next = clientIsRunning() ? "ready" : "pending";
+    if (mod.state !== next) { mod.state = next; changed = true; }
+    return next;
+  }
+
+  var changed = false;
+  internal.stateBus.on("state", function () {
+    changed = false;
+    registry.forEach(settle);
+    if (changed) { publish(); }
+  });
 
   /* ------------------------------------------------------------------ loading ------------------ */
   /** Define a mod. Called from mod sources; returns the mod's own handle. */
@@ -240,7 +273,9 @@
       try {
         if (typeof description.init === "function") { mod.__onEnable = function () { description.init(mod.api); mod.bus.emit("init", mod.api); }; }
         mod.enable();
-      } catch (error) { fail(mod, "init", error); }
+        mod.state = mod.suspended ? "failed" : "pending";
+        settle(mod);
+      } catch (error) { fail(mod, "init", error); mod.state = "failed"; }
       publish();
       return mod;
     };

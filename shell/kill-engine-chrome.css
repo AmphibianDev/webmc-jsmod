@@ -1,0 +1,42 @@
+/* The compiled client is borrowed, and it brings its own chrome: a boot overlay, a header and footer
+ * with the engine's name on them, a status console across the top of the game, a perf readout. None
+ * of that is this project, and a player should never read somebody else's product name on our page.
+ *
+ * Hidden rather than removed where the engine's own script looks the element up (removing a wired id
+ * is a client that does not start), removed where it is pure chrome. The list mirrors what the
+ * engine's build actually emits.
+ */
+:root { --webmc-shell-hide: none; }
+
+/* Boot overlay and its brand: ours is the loading screen outside the frame. */
+#boot-screen,
+#boot-brand,
+#boot-card,
+#boot-bar,
+#boot-bar-fill,
+#boot-progress,
+#boot-progress-text { display: var(--webmc-shell-hide) !important; }
+
+/* The engine's launcher shell around the game. */
+#gaius-shell-header,
+#gaius-shell-footer,
+#gaius-error-actions { display: var(--webmc-shell-hide) !important; }
+
+/* Its console and corner readouts, which we replace with our own panel outside the frame. */
+#status,
+#perf-hud,
+#log,
+#debug-overlay { display: var(--webmc-shell-hide) !important; }
+
+/* Profile screen lines that carry the engine's name or its legal sentence. */
+#profile-kicker,
+#profile-subtitle,
+#profile-legal { display: var(--webmc-shell-hide) !important; }
+
+/* Anything the engine builds after load marks itself. */
+[data-gaius-shell] { display: var(--webmc-shell-hide) !important; }
+
+/* The canvas is the game; it fills the frame, and the frame fills the page. */
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+body > *:not(#game_frame):not(canvas) { }
+canvas#mc-canvas, canvas.mc-canvas { display: block; }

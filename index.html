@@ -3,498 +3,409 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>WebMC JS — Minecraft 1.21.11</title>
+<title>WebMC — Minecraft 1.21.11, in a tab</title>
+<meta name="description" content="Minecraft 1.21.11 in the browser with JavaScript mods that load at play time." />
 <style>
   :root {
-    --bg: #0b0d10;
-    --panel: #14181d;
-    --panel-2: #1b2027;
-    --line: #2a313a;
-    --text: #e8eaed;
-    --dim: #9aa3ae;
-    --ok: #6ee7a8;
-    --warn: #ffcc66;
-    --bad: #ff7b72;
-    --accent: #7ab8ff;
+    --bg: #0a0c10;
+    --panel: #12161c;
+    --panel-2: #171c24;
+    --line: #232a34;
+    --line-2: #2e3642;
+    --text: #e9edf2;
+    --dim: #939eac;
+    --dim-2: #6b7480;
+    --accent: #6aa9ff;
+    --accent-2: #3b82f6;
+    --ok: #5eead4;
+    --warn: #fbbf24;
+    --bad: #f87171;
+    --radius: 14px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
-    font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
-  #screen { position: fixed; inset: 0; display: flex; flex-direction: column; }
-  #stage { position: relative; flex: 1 1 auto; min-height: 0; }
-  iframe, #frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; display: none; }
-
-  /* Boot screen */
-  #boot { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(1200px 600px at 50% 20%, #1a2230 0%, #0b0d10 70%); z-index: 5; }
-  #boot .card { width: min(620px, 92vw); background: var(--panel); border: 1px solid var(--line);
-    border-radius: 14px; padding: 26px 26px 22px; box-shadow: 0 24px 80px rgba(0,0,0,.55); }
-  #boot h1 { margin: 0 0 2px; font-size: 22px; letter-spacing: .2px; }
-  #boot .sub { color: var(--dim); margin-bottom: 18px; }
-  #boot .bar { height: 10px; background: #0d1116; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
-  #boot .bar > i { display: block; height: 100%; width: 2%; background: linear-gradient(90deg, #3b82f6, #7ab8ff); transition: width .18s ease-out; }
-  #boot .status { margin-top: 10px; color: var(--dim); font-size: 13px; min-height: 18px; }
-  #boot .row { display: flex; gap: 10px; align-items: center; margin-top: 18px; flex-wrap: wrap; }
-  button { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 9px;
-    padding: 9px 14px; font: inherit; cursor: pointer; }
-  button:hover { border-color: #3a4450; }
-  button.primary { background: #2563eb; border-color: #2563eb; font-weight: 600; }
-  button.primary:hover { background: #1d4ed8; }
+    font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button { font: inherit; color: var(--text); background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 10px; padding: 9px 14px; cursor: pointer; transition: border-color .15s, background .15s; }
+  button:hover { border-color: var(--line-2); background: #1c222b; }
+  button.primary { background: var(--accent-2); border-color: var(--accent-2); font-weight: 600; }
+  button.primary:hover { background: #2f6fdd; }
+  button.ghost { background: transparent; }
   button:disabled { opacity: .5; cursor: default; }
-  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
-  .chip { font-size: 12px; color: var(--dim); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; }
-  .chip.on { color: var(--ok); border-color: #2c4a3b; background: #10201a; }
-  .chip.bad { color: var(--bad); border-color: #4a2c2c; background: #201010; }
-  .err { color: var(--bad); white-space: pre-wrap; }
+  code, kbd { background: #0d1117; border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px;
+    font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-  /* Mods drawer */
-  #mods { position: absolute; top: 0; right: 0; bottom: 0; width: min(420px, 92vw); background: rgba(13,16,20,.97);
-    border-left: 1px solid var(--line); transform: translateX(102%); transition: transform .18s ease; z-index: 8;
-    display: flex; flex-direction: column; }
-  #mods.open { transform: none; }
-  #mods header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
-  #mods header h2 { margin: 0; font-size: 15px; flex: 1; }
-  #mods .body { padding: 14px 16px; overflow: auto; flex: 1; }
-  #mods .hint { color: var(--dim); font-size: 13px; }
-  .mod { border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; margin-bottom: 8px; background: var(--panel); }
-  .mod .name { font-weight: 600; }
-  .mod .meta { color: var(--dim); font-size: 12px; margin-top: 3px; word-break: break-word; }
-  .mod .caps { margin-top: 6px; display: flex; gap: 5px; flex-wrap: wrap; }
-  .mod .cap { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; color: var(--dim); }
-  .mod .cap.risk { color: var(--warn); border-color: #4a402c; }
-  .mod .actions { margin-top: 8px; display: flex; gap: 6px; }
-  .mod .actions button { padding: 5px 10px; font-size: 12px; }
-  .mod .error { color: var(--bad); font-size: 12px; margin-top: 6px; white-space: pre-wrap; }
-  #modlist .empty { color: var(--dim); }
-  .drop { border: 1px dashed var(--line); border-radius: 10px; padding: 14px; text-align: center; color: var(--dim); margin-bottom: 12px; }
-  .drop.hot { border-color: var(--accent); color: var(--accent); }
-  #toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 20;
-    background: #10151b; border: 1px solid var(--line); border-radius: 10px; padding: 9px 13px; color: var(--text);
-    opacity: 0; pointer-events: none; transition: opacity .2s; max-width: 80vw; }
+  /* ---------- chrome ---------- */
+  #shell { display: grid; grid-template-rows: auto 1fr; height: 100%; }
+  header { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #0f141b, #0a0c10); }
+  header .mark { width: 26px; height: 26px; border-radius: 7px; background:
+    conic-gradient(from 210deg, #1f6feb, #6aa9ff, #5eead4, #1f6feb); box-shadow: 0 0 18px rgba(106,169,255,.35); }
+  header h1 { font-size: 16px; margin: 0; letter-spacing: .2px; }
+  header .sub { color: var(--dim-2); font-size: 13px; }
+  header nav { margin-left: auto; display: flex; gap: 16px; align-items: center; font-size: 14px; }
+
+  main { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(420px, 1.15fr); gap: 0; min-height: 0; }
+  @media (max-width: 960px) { main { grid-template-columns: 1fr; } }
+  .col { padding: 22px; overflow: auto; min-height: 0; }
+  .col.right { border-left: 1px solid var(--line); background: #0c0f14; }
+  @media (max-width: 960px) { .col.right { border-left: 0; border-top: 1px solid var(--line); } }
+
+  /* ---------- play card ---------- */
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .card + .card { margin-top: 14px; }
+  .card h2 { margin: 0 0 2px; font-size: 18px; }
+  .card .muted { color: var(--dim); font-size: 13.5px; }
+  .play-row { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
+  .play-row button.primary { padding: 12px 22px; font-size: 16px; }
+  .bar { height: 8px; background: #0d1117; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; margin-top: 14px; }
+  .bar > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-2), #7dd3fc);
+    transition: width .2s ease-out; }
+  .status { color: var(--dim); font-size: 13px; margin-top: 9px; min-height: 19px; }
+  .error { color: var(--bad); font-size: 13px; margin-top: 10px; white-space: pre-wrap; }
+  .facts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .fact { font-size: 12px; color: var(--dim); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+  .fact.on { color: var(--ok); border-color: #23483f; background: #0e1c19; }
+  .fact.warn { color: var(--warn); border-color: #4a3d1d; background: #1d1809; }
+  .fact.bad { color: var(--bad); border-color: #4a2626; background: #1c0f0f; }
+
+  /* ---------- mods ---------- */
+  .row { display: flex; align-items: center; gap: 10px; }
+  .mods-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .mods-head h2 { margin: 0; font-size: 17px; }
+  .mods-head .spacer { flex: 1; }
+  .drop { border: 1px dashed var(--line-2); border-radius: 12px; padding: 16px; text-align: center;
+    color: var(--dim); font-size: 13.5px; margin-bottom: 14px; }
+  .drop.hot { border-color: var(--accent); color: var(--accent); background: #0f1622; }
+  .mod { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: center;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; margin-bottom: 9px; }
+  .mod .name { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .mod .meta { color: var(--dim-2); font-size: 12.5px; grid-column: 1 / -1; }
+  .mod .desc { color: var(--dim); font-size: 13px; grid-column: 1 / -1; }
+  .badge { font-size: 11px; border-radius: 999px; padding: 2px 8px; border: 1px solid var(--line-2); color: var(--dim); }
+  .badge.ready { color: var(--ok); border-color: #23483f; background: #0e1c19; }
+  .badge.pending { color: var(--warn); border-color: #4a3d1d; background: #1d1809; }
+  .badge.failed { color: var(--bad); border-color: #4a2626; background: #1c0f0f; }
+  .badge.optional { color: var(--accent); border-color: #23405f; background: #0e1622; }
+  .mod .caps { grid-column: 1 / -1; display: flex; gap: 5px; flex-wrap: wrap; }
+  .cap { font-size: 11px; color: var(--dim-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; }
+  .cap.risk { color: var(--warn); border-color: #4a3d1d; }
+  .mod .actions { display: flex; gap: 6px; }
+  .mod .actions button { padding: 5px 10px; font-size: 12.5px; }
+  .mod .moderr { grid-column: 1 / -1; color: var(--bad); font-size: 12px; white-space: pre-wrap; }
+  .settings { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; font-size: 13.5px; }
+  .settings input[type=text] { width: 100%; background: #0d1117; border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); padding: 8px 10px; font: 13px ui-monospace, Menlo, monospace; }
+  .settings label { color: var(--dim); }
+
+  /* ---------- boot overlay ---------- */
+  #boot { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background:
+    radial-gradient(1200px 700px at 50% 0%, #16202e 0%, #0a0c10 65%); transition: opacity .4s ease; }
+  #boot.gone { opacity: 0; pointer-events: none; }
+  #boot .inner { width: min(520px, 90vw); text-align: center; }
+  #boot h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -.4px; }
+  #boot .tag { color: var(--dim); margin-bottom: 26px; }
+  #boot .bar { margin-top: 0; }
+  #boot .status { text-align: left; }
+  #frameHost { position: fixed; inset: 0; }
+  #frame { border: 0; width: 100%; height: 100%; display: none; background: #000; }
+  #toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 60;
+    background: #12161c; border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 14px;
+    opacity: 0; transition: opacity .2s; pointer-events: none; max-width: 80vw; }
   #toast.show { opacity: 1; }
-  #modsBtn { position: absolute; right: 12px; bottom: 12px; z-index: 9; }
-  kbd { background: #0d1116; border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; font-size: 12px; }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
-<div id="screen">
-  <div id="stage">
-    <div id="boot">
+<div id="shell">
+  <header>
+    <span class="mark" aria-hidden="true"></span>
+    <div>
+      <h1>WebMC</h1>
+      <div class="sub">Minecraft <span id="versionLabel">1.21.11</span> — in a tab, with JavaScript mods</div>
+    </div>
+    <nav>
+      <a href="gallery/">Mod gallery</a>
+      <a href="docs/API.md">Write a mod</a>
+      <a href="docs/INTERNALS.md">How it works</a>
+      <a href="https://github.com/AmphibianDev/webmc-jsmod">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="col">
       <div class="card">
-        <h1>Minecraft <span id="version">1.21.11</span></h1>
-        <div class="sub">compiled client, JavaScript mods, nothing streamed — the game runs in this tab.</div>
+        <h2>Play</h2>
+        <div class="muted" id="clientLine">The client is a compiled 1.21.11 build, checked by hash before it runs.</div>
+        <div class="play-row">
+          <button class="primary" id="play">Play</button>
+          <button id="stop" class="ghost hidden">Stop</button>
+          <span class="muted" id="elapsed"></span>
+        </div>
         <div class="bar"><i id="bar"></i></div>
         <div class="status" id="status">Ready. Nothing downloaded yet.</div>
-        <div class="row">
-          <button class="primary" id="go">Play</button>
-          <button id="modsBtnTop">Mods</button>
-          <button onclick="location.href='gallery/'">Mod gallery</button>
-          <div class="chips">
-            <span class="chip" id="chipClient">client</span>
-            <span class="chip" id="chipMods">mods</span>
-            <span class="chip" id="chipFabric">fabric bridge</span>
-          </div>
+        <div class="error" id="why"></div>
+        <div class="facts">
+          <span class="fact" id="factClient">client</span>
+          <span class="fact" id="factMods">mods</span>
+          <span class="fact" id="factHooks">in-game hooks</span>
+          <span class="fact" id="factPatches">mixins</span>
         </div>
-        <div class="status err" id="why"></div>
       </div>
-    </div>
-    <iframe id="frame" allow="cross-origin-isolated; fullscreen; autoplay; clipboard-write"
-            allowfullscreen referrerpolicy="no-referrer"></iframe>
-    <button id="modsBtn">Mods <kbd>F6</kbd></button>
-    <div id="mods">
-      <header>
+
+      <div class="card">
+        <h2>Settings</h2>
+        <div class="muted" style="margin-bottom:12px">These travel in the page URL, so a link can carry them.</div>
+        <div class="settings">
+          <label for="setInternals">Client internals (mixin patches)</label>
+          <select id="setInternals">
+            <option value="on">on</option>
+            <option value="off">off (mods load, patches stay planned)</option>
+          </select>
+          <label for="setPatches">Patch budget</label>
+          <input type="text" id="setPatches" value="128" inputmode="numeric" />
+          <label for="setGateway">Multiplayer gateway</label>
+          <input type="text" id="setGateway" placeholder="wss://…/tunnel" />
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button id="applySettings">Apply &amp; reload</button>
+          <span class="muted">Stored as <code>?internals=…&amp;patches=…&amp;bridge=…</code></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>What this is</h2>
+        <div class="muted">
+          A browser client with its own JavaScript modding API: mods load at play time from this page, a
+          dropped file or the gallery. A converted Fabric mod keeps its events, keybinds, commands and
+          modules; its mixins are named against the compiled client (17,000+ methods, fields, accessors)
+          and applied inside the safety valves — a patch that hurts the client is rolled back by name.
+        </div>
+      </div>
+    </section>
+
+    <section class="col right">
+      <div class="mods-head">
         <h2>Mods</h2>
-        <button id="modsClose">Close</button>
-      </header>
-      <div class="body">
-        <div class="drop" id="drop">Drop a <code>.jsmod</code> / <code>.zip</code> / <code>.js</code> here, or click to choose a file.<br>
-          Packages are stored in this browser and load at play time.</div>
-        <input type="file" id="file" accept=".jsmod,.zip,.js,.json" multiple hidden>
-        <div id="modlist"><div class="empty">Loading the mod list…</div></div>
+        <span class="muted" id="modsCount"></span>
+        <span class="spacer"></span>
+        <button id="addMod">Add mod…</button>
+        <a href="gallery/" style="font-size:13.5px">Gallery →</a>
       </div>
+      <div class="drop" id="drop">
+        Drop a <code>.jsmod</code>, <code>.zip</code> or <code>.js</code> here — or click to choose a file.<br />
+        Packages stay in this browser and load at play time; nothing is uploaded anywhere.
+      </div>
+      <input type="file" id="file" accept=".jsmod,.zip,.js,.json" multiple hidden />
+      <div id="modlist"></div>
+      <div id="ondemand"></div>
+      <div class="card" style="margin-top:16px">
+        <h2 style="font-size:15px">Keys</h2>
+        <div class="muted"><kbd>F7</kbd> command prompt · <kbd>F8</kbd> module list · <kbd>H</kbd>/<kbd>V</kbd>/<kbd>C</kbd> example mods · <kbd>F6</kbd> mods panel in the game</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- `cross-origin-isolated` in the permission policy is not decoration: the compiled client uses
+     SharedArrayBuffer-backed memory when it can, and without it the engine's boot takes a fallback
+     path that does not finish installing its input/state hooks. A frame that boots halfway is the
+     bug this attribute exists to prevent. -->
+<div id="frameHost"><iframe id="frame" allow="cross-origin-isolated; fullscreen; autoplay; clipboard-write; gamepad; pointer-lock"
+  allowfullscreen referrerpolicy="no-referrer"></iframe></div>
+
+<div id="boot">
+  <div class="inner">
+    <h1>WebMC</h1>
+    <div class="tag">Minecraft <span id="bootVersion">1.21.11</span>, compiled client, JavaScript mods</div>
+    <div class="bar"><i id="bootBar"></i></div>
+    <div class="status" id="bootStatus">Starting…</div>
+    <div class="row" style="justify-content:center;margin-top:18px">
+      <button class="primary" id="bootPlay">Play</button>
+      <button id="bootGallery" class="ghost">Browse mods</button>
     </div>
   </div>
 </div>
+
 <div id="toast"></div>
 
 <script>
-/* ============================================================================================
- * The loader. It does three things:
- *   1. fetch the client's chunks and check every hash (the client bytes are never trusted blind),
- *   2. read the mod index and gather the sources that load at play time,
- *   3. splice a bootstrap into the client's <head> and open it in the frame.
- *
- * The bootstrap is the seam: it runs before any of the client's own scripts, so the JS mod
- * runtime is installed before the game's main() runs. Nothing here patches the client: the
- * runtime talks to it through the window surface the client already publishes.
- * ========================================================================================== */
+/* ================================================================================================
+ * The page. It does four things and knows nothing about the game's internals:
+ *   1. fetch the client's chunks, check every hash (per chunk and for the whole client),
+ *   2. splice a bootstrap into the client's <head>: the shell (which removes the compiled engine's
+ *      own chrome and branding), the mod runtime, and the mod sources that load at play time,
+ *   3. run the client in a frame and hand the player the mods panel, the gallery and the toggles,
+ *   4. watch: if the runtime never appears, say so instead of pretending the client is loading.
+ * ============================================================================================== */
 (function () {
   "use strict";
 
+  var params = new URLSearchParams(location.search);
   var BASE = new URL(".", location.href).href;
-  // ?client=<dir> picks a build by hand. Without it, the internals-patched build is used when it is
-  // there (it is the same client with two assignments added at the end of its compiled module), and
-  // the pristine one otherwise.
-  var version = new URLSearchParams(location.search).get("client") || "1.21.11-internals";
+  var version = params.get("client") || "1.21.11-internals";
   var frame = document.getElementById("frame");
   var boot = document.getElementById("boot");
+  var bootBar = document.getElementById("bootBar");
+  var bootStatus = document.getElementById("bootStatus");
   var bar = document.getElementById("bar");
   var status = document.getElementById("status");
   var why = document.getElementById("why");
-  var go = document.getElementById("go");
-  var chipMods = document.getElementById("chipMods");
-  var chipClient = document.getElementById("chipClient");
-  var chipFabric = document.getElementById("chipFabric");
-  var toastEl = document.getElementById("toast");
-  var modsPanel = document.getElementById("mods");
+  var playButton = document.getElementById("play");
+  var stopButton = document.getElementById("stop");
+  var elapsedLabel = document.getElementById("elapsed");
+  var facts = {
+    client: document.getElementById("factClient"),
+    mods: document.getElementById("factMods"),
+    hooks: document.getElementById("factHooks"),
+    patches: document.getElementById("factPatches")
+  };
+  var modsPanel = {
+    builtin: [],
+    stored: [],
+    running: new Map(),
+    optional: []
+  };
+  var startedAt = 0;
+  var runtimeWatchdog = 0;
+  var bootDone = false;
 
+  function fmtMB(bytes) { return (bytes / 1048576).toFixed(1) + " MB"; }
+  function esc(text) { return String(text == null ? "" : text).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function toast(text) {
-    toastEl.textContent = text;
-    toastEl.classList.add("show");
-    clearTimeout(toast.__t);
-    toast.__t = setTimeout(function () { toastEl.classList.remove("show"); }, 3200);
+    var el = document.getElementById("toast");
+    el.textContent = text; el.classList.add("show");
+    clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove("show"); }, 3200);
+  }
+  function progress(fraction, text) {
+    var percent = Math.max(2, Math.round(fraction * 100));
+    bar.style.width = percent + "%";
+    bootBar.style.width = percent + "%";
+    if (text) { status.textContent = text; bootStatus.textContent = text; }
   }
 
-  function progress(part, text) {
-    bar.style.width = Math.max(2, Math.round(part * 100)) + "%";
-    if (text) { status.textContent = text; }
+  async function hex(bytes) {
+    if (!window.crypto || !crypto.subtle) { return null; }
+    var digest = await crypto.subtle.digest("SHA-256", bytes);
+    return Array.prototype.map.call(new Uint8Array(digest), function (b) { return b.toString(16).padStart(2, "0"); }).join("");
   }
-
-  function hex(bytes) {
-    return Array.prototype.map.call(new Uint8Array(bytes), function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+  async function fetchBytes(url) {
+    var response = await fetch(url, { cache: "force-cache" });
+    if (!response.ok) { throw new Error(url + ": HTTP " + response.status); }
+    return new Uint8Array(await response.arrayBuffer());
   }
-  async function digest(bytes) {
-    if (!window.crypto || !crypto.subtle) { return null; } // an insecure origin has no crypto
-    return hex(await crypto.subtle.digest("SHA-256", bytes));
-  }
-
   async function fetchText(url) {
     var response = await fetch(url, { cache: "no-cache" });
     if (!response.ok) { throw new Error(url + ": HTTP " + response.status); }
     return await response.text();
   }
 
-  /* Encode a mod source so it can travel inside a script element without ever closing it. The
-   * sequences that would confuse the HTML parser are built from parts, so this file's own script
-   * never contains them literally. */
-  var CLOSE_TAG = "</" + "script";
-  var OPEN_TAG = "<" + "script";
-  var COMMENT_OPEN = "<" + "!--";
-  function inlineSource(source) {
-    return JSON.stringify(source)
-      .replace(new RegExp("<\\/", "g"), "<\\/")
-      .replace(new RegExp(COMMENT_OPEN, "g"), "<\\!" + "--");
+  /* ---------------------------------------------------------------- mods ---------------------------------- */
+  function stored() {
+    try { return JSON.parse(localStorage.getItem("webmc.jsmod.packages.v1") || "[]"); } catch (e) { return []; }
   }
-
-  var optional = [];
-
-  async function gatherMods() {
-    var list = [];
-    var index = null;
+  function saveStored(list) {
+    try { localStorage.setItem("webmc.jsmod.packages.v1", JSON.stringify(list)); }
+    catch (e) { toast("This browser refused to store the package (quota?)"); }
+  }
+  function installed() {
+    var byId = {};
+    (modsPanel.builtin || []).forEach(function (m) { byId[m.id] = Object.assign({ builtin: true }, m); });
+    stored().forEach(function (m) {
+      if (m.id.charAt(0) === "@") { var target = byId[m.target]; if (target) { target.disabled = m.disabled; } return; }
+      byId[m.id] = Object.assign({ from: "storage" }, m);
+    });
+    return Object.keys(byId).map(function (id) { return byId[id]; });
+  }
+  function isDisabled(list, id) {
+    var override = stored().filter(function (m) { return m.id === "@" + id; })[0];
+    return !!(override && override.disabled);
+  }
+  async function loadBuiltinIndex() {
     try {
-      index = JSON.parse(await fetchText(BASE + "mods/index.json"));
-    } catch (error) {
-      index = { mods: [] };
-    }
-    var entries = (index && Array.isArray(index.mods)) ? index.mods : [];
-    var wanted = (new URLSearchParams(location.search).get("load") || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
-    for (var i = 0; i < entries.length; i++) {
-      var entry = entries[i];
-      if (!entry || !entry.entry) { continue; }
-      // A mod marked optional is not inlined into the client: it is listed in the Mods panel and
-      // fetched only when the player (or ?load=id) asks for it.
-      if (entry.optional) { optional.push(entry); continue; }
-      try {
-        var source = await fetchText(entry.url || (BASE + "mods/" + String(entry.entry).replace(/^\.?\//, "")));
-        list.push({ id: entry.id || entry.entry, source: source, from: "index" });
-      } catch (error) {
-        list.push({ id: entry.id || entry.entry, error: String(error && error.message || error), from: "index" });
-      }
-    }
-    window.__webmcOptionalIndex = optional;
-    return list;
+      var index = JSON.parse(await fetchText(BASE + "mods/index.json"));
+      modsPanel.builtin = index.mods || [];
+    } catch (error) { modsPanel.builtin = []; }
   }
 
-  /* Splice the bootstrap into <head>. The client is ~108 MB, so this is done on bytes: turning it
-   * into a string to run a replace on would be the one slow thing in the whole page. */
-  function inject(bytes, bootstrap) {
-    var needle = new TextEncoder().encode("<head>");
-    var at = -1;
-    outer:
-    for (var i = 0; i < bytes.length - needle.length; i++) {
-      for (var j = 0; j < needle.length; j++) {
-        if (bytes[i + j] !== needle[j]) { continue outer; }
-      }
-      at = i; break;
-    }
-    if (at < 0) { return bytes; }
-    var script = new TextEncoder().encode(bootstrap.join("\n"));
-    var out = new Uint8Array(bytes.length + script.length - needle.length);
-    out.set(bytes.subarray(0, at), 0);
-    out.set(script, at);
-    out.set(bytes.subarray(at + needle.length), at + script.length);
-    return out;
+  /* A .jsmod package is a zip; rather than pulling a zip reader into the page, the pieces the loader
+   * needs live next to the mod in the repo, and a dropped file is read as text. */
+  async function loadOptionalIndex() {
+    try { modsPanel.optional = JSON.parse(await fetchText(BASE + "mods/optional.json")).mods || []; }
+    catch (error) { modsPanel.optional = []; }
   }
-
-  async function play() {
-    go.disabled = true;
-    why.textContent = "";
-    try {
-      var manifest = JSON.parse(await fetchText(BASE + "client/" + version + "/manifest.json"));
-      document.getElementById("version").textContent = manifest.title || version;
-      chipClient.textContent = "client " + (manifest.title || version);
-      chipClient.className = "chip on";
-
-      progress(0.01, "Reading the mod index…");
-      var mods = await gatherMods();
-      var failed = mods.filter(function (m) { return m.error; });
-      var good = mods.filter(function (m) { return !m.error; });
-      chipMods.textContent = good.length ? ("mods " + good.length) : "mods none";
-      chipMods.className = "chip " + (good.length ? "on" : "");
-      if (failed.length) {
-        chipMods.className = "chip bad";
-        toast(failed.length + " mod(s) failed to load: " + failed.map(function (m) { return m.id; }).join(", "));
-      }
-
-      progress(0.05, "Loading " + (manifest.title || version) + " — " + fmt(manifest.total));
-      var parts = new Array(manifest.chunks.length);
-      var seen = 0;
-      await Promise.all(manifest.chunks.map(async function (chunk, index) {
-        var response = await fetch(BASE + "client/" + version + "/" + chunk.path, { cache: "force-cache" });
-        if (!response.ok) { throw new Error(chunk.path + ": HTTP " + response.status); }
-        var bytes = new Uint8Array(await response.arrayBuffer());
-        var got = await digest(bytes);
-        if (got && chunk.sha256 && got !== chunk.sha256) {
-          throw new Error(chunk.path + ": the bytes do not match their hash — the transfer was corrupted");
-        }
-        parts[index] = bytes;
-        seen += bytes.length;
-        progress(0.05 + 0.75 * (seen / manifest.total), "Loading " + (manifest.title || version) + " — " + fmt(seen) + " / " + fmt(manifest.total));
-      }));
-
-      var assembled = concat(parts);
-      var whole = await digest(assembled);
-      if (whole && manifest.sha256 && whole !== manifest.sha256) {
-        throw new Error("the reassembled client does not match its hash");
-      }
-
-      var bridge = new URLSearchParams(location.search).get("bridge")
-                || new URLSearchParams(location.search).get("gateway")
-                || (function () { try { return localStorage.getItem("webmc.gateway") || ""; } catch (e) { return ""; } })();
-
-      var bootstrap = [];
-      bootstrap.push("<head>" + OPEN_TAG + ">/* WebMC JS: the client's bootstrap. Runs before every client script. */");
-      if (bridge) {
-        bootstrap.push("globalThis.__gaiusBridgeUrl = " + JSON.stringify(bridge.replace(/\/$/, "") + "/tunnel") + ";");
-        bootstrap.push("globalThis.__gaiusBridgeUrls = [globalThis.__gaiusBridgeUrl];");
-        chipFabric.textContent = "fabric bridge on";
-        chipFabric.className = "chip on";
-      }
-      bootstrap.push("globalThis.__webmcClient = {");
-      bootstrap.push("  base: " + JSON.stringify(BASE) + ",");
-      bootstrap.push("  version: " + JSON.stringify(manifest.title || version) + ",");
-      bootstrap.push("  manifest: " + JSON.stringify({ sha256: manifest.sha256, bytes: manifest.bytes || manifest.total }) + ",");
-      bootstrap.push("  trustAll: " + (new URLSearchParams(location.search).get("consent") === "all") + ",");
-      // Version the two files that change between deploys: a CDN may hold an older copy for ten
-      // minutes, and a stale runtime next to a new client is a mixture nobody wants to debug.
-      var stamp = (manifest.sha256 || "").slice(0, 10) + "-" + (manifest.chunks ? manifest.chunks.length : 0);
-      bootstrap.push("  runtimeVersion: " + JSON.stringify(stamp) + ",");
-      bootstrap.push("  symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json?v=" + stamp) + ",");
-      bootstrap.push("  internals: " + (new URLSearchParams(location.search).get("internals") !== "off") + ",");
-      bootstrap.push("  patchCap: " + JSON.stringify(new URLSearchParams(location.search).get("patches") || ""));
-      bootstrap.push("};");
-      bootstrap.push("globalThis.__webmcMods = [");
-      for (var k = 0; k < good.length; k++) {
-        bootstrap.push("  { id: " + JSON.stringify(good[k].id) + ", from: " + JSON.stringify(good[k].from) +
-                       ", source: " + inlineSource(good[k].source) + " }" + (k + 1 < good.length ? "," : ""));
-      }
-      bootstrap.push("];");
-      bootstrap.push("<" + "/" + "script>");
-      // The runtime is a classic script in the head, so the parser blocks until it has run:
-      // every mod's hooks exist before the client's own first script executes.
-      bootstrap.push(OPEN_TAG + ' src="' + BASE + "runtime/dist/webmc.js?v=" + stamp + '">' + CLOSE_TAG + ">");
-      var withRuntime = inject(assembled, bootstrap);
-
-      var blob = new Blob([withRuntime], { type: "text/html" });
-      progress(0.98, "Opening the client…");
-      frame.src = URL.createObjectURL(blob);
-      frame.style.display = "block";
-      boot.style.display = "none";
-      frame.focus();
-
-      // The game takes over from here; the runtime keeps talking to this page.
-      window.__webmcLoader = {
-        mods: good.map(function (m) { return m.id; })
-      };
-    } catch (error) {
-      go.disabled = false;
-      why.textContent = "could not start: " + (error && error.message ? error.message : error);
-      why.className = "status err";
-    }
-  }
-
-  function fmt(bytes) { return (bytes / 1048576).toFixed(1) + " MB"; }
-  function concat(parts) {
-    var size = parts.reduce(function (total, part) { return total + part.length; }, 0);
-    var out = new Uint8Array(size);
-    var at = 0;
-    parts.forEach(function (part) { out.set(part, at); at += part.length; });
-    return out;
-  }
-
-  go.addEventListener("click", play);
-
-  /* Autostart, the way the previous page did it: the chunks are immutable and hashed, so if the
-   * browser already has them the page may as well go straight in. The button remains for anyone
-   * who stops it. `?autoplay=1` forces it even without a cache. */
-  if (new URLSearchParams(location.search).has("autoplay")) {
-    play();
-  } else if (typeof caches !== "undefined") {
-    caches.open("webmc-jsmod-clients-v1").then(function () { play(); }).catch(function () {});
-  }
-
-  /* ---- The mods drawer + package import -------------------------------------------------- */
-  var drawer = {
-    open: false,
-    list: [],
-    set: function (list) { this.list = list; renderMods(); }
-  };
+  function post(message) { try { frame.contentWindow.postMessage(message, "*"); } catch (e) {} }
 
   function renderMods() {
     var list = document.getElementById("modlist");
-    if (!drawer.list.length) {
-      list.innerHTML = '<div class="empty">No mods installed yet. Add one above; it loads the next time you press Play (or immediately, if the game is already running).</div>';
+    var all = installed();
+    document.getElementById("modsCount").textContent = all.length ? all.length + " installed" : "";
+    if (!all.length) {
+      list.innerHTML = '<div class="muted">No mods yet. Add one above, or take one from the <a href="gallery/">gallery</a>.</div>';
       return;
     }
     list.innerHTML = "";
-    drawer.list.forEach(function (mod) {
+    all.forEach(function (mod) {
+      var running = modsPanel.running.get(mod.id) || {};
+      var state = running.state || (mod.disabled ? "disabled" : "not loaded");
+      var badgeClass = state === "ready" ? "ready" : (state === "failed" ? "failed" : (state === "pending" || state === "not loaded" ? "pending" : ""));
+      var caps = (running.capabilities || mod.capabilities || []).map(function (cap) {
+        return '<span class="cap' + (/(write|patch|internals|inject|block)/.test(cap) ? " risk" : "") + '">' + esc(cap) + "</span>";
+      }).join("");
       var el = document.createElement("div");
       el.className = "mod";
-      var caps = (mod.capabilities || []).map(function (c) {
-        return '<span class="cap' + (/(write|patch|network|storage)/.test(c) ? " risk" : "") + '">' + escapeHtml(c) + "</span>";
-      }).join("");
       el.innerHTML =
-        '<div class="name">' + escapeHtml(mod.name || mod.id) + "</div>" +
-        '<div class="meta">' + escapeHtml(mod.id) + (mod.version ? " · v" + escapeHtml(String(mod.version)) : "") +
-        (mod.authors && mod.authors.length ? " · " + escapeHtml(mod.authors.join(", ")) : "") + "</div>" +
+        '<div class="name">' + esc(running.name || mod.name || mod.id) +
+          '<span class="badge ' + badgeClass + '">' + esc(state) + "</span>" +
+          (mod.optional ? '<span class="badge optional">load on demand</span>' : "") + "</div>" +
+        '<div class="meta">' + esc(mod.id) + (running.version || mod.version ? " · v" + esc(running.version || mod.version) : "") +
+          (running.patches ? " · " + running.patches + " patch plan(s)" : "") +
+          (running.errors && running.errors.length ? " · " + running.errors.length + " error(s)" : "") + "</div>" +
+        (mod.summary || running.description ? '<div class="desc">' + esc(mod.summary || running.description) + "</div>" : "") +
         (caps ? '<div class="caps">' + caps + "</div>" : "") +
-        '<div class="actions"></div>' +
-        (mod.error ? '<div class="error">' + escapeHtml(String(mod.error)) + "</div>" : "");
+        (running.errors && running.errors.length ? '<div class="moderr">' + esc(running.errors[0].text || "") + "</div>" : "") +
+        '<div class="actions"></div>';
       var actions = el.querySelector(".actions");
-      var remove = document.createElement("button");
-      remove.textContent = "Remove";
-      remove.onclick = function () { removeMod(mod.id); };
-      actions.appendChild(remove);
-      if (mod.optional && mod.builtin) {
-        var load = document.createElement("button");
-        load.textContent = "Load now";
-        load.onclick = function () { loadOptional(mod.id); };
-        actions.appendChild(load);
-      }
-      if (mod.disabled) {
-        var enable = document.createElement("button");
-        enable.textContent = "Enable";
-        enable.onclick = function () { setDisabled(mod.id, false); };
-        actions.appendChild(enable);
-      } else {
-        var disable = document.createElement("button");
-        disable.textContent = "Disable";
-        disable.onclick = function () { setDisabled(mod.id, true); };
-        actions.appendChild(disable);
-      }
+      function act(label, fn) { var b = document.createElement("button"); b.textContent = label; b.onclick = fn; actions.appendChild(b); }
+      if (mod.optional && !mod.from) { act("Load now", function () { loadOptional(mod.id); }); }
+      if (mod.disabled) { act("Enable", function () { setDisabled(mod.id, false); }); }
+      else { act("Disable", function () { setDisabled(mod.id, true); }); }
+      if (!mod.builtin) { act("Remove", function () { removeMod(mod.id); }); }
       list.appendChild(el);
     });
+    renderOnDemand();
   }
 
-  function escapeHtml(text) {
-    return String(text).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  /* The heavy mods: a converted Meteor or JEI is megabytes of source, so the page fetches it when a
+   * player asks instead of inlining it into the client document. */
+  function renderOnDemand() {
+    var host = document.getElementById("ondemand");
+    var list = optionalList().filter(function (mod) { return mod.id !== "@" && !(mod.id in Object.fromEntries(installed().map(function (m) { return [m.id, 1]; }))); });
+    if (!list.length) { host.innerHTML = ""; return; }
+    host.innerHTML = '<div class="mods-head" style="margin-top:18px"><h2 style="font-size:15px">On demand</h2>' +
+      '<span class="muted">heavy mods, fetched only when asked</span></div>';
+    list.forEach(function (mod) {
+      var el = document.createElement("div");
+      el.className = "mod";
+      var size = mod.bytes ? " · " + (mod.bytes / 1048576).toFixed(1) + " MB" : "";
+      el.innerHTML = '<div class="name">' + esc(mod.name) + '<span class="badge optional">load on demand</span></div>' +
+        '<div class="meta">' + esc(mod.id) + size + '</div>' +
+        (mod.summary ? '<div class="desc">' + esc(mod.summary) + '</div>' : "") +
+        '<div class="actions"></div>';
+      var button = document.createElement("button");
+      button.textContent = "Load";
+      button.onclick = function () { loadOptional(mod.id); };
+      el.querySelector(".actions").appendChild(button);
+      host.appendChild(el);
     });
   }
 
-  /* -------- package storage: built-in mods + things the player added, in localStorage -------- */
-  var STORE = "webmc.jsmod.packages.v1";
-
-  function stored() {
-    try { return JSON.parse(localStorage.getItem(STORE) || "[]"); } catch (e) { return []; }
-  }
-  function saveStored(list) {
-    try { localStorage.setItem(STORE, JSON.stringify(list)); } catch (e) { toast("This browser refused to store the package (quota?)"); }
-  }
-
-  function installedList() {
-    var builtins = (window.__webmcBuiltinIndex || []).map(function (m) {
-      return Object.assign({ builtin: true, optional: !!m.optional }, m);
-    });
-    var added = stored().map(function (m) {
-      return Object.assign({ from: "storage" }, m);
-    });
-    var byId = {};
-    builtins.concat(added).forEach(function (m) { byId[m.id] = m; });
-    return Object.keys(byId).map(function (id) { return byId[id]; });
-  }
-  function addMod(mod) {
-    var list = stored().filter(function (m) { return m.id !== mod.id; });
-    list.push(mod);
-    saveStored(list);
-    drawer.set(installedList());
-    post({ kind: "webmc:mod-added", mod: { id: mod.id, source: mod.source, from: "storage" } });
-  }
-  function removeMod(id) {
-    saveStored(stored().filter(function (m) { return m.id !== id; }));
-    drawer.set(installedList());
-    post({ kind: "webmc:mod-removed", id: id });
-    toast("Removed " + id);
-  }
-  function setDisabled(id, disabled) {
-    var list = stored();
-    var found = false;
-    list.forEach(function (m) { if (m.id === id) { m.disabled = disabled; found = true; } });
-    if (!found) {
-      // A built-in mod: keep the choice as an override.
-      var overrides = stored().filter(function (m) { return m.id !== "@" + id; });
-      overrides.push({ id: "@" + id, target: id, disabled: disabled, source: "" });
-      saveStored(overrides);
-    } else { saveStored(list); }
-    drawer.set(installedList());
-    post({ kind: "webmc:mod-disabled", id: id, disabled: disabled });
-  }
-
-  function post(message) {
-    try { frame.contentWindow.postMessage(message, "*"); } catch (e) {}
-  }
-
-  /* Fetch an optional mod and hand it to the running game. This is the same door the drag-and-drop
-   * import uses, so a mod added this way is live immediately — no reload. */
-  /* Optional mods are fetched by this page and handed to the running game: an 18 MB source inlined
-   * into the client's bootstrap would make a 150 MB document, and localStorage would refuse to keep
-   * it. What is stored is a reference, so the mod comes back on the next visit. */
-  function storedReferences() {
-    return stored().filter(function (m) { return m.url && !m.source; });
-  }
-
-  async function loadOptional(id, options) {
-    var entry = (window.__webmcOptionalIndex || []).filter(function (m) { return m.id === id; })[0];
-    if (!entry && options && options.url) { entry = { id: id, entry: null, url: options.url }; }
-    if (!entry) { toast("No optional mod called " + id); return; }
-    try {
-      toast("Loading " + id + "…");
-      var source = await fetchText(entry.url || (BASE + "mods/" + String(entry.entry).replace(/^\.?\//, "")));
-      if (!options || options.persist !== false) {
-        var packages = stored().filter(function (m) { return m.id !== id; });
-        packages.push({ id: entry.id, name: entry.name || entry.id, version: entry.version || "", url: entry.url || (BASE + "mods/" + String(entry.entry).replace(/^\.?\//, "")), from: "optional" });
-        saveStored(packages);
-      }
-      post({ kind: "webmc:mod-added", mod: { id: entry.id, source: source, from: "optional" } });
-      drawer.set(installedList());
-      toast(id + " is loading in the game now");
-    } catch (error) {
-      toast("Could not load " + id + ": " + (error && error.message || error));
-    }
-  }
-
-  /* Automated checks: `?report=1` makes this page forward everything the runtime says to the
-   * server it was served from, so a headless browser can be inspected from a shell. */
+  /* Automated checks: `?report=1` makes this page forward everything the runtime says to the server
+   * it was served from, so a headless browser can be read from a shell. */
   var reportTo = new URLSearchParams(location.search).has("report") ? (BASE + "__report") : null;
   function report(payload) {
     if (!reportTo) { return; }
@@ -502,9 +413,10 @@
       payload.at = Date.now();
       if (navigator.sendBeacon) { navigator.sendBeacon(reportTo, JSON.stringify(payload)); }
       else { fetch(reportTo, { method: "POST", body: JSON.stringify(payload), keepalive: true }); }
-    } catch (e) {}
+    } catch (error) { /* the check is optional */ }
   }
   window.addEventListener("error", function (event) { report({ kind: "page:error", text: String(event.message || "") }); });
+  window.__webmcLoadOptional = function (id, options) { return loadOptional(id, options); };
 
   /* -------- reading .jsmod / .zip packages in the page ---------------------------------------- */
   async function readPackage(file) {
@@ -521,16 +433,14 @@
     }
     var text = new TextDecoder().decode(buffer);
     if (/^\s*[[{]/.test(text) && /"source"\s*:/.test(text)) {
-      // A packaged JSON: { id, manifest, source }
       var json = JSON.parse(text);
       return { id: json.id, manifest: json.manifest || {}, source: json.source };
     }
-    // A bare .js file with a manifest comment header, or nothing at all.
-    var id = (file.name || "mod").replace(/\.(jsmod|zip|js)$/i, "");
+    var id = (file.name || "mod").replace(/\.(jsmod|zip|js|json)$/i, "");
     var match = /\/\*\s*webmc\.mod\s*(\{[\s\S]*?\})\s*\*\//.exec(text);
-    var manifest2 = {};
-    if (match) { try { manifest2 = JSON.parse(match[1]); } catch (e) {} }
-    return { id: manifest2.id || id, manifest: manifest2, source: text };
+    var header = {};
+    if (match) { try { header = JSON.parse(match[1]); } catch (e) {} }
+    return { id: header.id || id, manifest: header, source: text };
   }
 
   function looksLikeZip(bytes) {
@@ -541,7 +451,6 @@
    * stored entries need nothing. */
   async function unzip(bytes) {
     var view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    // Find the end-of-central-directory record.
     var eocd = -1;
     for (var i = bytes.length - 22; i >= 0 && i > bytes.length - 65558; i--) {
       if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
@@ -563,13 +472,9 @@
       var localExtraLength = view.getUint16(localOffset + 28, true);
       var dataStart = localOffset + 30 + localNameLength + localExtraLength;
       var data = bytes.subarray(dataStart, dataStart + compressedSize);
-      if (method === 0) {
-        files[name] = data;
-      } else if (method === 8) {
-        files[name] = await inflateRaw(data);
-      } else {
-        throw new Error("zip entry " + name + " uses compression method " + method);
-      }
+      if (method === 0) { files[name] = data; }
+      else if (method === 8) { files[name] = await inflateRaw(data); }
+      else { throw new Error("zip entry " + name + " uses compression method " + method); }
       offset += 46 + nameLength + extraLength + commentLength;
     }
     return files;
@@ -583,75 +488,454 @@
     return new Uint8Array(await new Response(stream).arrayBuffer());
   }
 
-  /* -------- drag & drop + file picker --------------------------------------------------------- */
+  function setDisabled(id, disabled) {
+    var list = stored().filter(function (m) { return m.id !== "@" + id; });
+    list.push({ id: "@" + id, target: id, disabled: !!disabled });
+    saveStored(list);
+    post({ kind: "webmc:mod-disabled", id: id, disabled: !!disabled });
+    renderMods();
+  }
+  function removeMod(id) {
+    saveStored(stored().filter(function (m) { return m.id !== id; }));
+    post({ kind: "webmc:mod-removed", id: id });
+    renderMods();
+    toast("Removed " + id);
+  }
+
+  /* Optional mods are fetched by the page and handed to the running game: inlining a 15 MB source
+   * into the client's bootstrap would make a 150 MB document, and localStorage would refuse it. */
+  function optionalEntry(id) {
+    var fromIndex = (modsPanel.builtin || []).filter(function (m) { return m.id === id && m.optional; })[0];
+    var fromList = (modsPanel.optional || []).filter(function (m) { return m.id === id; })[0];
+    var fromStored = stored().filter(function (m) { return m.id === id && m.url; })[0];
+    return fromIndex || fromList || (fromStored ? { id: id, url: fromStored.url, name: fromStored.name } : null);
+  }
+  function optionalList() {
+    var ids = {};
+    (modsPanel.builtin || []).forEach(function (m) { if (m.optional) { ids[m.id] = m; } });
+    (modsPanel.optional || []).forEach(function (m) { ids[m.id] = Object.assign(ids[m.id] || {}, m); });
+    stored().forEach(function (m) { if (m.url) { ids[m.id] = Object.assign(ids[m.id] || { id: m.id }, { url: m.url, name: m.name || m.id, optional: true }); } });
+    return Object.keys(ids).map(function (id) {
+      var entry = ids[id];
+      return { id: id, name: entry.name || id, summary: entry.summary || entry.description || "", optional: true, url: entry.url || null, entry: entry.entry || null, size: entry.size || null };
+    });
+  }
+
+  async function loadOptional(id) {
+    var entry = optionalEntry(id);
+    if (!entry && !optionalList().length) { toast("No such mod: " + id); return; }
+    try {
+      toast("Loading " + id + "…");
+      var url = entry && entry.url ? entry.url : (BASE + "mods/" + String((entry && entry.entry) || "").replace(/^\.?\//, ""));
+      var source = await fetchText(url);
+      var list = stored().filter(function (m) { return m.id !== id; });
+      if (!/^blob:/.test(url)) { list.push({ id: id, name: entry.name || id, url: url, from: "optional" }); saveStored(list); }
+      post({ kind: "webmc:mod-added", mod: { id: id, source: source, from: "optional" } });
+      toast(id + " is loading in the game now");
+    } catch (error) {
+      toast("Could not load " + id + ": " + (error && error.message || error));
+    }
+  }
+
+  /* ---------------------------------------------------------------- the loader ----------------------------- */
+  async function gatherMods() {
+    var list = [];
+    for (var i = 0; i < (modsPanel.builtin || []).length; i++) {
+      var entry = modsPanel.builtin[i];
+      if (!entry || !entry.entry || entry.optional) { continue; }
+      if (isDisabled(null, entry.id)) { continue; }
+      try {
+        list.push({ id: entry.id, source: await fetchText(BASE + "mods/" + String(entry.entry).replace(/^\.?\//, "")), from: "index" });
+      } catch (error) {
+        toast("Could not read " + entry.id + ": " + (error && error.message || error));
+      }
+    }
+    for (var k = 0; k < stored().length; k++) {
+      var mod = stored()[k];
+      if (!mod.source || mod.id.charAt(0) === "@") { continue; }
+      list.push({ id: mod.id, source: mod.source, from: "storage" });
+    }
+    return list;
+  }
+
+  /* Encode a mod source so it can travel inside a script element without ever closing it. The
+   * sequences that would confuse the HTML parser are built from parts, so this page's own script
+   * never contains them literally. */
+  var CLOSE_TAG = "</" + "script";
+  var OPEN_TAG = "<" + "script";
+  var COMMENT_OPEN = "<" + "!--";
+  function inlineSource(source) {
+    return JSON.stringify(source)
+      .replace(new RegExp("<\\/", "g"), "<\\/")
+      .replace(new RegExp(COMMENT_OPEN, "g"), "<!\\" + "--");
+  }
+
+  function inject(bytes, lines) {
+    var needle = new TextEncoder().encode("<head>");
+    var at = -1;
+    outer:
+    for (var i = 0; i < bytes.length - needle.length; i++) {
+      for (var j = 0; j < needle.length; j++) { if (bytes[i + j] !== needle[j]) { continue outer; } }
+      at = i; break;
+    }
+    if (at < 0) { return bytes; }
+    var script = new TextEncoder().encode(lines.join("\n"));
+    var out = new Uint8Array(bytes.length + script.length - needle.length);
+    out.set(bytes.subarray(0, at), 0);
+    out.set(script, at);
+    out.set(bytes.subarray(at + needle.length), at + script.length);
+    return out;
+  }
+
+  function concat(parts) {
+    var total = parts.reduce(function (sum, part) { return sum + part.length; }, 0);
+    var out = new Uint8Array(total);
+    var at = 0;
+    parts.forEach(function (part) { out.set(part, at); at += part.length; });
+    return out;
+  }
+
+  async function play() {
+    playButton.disabled = true;
+    why.textContent = "";
+    startedAt = Date.now();
+    try {
+      var manifest = JSON.parse(await fetchText(BASE + "client/" + version + "/manifest.json"));
+      document.getElementById("versionLabel").textContent = manifest.title || version;
+      document.getElementById("bootVersion").textContent = manifest.title || version;
+      facts.client.textContent = "client " + (manifest.title || version);
+      facts.client.className = "fact on";
+
+      progress(0.01, "Reading the mod index…");
+      await loadBuiltinIndex();
+      await loadOptionalIndex();
+      var mods = await gatherMods();
+      facts.mods.textContent = mods.length ? "mods " + mods.length : "mods none";
+      facts.mods.className = "fact " + (mods.length ? "on" : "");
+
+      progress(0.05, "Loading " + (manifest.title || version) + " — " + fmtMB(manifest.total));
+      var parts = new Array(manifest.chunks.length);
+      var seen = 0;
+      await Promise.all(manifest.chunks.map(async function (chunk, index) {
+        var bytes = await fetchBytes(BASE + "client/" + version + "/" + chunk.path);
+        var got = await hex(bytes);
+        if (got && chunk.sha256 && got !== chunk.sha256) {
+          throw new Error(chunk.path + ": the bytes do not match their hash — the transfer was corrupted");
+        }
+        parts[index] = bytes;
+        seen += bytes.length;
+        progress(0.05 + 0.75 * (seen / manifest.total), "Loading " + (manifest.title || version) + " — " + fmtMB(seen) + " / " + fmtMB(manifest.total));
+      }));
+      var assembled = concat(parts);
+      var whole = await hex(assembled);
+      if (whole && manifest.sha256 && whole !== manifest.sha256) { throw new Error("the reassembled client does not match its hash"); }
+
+      var bridge = params.get("bridge") || params.get("gateway")
+        || (function () { try { return localStorage.getItem("webmc.gateway") || ""; } catch (e) { return ""; } })();
+      var stamp = (manifest.sha256 || "").slice(0, 10);
+      var bootstrap = [];
+      bootstrap.push("<head><script>/* WebMC: bootstrap. Runs before every client script. */");
+      if (bridge) {
+        bootstrap.push("globalThis.__gaiusBridgeUrl = " + JSON.stringify(bridge.replace(/\/$/, "") + "/tunnel") + ";");
+        bootstrap.push("globalThis.__gaiusBridgeUrls = [globalThis.__gaiusBridgeUrl];");
+        facts.hooks.className = "fact on";
+      }
+      bootstrap.push("globalThis.__webmcClient = { base: " + JSON.stringify(BASE) + ", version: " + JSON.stringify(manifest.title || version) +
+        ", manifest: " + JSON.stringify({ sha256: manifest.sha256, bytes: manifest.bytes || manifest.total }) +
+        ", runtimeVersion: " + JSON.stringify(stamp) +
+        ", trustAll: " + (params.get("consent") === "all") +
+        ", internals: " + (params.get("internals") !== "off") +
+        ", patchCap: " + JSON.stringify(params.get("patches") || "") +
+        ", symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json?v=" + stamp) + " };");
+      bootstrap.push("globalThis.__webmcMods = [");
+      for (var i = 0; i < mods.length; i++) {
+        bootstrap.push("  { id: " + JSON.stringify(mods[i].id) + ", from: " + JSON.stringify(mods[i].from) + ", source: " + inlineSource(mods[i].source) + " }" + (i + 1 < mods.length ? "," : ""));
+      }
+      bootstrap.push("];");
+      bootstrap.push("<\/script>");
+      if (params.get("shell") !== "off") {
+        bootstrap.push('<link rel="stylesheet" href="' + BASE + "shell/kill-engine-chrome.css?v=" + stamp + '">');
+        bootstrap.push('<script src="' + BASE + "shell/shell.js?v=" + stamp + '"><\/script>');
+      }
+      if (params.get("shell") === "css") { bootstrap.pop(); }
+      bootstrap.push('<script src="' + BASE + "runtime/dist/webmc.js?v=" + stamp + '"><\/script>');
+
+      var blob = new Blob([inject(assembled, bootstrap)], { type: "text/html" });
+      progress(0.98, "Opening the client…");
+      frame.src = URL.createObjectURL(blob);
+      frame.style.display = "block";
+
+
+      try { frame.focus(); } catch (error) { /* the client also takes a click */ }
+      stopButton.classList.remove("hidden");
+      window.__webmcLoader = { mods: mods.map(function (m) { return m.id; }) };
+      // The boot screen lifts on the client's own signal (a screen or a level). If the client never
+      // describes one — a crash inside it, say — the screen still lifts, and the frame is what shows.
+      setTimeout(hideBoot, 30000);
+      watchClient();
+    } catch (error) {
+      playButton.disabled = false;
+      why.textContent = "could not start: " + (error && error.message || error);
+      progress(0, "Ready. Nothing downloaded yet.");
+    }
+  }
+
+  /* ------------------------------------------------------------ the client's own health ----------- */
+
+  /* A compiled client can fail in ways this page cannot see: it starts, then stops. Rather than
+   * leaving a black frame, this reads the client's *own* boot accounting (it publishes its progress
+   * on the window) and prints it. The rule the loader keeps: if the client is not describing itself,
+   * say so — never show a spinner that cannot end. */
+  function describeBoot(win) {
+    try {
+      var progress = win.__gaiusClientStartupProgress;
+      if (progress && typeof progress === "object") {
+        var parts = [];
+        Object.keys(progress).slice(0, 6).forEach(function (key) {
+          var value = progress[key];
+          if (value && typeof value === "object" && typeof value.label === "string") {
+            parts.push(value.label + (typeof value.fraction === "number" ? " " + Math.round(value.fraction * 100) + "%" : ""));
+          }
+        });
+        if (parts.length) { return "the client is " + parts.join(", "); }
+      }
+      var reload = win.__gaiusReloadProgress;
+      if (reload && typeof reload === "object") {
+        var done = reload.done || reload.completed || 0;
+        var total = reload.total || reload.count || 0;
+        if (total) { return "the client is reloading resources (" + done + "/" + total + ")"; }
+      }
+      if (win.__gaiusResourceReloadSectionActive) { return "the client is reloading resources"; }
+      if (win.__gaiusInitialBootPending) { return "the client is still in its own start-up"; }
+      return "the client has not reached a screen yet";
+    } catch (error) { return "the client has not reached a screen yet"; }
+  }
+
+  function watchClient() {
+    clearInterval(runtimeWatchdog);
+    var watchingFrom = Date.now();
+    runtimeWatchdog = setInterval(function () {
+      var win = null;
+      try { win = frame.contentWindow; } catch (error) { win = null; }
+      var alive = false;
+      var self = null;
+      try {
+        alive = !!(win && win.webmc && typeof win.webmc.selftest === "function");
+        if (alive) { self = win.webmc.selftest(); }
+      } catch (error) { alive = false; }
+      var seconds = Math.round((Date.now() - watchingFrom) / 1000);
+      if (!alive) {
+        if (seconds >= 25) {
+          why.textContent = "the client opened but its mod runtime never started. The runtime is " +
+            BASE + "runtime/dist/webmc.js — open that URL in a tab: if it downloads, the deploy is fine " +
+            "and the client's document was cut short; if it 404s, the deploy is missing it.";
+          facts.hooks.textContent = "in-game hooks missing";
+          facts.hooks.className = "fact bad";
+          clearInterval(runtimeWatchdog);
+        }
+        return;
+      }
+      var hooks = (self && self.hooks) || {};
+      if (hooks.input && hooks.state) {
+        facts.hooks.className = "fact on";
+        facts.hooks.textContent = "in-game hooks";
+        if (self && self.client && self.client.version) { facts.client.textContent = "client " + self.client.version; }
+        if (win && win.crossOriginIsolated === false) {
+          facts.client.title = "the client is running its compatibility path: this page was not served cross-origin isolated";
+        }
+        clearInterval(runtimeWatchdog);
+        return;
+      }
+      if (seconds >= 12) {
+        status.textContent = describeBoot(win);
+        status.title = "the launcher is reading the client's own start-up accounting, not guessing";
+      }
+    }, 3000);
+  }
+
+  function hideBoot() {
+    if (bootDone) { return; }
+    bootDone = true;
+    clearInterval(runtimeWatchdog);
+    boot.classList.add("gone");
+    var alive = setInterval(function () {
+      if (!startedAt) { clearInterval(alive); return; }
+      elapsedLabel.textContent = Math.round((Date.now() - startedAt) / 1000) + "s";
+    }, 1000);
+  }
+
+  /* ---------------------------------------------------------------- events --------------------------------- */
+  /* Diagnostics: in report mode, anything the client's own document throws is forwarded too. Without
+   * this a client that dies before its first script is indistinguishable from a slow download. */
+  function watchFrame() {
+    var win;
+    try { win = frame.contentWindow; } catch (error) { return; }
+    if (!win || win.__webmcWatched) { return; }
+    win.__webmcWatched = true;
+    win.addEventListener("error", function (event) {
+      report({ kind: "client:error", text: String(event.message || "") + " @" + String(event.filename || "") + ":" + String(event.lineno || 0) });
+    });
+    win.addEventListener("unhandledrejection", function (event) {
+      report({ kind: "client:rejection", text: String((event.reason && (event.reason.stack || event.reason.message)) || event.reason || "") });
+    });
+    if (reportTo && win.console) {
+      ["error", "warn"].forEach(function (level) {
+        var original = win.console[level];
+        win.console[level] = function () {
+          var text = Array.prototype.map.call(arguments, function (a) {
+            try { return typeof a === "string" ? a : (a && (a.stack || a.message)) || JSON.stringify(a); } catch (e) { return String(a); }
+          }).join(" ");
+          report({ kind: "client:console", level: level, text: text.slice(0, 2000) });
+          return original.apply(win.console, arguments);
+        };
+      });
+    }
+  }
+  frame.addEventListener("load", function () {
+    watchFrame();
+    if (reportTo) {
+      setTimeout(function () {
+        try {
+          var win = frame.contentWindow;
+          report({ kind: "page:frame", head: String(win.document.head.innerHTML).slice(0, 1200),
+            headLength: String(win.document.head.innerHTML).length,
+            gaiusKeys: Object.keys(win).filter(function (k) { return k.indexOf("__gaius") === 0; }),
+            webmcKeys: Object.keys(win).filter(function (k) { return k.indexOf("__webmc") === 0 || k === "webmc"; }),
+            readyState: win.document.readyState, bodyChildren: win.document.body ? win.document.body.children.length : -1,
+            clientSize: win.innerWidth + "x" + win.innerHeight, focused: win.document.hasFocus() });
+        } catch (error) { report({ kind: "page:frame", error: String(error && error.message || error) }); }
+      }, 20000);
+    }
+  }, true);
+  window.addEventListener("message", function (event) {
+    var data = event.data;
+    if (!data || typeof data !== "object" || typeof data.kind !== "string") { return; }
+    // Every message the runtime sends is forwarded in report mode, not just the ones this page has
+    // UI for: a check reads heartbeats and patch counts, and a page that forwards only what it
+    // understands silently hides the client's own reports.
+    report(data);
+    if (data.kind === "webmc:client-screen") {
+      hideBoot();
+      facts.hooks.className = "fact on";
+      facts.hooks.textContent = "in-game hooks";
+    }
+    if (data.kind === "webmc:runtime") {
+      var info = data.value || {};
+      if (info.client && info.client.version) { facts.client.textContent = "client " + info.client.version; }
+      facts.client.className = "fact on";
+      if (info.missing && info.missing.length) {
+        facts.hooks.textContent = "waiting on " + info.missing.map(function (m) { return m.capability; }).join(", ");
+      }
+    }
+    if (data.kind === "webmc:ready") {
+      hideBoot();
+      var hooks = data.hooks || {};
+      var ok = hooks.input && hooks.state;
+      facts.hooks.textContent = ok ? "in-game hooks" : "hooks missing: " + Object.keys(hooks).filter(function (k) { return !hooks[k]; }).join(", ");
+      facts.hooks.className = "fact " + (ok ? "on" : "bad");
+      if (data.count) { facts.mods.textContent = "mods " + data.count; }
+    }
+    if (data.kind === "webmc:mods") {
+      if (data.mods) {
+        modsPanel.running = new Map((data.mods || []).map(function (m) { return [m.id, m]; }));
+        renderMods();
+      }
+      hideBoot();
+    }
+    if (data.kind === "webmc:patches") {
+      facts.patches.textContent = "mixins " + (data.applied || 0) + "/" + (data.count || 0);
+      facts.patches.className = "fact " + ((data.applied || 0) > 0 ? "on" : "");
+    }
+    if (data.kind === "webmc:heartbeat") {
+      var beat = data.value || data;
+      if (beat.hooks) {
+        var good = beat.hooks.input && beat.hooks.state;
+        facts.hooks.className = "fact " + (good ? "on" : "bad");
+        if (good) { facts.hooks.textContent = "in-game hooks"; }
+      }
+      if (beat.frames) { facts.client.textContent = "client " + ((beat.client && beat.client.version) || version) + " · " + beat.frames + " frames"; }
+      hideBoot();
+    }
+    if (data.kind === "webmc:toast" && data.text) { toast(data.text); }
+    if (data.kind === "webmc:error" && data.text) {
+      why.textContent = String(data.text).slice(0, 400);
+      facts.hooks.className = "fact bad";
+    }
+  });
+
+  document.getElementById("drop").addEventListener("click", function () { document.getElementById("file").click(); });
+  document.getElementById("addMod").addEventListener("click", function () { document.getElementById("file").click(); });
   var drop = document.getElementById("drop");
-  var fileInput = document.getElementById("file");
-  drop.addEventListener("click", function () { fileInput.click(); });
-  drop.addEventListener("dragover", function (event) { event.preventDefault(); drop.classList.add("hot"); });
+  drop.addEventListener("dragover", function (e) { e.preventDefault(); drop.classList.add("hot"); });
   drop.addEventListener("dragleave", function () { drop.classList.remove("hot"); });
   drop.addEventListener("drop", async function (event) {
     event.preventDefault(); drop.classList.remove("hot");
     for (var i = 0; i < event.dataTransfer.files.length; i++) { await importFile(event.dataTransfer.files[i]); }
   });
-  fileInput.addEventListener("change", async function () {
-    for (var i = 0; i < fileInput.files.length; i++) { await importFile(fileInput.files[i]); }
-    fileInput.value = "";
+  document.getElementById("file").addEventListener("change", async function (event) {
+    for (var i = 0; i < event.target.files.length; i++) { await importFile(event.target.files[i]); }
+    event.target.value = "";
   });
 
   async function importFile(file) {
     try {
-      var pkg = await readPackage(file);
-      if (!pkg.id || !pkg.source) { throw new Error("the package did not say what it is"); }
-      addMod({
-        id: String(pkg.id),
-        name: pkg.manifest.name || pkg.id,
-        version: pkg.manifest.version || "",
-        authors: pkg.manifest.authors || [],
-        capabilities: pkg.manifest.capabilities || pkg.manifest.permissions || [],
-        source: pkg.source
-      });
-      toast("Added " + pkg.id + " — it loads when you press Play, or now if the game is running");
-    } catch (error) {
-      toast("Could not read " + (file.name || "the file") + ": " + (error && error.message || error));
-    }
+      var parsed = await readPackage(file);
+      var id = parsed.id || (file.name || "mod").replace(/\.(jsmod|zip|js|json)$/i, "");
+      var manifest = parsed.manifest || {};
+      var list = stored().filter(function (m) { return m.id !== id; });
+      list.push({ id: id, name: manifest.name || id, version: manifest.version || "", source: parsed.source, from: "storage" });
+      saveStored(list);
+      renderMods();
+      post({ kind: "webmc:mod-added", mod: { id: id, source: parsed.source, from: "storage" } });
+      toast("Added " + id + " — it is loading in the game now");
+    } catch (error) { toast("Could not read " + (file.name || "the file") + ": " + (error && error.message || error)); }
   }
 
-  window.__webmcLoadOptional = loadOptional;
+  /* ---------------------------------------------------------------- boot ----------------------------------- */
+  playButton.addEventListener("click", play);
+  document.getElementById("bootPlay").addEventListener("click", play);
+  document.getElementById("bootGallery").addEventListener("click", function () { location.href = "gallery/"; });
+  stopButton.addEventListener("click", function () { location.reload(); });
 
-  /* -------- panel plumbing --------------------------------------------------------------------- */
-  function toggleMods(open) {
-    drawer.open = (typeof open === "boolean") ? open : !drawer.open;
-    modsPanel.classList.toggle("open", drawer.open);
+  document.getElementById("applySettings").addEventListener("click", function () {
+    var next = new URLSearchParams(location.search);
+    var internals = document.getElementById("setInternals").value;
+    var patches = document.getElementById("setPatches").value.trim();
+    var gateway = document.getElementById("setGateway").value.trim();
+    if (internals === "off") { next.set("internals", "off"); } else { next.delete("internals"); }
+    if (patches && patches !== "128") { next.set("patches", patches); } else { next.delete("patches"); }
+    if (gateway) { next.set("bridge", gateway); } else { next.delete("bridge"); }
+    location.search = next.toString();
+  });
+
+  (async function boot() {
+    await loadBuiltinIndex();
+    await loadOptionalIndex();
+    // Fill settings from the URL.
+    document.getElementById("setInternals").value = params.get("internals") === "off" ? "off" : "on";
+    if (params.get("patches")) { document.getElementById("setPatches").value = params.get("patches"); }
+    if (params.get("bridge") || params.get("gateway")) { document.getElementById("setGateway").value = params.get("bridge") || params.get("gateway"); }
+    renderMods();
+    // Anything explicit in the URL starts on its own; otherwise the button is the way in.
+    var wanted = (params.get("load") || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+    var autoplay = params.has("autoplay") || params.has("report");
+    if (autoplay) {
+      await play();
+      wanted.forEach(function (id) { waitForRuntimeThen(function () { loadOptional(id); }); });
+    } else if (wanted.length) {
+      status.textContent = "Press Play to start, then " + wanted.join(", ") + " loads.";
+    }
+  })();
+
+  function waitForRuntimeThen(fn) {
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries++;
+      var ok = false;
+      try { ok = !!(frame.contentWindow && frame.contentWindow.webmc && frame.contentWindow.webmc.patches); } catch (e) { ok = false; }
+      if (ok || tries > 240) { clearInterval(timer); if (ok) { fn(); } }
+    }, 500);
   }
-  document.getElementById("modsBtn").addEventListener("click", function () { toggleMods(); });
-  document.getElementById("modsBtnTop").addEventListener("click", function () { toggleMods(); });
-  document.getElementById("modsClose").addEventListener("click", function () { toggleMods(false); });
-  window.addEventListener("keydown", function (event) {
-    if (event.key === "F6") { event.preventDefault(); toggleMods(); }
-  });
-  window.addEventListener("message", function (event) {
-    var data = event.data;
-    if (!data || typeof data !== "object") { return; }
-    if (data.kind && String(data.kind).indexOf("webmc:") === 0) { report(data); }
-    if (data.kind === "webmc:mods") { drawer.set(data.mods); }
-    if (data.kind === "webmc:toast") { toast(String(data.text)); }
-    if (data.kind === "webmc:runtime") {
-      var wanted2 = (new URLSearchParams(location.search).get("load") || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
-      wanted2.forEach(function (id) { loadOptional(id, { persist: false }); });
-      storedReferences().forEach(function (entry) { loadOptional(entry.id, { persist: false, url: entry.url }); });
-    }
-    if (data.kind === "webmc:ready") {
-      chipMods.textContent = (data.count ? "mods " + data.count : "mods none");
-      chipMods.className = "chip " + (data.count ? "on" : "");
-    }
-  });
-
-  // Built-in mod list is fetched once so the panel can show what will load before Play is pressed.
-  fetchText(BASE + "mods/index.json").then(function (text) {
-    var index = JSON.parse(text);
-    window.__webmcBuiltinIndex = (index.mods || []);
-    drawer.set(installedList());
-  }).catch(function () { drawer.set(stored()); });
 })();
 </script>
 </body>
