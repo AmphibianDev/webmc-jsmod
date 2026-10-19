@@ -154,7 +154,8 @@ console.log("\nverdict");
 const self = selftest;
 check("the page loaded and the client frame opened", !!self, pageError ? "page says: " + pageError : (self ? "" : "no selftest from the frame"));
 check("the client in the frame is the 1.21.11 build", self && /1\.21\.11/.test(self.client.version), self && self.client.version);
-check("the runtime is installed before the client's scripts", self && self.runtime && self.runtime.version, self && self.runtime.version);
+check("the runtime is installed before the client's scripts", self && self.runtime && self.runtime.version,
+  self && (self.runtime.version + " (build " + self.runtime.build + ")"));
 check("the hooks installed on the real client", self && self.hooks.input && self.hooks.state && self.hooks.gl, self && JSON.stringify(self.hooks));
 check("the frame loop runs", self && self.frame.count > 60, self && self.frame.count + " frames");
 check("the client reached a running state", self && self.hooks.stateUpdates > 0, self && self.hooks.stateUpdates + " state updates");

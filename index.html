@@ -294,7 +294,11 @@
       bootstrap.push("  version: " + JSON.stringify(manifest.title || version) + ",");
       bootstrap.push("  manifest: " + JSON.stringify({ sha256: manifest.sha256, bytes: manifest.bytes || manifest.total }) + ",");
       bootstrap.push("  trustAll: " + (new URLSearchParams(location.search).get("consent") === "all") + ",");
-      bootstrap.push("  symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json") + ",");
+      // Version the two files that change between deploys: a CDN may hold an older copy for ten
+      // minutes, and a stale runtime next to a new client is a mixture nobody wants to debug.
+      var stamp = (manifest.sha256 || "").slice(0, 10) + "-" + (manifest.chunks ? manifest.chunks.length : 0);
+      bootstrap.push("  runtimeVersion: " + JSON.stringify(stamp) + ",");
+      bootstrap.push("  symbolsUrl: " + JSON.stringify(BASE + "client/" + version + "/symbols.json?v=" + stamp) + ",");
       bootstrap.push("  internals: " + (new URLSearchParams(location.search).get("internals") !== "off") + ",");
       bootstrap.push("  patchCap: " + JSON.stringify(new URLSearchParams(location.search).get("patches") || ""));
       bootstrap.push("};");
@@ -307,7 +311,7 @@
       bootstrap.push("<" + "/" + "script>");
       // The runtime is a classic script in the head, so the parser blocks until it has run:
       // every mod's hooks exist before the client's own first script executes.
-      bootstrap.push(OPEN_TAG + ' src="' + BASE + "runtime/dist/webmc.js" + '">' + CLOSE_TAG + ">");
+      bootstrap.push(OPEN_TAG + ' src="' + BASE + "runtime/dist/webmc.js?v=" + stamp + '">' + CLOSE_TAG + ">");
       var withRuntime = inject(assembled, bootstrap);
 
       var blob = new Blob([withRuntime], { type: "text/html" });
