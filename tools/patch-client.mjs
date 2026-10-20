@@ -89,7 +89,46 @@ const PATCH = [
   MARKER
 ].join("\n");
 
-const patched = classes.replace(MARKER, PATCH);
+/* ---- make virtual dispatch patchable --------------------------------------------------------- *
+ * The compiled client dispatches virtual methods through small adapter closures the class tables are
+ * built from:
+ *
+ *     let L=f=>function(){return f(this);}, K=f=>function(p1){return f(this,p1);}, V=…, Bg=…, Bo=…
+ *
+ * `K(A.foo)` captures the *value* of `A.foo` when the class registers itself, so replacing `A.foo`
+ * later — which is how every patch is installed — can never intercept a virtual call. That is the
+ * difference between a plan that applies and a plan that does something: a method called through the
+ * object's table kept running its original body.
+ *
+ * Routing the five adapters through a hook costs one comparison per virtual call (`(w||f)(this,p1)`)
+ * and makes those calls patchable: `__webmcSlot` hands back the same adapter shape, remembers which
+ * function it wraps, and the runtime refreshes it when a wrapper is installed or rolled back.
+ */
+const SLOT_ADAPTERS = /let L=f=>function\(\)\{return f\(this\);\},K=f=>function\(p1\)\{return f\(this,p1\);\},V=f=>function\(p1,p2\)\{return f\(this,p1,p2\);\},Bg=f=>function\(p1,\np2,p3\)\{return f\(this,p1,p2,p3\);\},Bo=f=>function\(p1,p2,p3,p4\)\{return f\(this,p1,p2,p3,p4\);\};/;
+const SLOT_REPLACEMENT =
+  "let L=f=>globalThis.__webmcSlot(f,0),K=f=>globalThis.__webmcSlot(f,1),V=f=>globalThis.__webmcSlot(f,2)," +
+  "Bg=f=>globalThis.__webmcSlot(f,3),Bo=f=>globalThis.__webmcSlot(f,4);";
+const VARARGS_ADAPTER = /Cm2=f=>function\(\)\{return f\.apply\(null,\[this\]\.concat\(Array\.prototype\.slice\.call\(arguments\)\)\);\};/;
+const VARARGS_REPLACEMENT = "Cm2=f=>globalThis.__webmcSlotVarargs(f);";
+
+let withHooks = classes;
+let adaptersPatched = 0;
+if (SLOT_ADAPTERS.test(withHooks)) {
+  withHooks = withHooks.replace(SLOT_ADAPTERS, () => { adaptersPatched += 1; return SLOT_REPLACEMENT; });
+} else {
+  console.error("could not find the five virtual-dispatch adapters; refusing to patch a client whose shape changed");
+  process.exit(1);
+}
+if (VARARGS_ADAPTER.test(withHooks)) {
+  withHooks = withHooks.replace(VARARGS_ADAPTER, () => { adaptersPatched += 1; return VARARGS_REPLACEMENT; });
+}
+if (adaptersPatched < 1 || !withHooks.includes("globalThis.__webmcSlot(")) {
+  console.error("the adapter rewrite did not take; refusing to write a client without patchable dispatch");
+  process.exit(1);
+}
+console.log(`virtual dispatch: ${adaptersPatched} adapter definition(s) routed through __webmcSlot`);
+
+const patched = withHooks.replace(MARKER, PATCH);
 const patchedGz = gzipSync(Buffer.from(patched, "utf8"), { level: 9 });
 console.log(`patched: ${(classes.length / 1048576).toFixed(1)} MB -> ${(patchedGz.length / 1048576).toFixed(1)} MB gzip`);
 

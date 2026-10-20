@@ -444,6 +444,43 @@ await test("a plan whose method has no anchor is refused, not guessed", async ()
 });
 
 /* ------------------------------------------------------------------ redirects ---------------- */
+await test("a virtual call through the class adapter reaches the patch (the dispatch hook)", async () => {
+  const win = loadRuntime({ trustAll: true });
+  win.__installClient();
+  const meta = Symbol("teavm_meta");
+  const target = function TargetClass() {}; target[meta] = { name: "net.minecraft.client.Minecraft" };
+  let bodyRuns = 0;
+  win.__gaiusTeaVM = {
+    TargetCtor: target,
+    TargetFn: function (self) { bodyRuns++; return "original"; }
+  };
+  // The patched client builds its virtual tables through these hooks (tools/patch-client.mjs routes
+  // the five adapters here), so this is the shape a real class registration produces.
+  const adapter = win.__webmcSlot(win.__gaiusTeaVM.TargetFn, 1);
+  const object = { tick: adapter };
+  const state = win.webmc.__internal.internals.state;
+  state.symbols = { Minecraft: { tick: { fn: "TargetFn", arity: 1 } } };
+  state.symbolsLoaded = true;
+  win.webmc.__internal.internals.limits.hotPerSecond = 1e9;
+  win.webmc.__internal.internals.limits.sampleCalls = 1;
+  win.__gaiusMinecraftState = { screen: "Game", level: true, player: { x: 0, y: 0, z: 0 }, clientDistance: {} };
+
+  let handlerRuns = 0;
+  win.webmc.patches.add({
+    targets: ["net/minecraft/client/Minecraft"],
+    injections: [{ kind: "inject", method: ["tick"], at: [{ value: "HEAD" }], run: () => { handlerRuns++; } }]
+  });
+  await new Promise((resolve) => setTimeout(resolve, 2500));
+  const plan = win.webmc.__internal.patches.plans[0];
+  eq(plan.state, "applied", "the plan applied");
+  ok(win.webmc.__internal.internals.slotsRefreshed() > 0, "the slot adapter was refreshed with the wrapper");
+  // Call it the way the client does: through the object's table, not through A.TargetFn.
+  object.tick({});
+  object.tick({});
+  eq(bodyRuns, 2, "the original body still ran");
+  eq(handlerRuns, 2, "the handler ran for a call that went through the virtual table");
+});
+
 await test("an @Inject at HEAD applies when the at-point is an object (the converter's own shape)", async () => {
   const win = loadRuntime({ trustAll: true });
   win.__installClient();

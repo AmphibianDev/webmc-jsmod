@@ -92,6 +92,7 @@ for (let round = 1; round <= rounds; round++) {
 }
 console.log("\n=== 5/5 call-site map (which compiled function each call inside a named method is) ===");
 run("build-sites.mjs", ["--jar", jar, "--mappings", mappings, "--js", jsDir,
-  "--symbols", symbolsFile, "--out", join(patched, "sites.json")]);
+  "--symbols", symbolsFile, "--out", join(patched, "sites.json"),
+  "--slots-out", join(patched, "slots.json")]);
 
 console.log("\nwrote " + symbolsFile + " and " + join(patched, "sites.json"));

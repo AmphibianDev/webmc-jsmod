@@ -324,6 +324,54 @@
    * consulted. A callee called twice inside the same target is redirected both times — the report
    * says "approximate" for those, and the wrapper is rollback-able like any other.
    */
+  /* Virtual dispatch. The compiled client dispatches virtual methods through the five adapter
+   * closures the class tables are built from (`K=f=>function(p1){return f(this,p1);}` and friends),
+   * which capture the function *value*. Wrapping `A.fn` — how every patch is installed — therefore
+   * never reached a method called through an object's table. tools/patch-client.mjs rewrites those
+   * five definitions to call the hook below, so the same wrapper is seen by both dispatch paths. */
+  var slotAdapters = new Map();       // original function -> [refresh(wrapper|0)]
+  var slotRefreshCount = 0;
+  var handlerRuns = 0;                // how many times a converted handler actually ran
+  function trackSlot(fn, refresh) {
+    if (typeof fn !== "function") { return; }
+    var list = slotAdapters.get(fn);
+    if (!list) { list = []; slotAdapters.set(fn, list); }
+    list.push(refresh);
+  }
+  function refreshSlots(fn, wrapper) {
+    var list = slotAdapters.get(fn);
+    if (!list || !list.length) { return 0; }
+    for (var i = 0; i < list.length; i++) {
+      try { list[i](wrapper || 0); } catch (error) { internal.reportError("internals:slot", error); }
+    }
+    slotRefreshCount += list.length;
+    return list.length;
+  }
+  function slotOf(fn, arity) {
+    var current = 0;
+    var call;
+    if (arity === 0) { call = function () { return (current || fn)(this); }; }
+    else if (arity === 1) { call = function (p1) { return (current || fn)(this, p1); }; }
+    else if (arity === 2) { call = function (p1, p2) { return (current || fn)(this, p1, p2); }; }
+    else if (arity === 3) { call = function (p1, p2, p3) { return (current || fn)(this, p1, p2, p3); }; }
+    else { call = function (p1, p2, p3, p4) { return (current || fn)(this, p1, p2, p3, p4); }; }
+    trackSlot(fn, function (wrapper) { current = wrapper; });
+    return call;
+  }
+  function slotVarargs(fn) {
+    var current = 0;
+    var call = function () {
+      var args = [this].concat(Array.prototype.slice.call(arguments));
+      return (current || fn).apply(null, args);
+    };
+    trackSlot(fn, function (wrapper) { current = wrapper; });
+    return call;
+  }
+  // The hook has to exist before the client's own scripts run; tools/patch-client.mjs rewrites the
+  // adapters to call it by name.
+  global.__webmcSlot = slotOf;
+  global.__webmcSlotVarargs = slotVarargs;
+
   var activeTargets = new Map();      // target fn -> stack of `this` values
   var calleeSites = new Map();        // callee fn -> [{ targetFn, run, kind, index, plan }]
   var bookkeeping = new Map();        // target fn -> { original, wrapper }
@@ -370,6 +418,7 @@
         // `CallbackInfo.cancel()` does in a mixin. There is no bytecode to rewrite at run time, so
         // the call site is approximated by "while this callee is called from inside that method".
         if (active.kind === "injectAtInvoke") {
+          handlerRuns++;
           var around = active.shift === "AFTER";
           if (!around) {
             active.run(active.self, args, info);
@@ -513,7 +562,12 @@
       var label = plan.mixin + " -> " + plan.targets[0] + "." + targets[i];
       wrappedBy.set(resolved.fn, label);
       state.teaVM[resolved.fn] = makeWrapper(original, run, { cancellable: !!injection.cancellable, atHead: atHead, atReturn: atReturn, label: label });
+      // A method reached through an object's table has to see the same wrapper, or the patch applies
+      // and never runs.
+      // Keyed by the original *function*, not by the symbol name: the adapters hold function values.
+      var slots = refreshSlots(original, state.teaVM[resolved.fn]);
       return {
+        slots: slots,
         ok: true, kind: kind, target: targets[i], point: point, fn: resolved.fn, arity: resolved.arity, mixin: plan.mixin,
         rollback: { fn: resolved.fn, original: original, label: label }
       };
@@ -568,6 +622,7 @@
       var info = { cancellable: options.cancellable, cancelled: false, cancelIgnored: false, returnValue: undefined };
       var budgetStart = Date.now();
       if (options.atHead) {
+        handlerRuns++;
         try { run(self, args, info); }
         catch (error) {
           // A handler whose calls this build cannot satisfy fails on every invocation; leaving it
@@ -602,6 +657,7 @@
         return result;
       }
       if (options.atReturn) {
+        handlerRuns++;
         try { run(self, args, info); }
         catch (error) {
           if (++handlerFailures >= 25) {
@@ -625,6 +681,7 @@
       var handle = handles[i];
       if (!handle || !handle.fn) { continue; }
       state.teaVM[handle.fn] = handle.original;
+      refreshSlots(handle.original, 0);
       wrappedBy.delete(handle.fn);
       undone++;
     }
@@ -649,6 +706,12 @@
       resolutions: state.resolutions,
       misses: state.misses,
       appliedInjections: applied.reduce(function (total, record) { return total + record.applied; }, 0),
+      // A client built by an older patch-client has no dispatch hook: patches apply and never run, so
+      // the state of this is worth reporting rather than leaving to be guessed.
+      dispatchPatchable: slotAdapters.size > 0,
+      slotAdapters: slotAdapters.size,
+      slotsRefreshed: slotRefreshCount,
+      handlerRuns: handlerRuns,
       fieldsMapped: state.fields ? Object.keys(state.fields).reduce(function (total, cls) { return total + Object.keys(state.fields[cls]).length; }, 0) : 0,
       accessorsInstalled: state.accessors ? Object.keys(state.accessors).reduce(function (total, cls) { return total + Object.keys(state.accessors[cls]).length; }, 0) : 0,
       rolledBack: rolledBack,
@@ -705,6 +768,10 @@
     resolve: resolve,
     unresolved: unresolved,
     applyPatch: applyPatch,
+    refreshSlots: function (fn, wrapper) { return refreshSlots(fn, wrapper); },
+    slotAdapters: function () { return slotAdapters.size; },
+    slotsRefreshed: function () { return slotRefreshCount; },
+    handlerRuns: function () { return handlerRuns; },
     summary: summary,
     teaVM: function () { return state.teaVM; },
     loadSymbols: loadSymbols,

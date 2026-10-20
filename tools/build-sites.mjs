@@ -37,6 +37,7 @@ const mappingsDir = resolve(flag("mappings", join(root, "converter", "mappings",
 const jsDir = resolve(flag("js", join(root, "client", "1.21.11")));
 const symbolsFile = resolve(flag("symbols", join(root, "client", "1.21.11-internals", "symbols.json")));
 const outFile = resolve(flag("out", join(root, "client", "1.21.11-internals", "sites.json")));
+const slotOutFile = resolve(flag("slots-out", join(root, "client", "1.21.11-internals", "slots.json")));
 const verbose = args.includes("--verbose");
 
 console.log("mappings: " + mappingsDir);
@@ -82,13 +83,88 @@ function javaSites(method) {
   }));
 }
 
-/** Compiled calls of a function, in textual order (which is the order TeaVM emitted them in). */
+/** Every virtual-slot name the client's class tables use: `["q",L(A.fn)]`. A property call whose
+ *  name is one of these is a virtual method call; any other `.name(` is something else. */
+function slotNames(source) {
+  const names = new Set();
+  const pairRe = /"([A-Za-z0-9_$]{1,6})",\s*(?:(?:L|K|V|Bg|Bo|Cm2)\(A\.([A-Za-z0-9_$]+)\)|function\([^)]*\)\s*\{\s*return\s+A\.([A-Za-z0-9_$]+)\()/g;
+  let match;
+  while ((match = pairRe.exec(source)) !== null) { names.add(match[1]); }
+  return names;
+}
+const SLOTS = slotNames(text);
+console.log(`  ${SLOTS.size} virtual-slot names in the class tables`);
+
+/** The class tables themselves: which class implements which slot with which function. */
+function classSlots(source) {
+  const rows = [];
+  const callRe = /\bCo\(/g;
+  let call;
+  const entryRe = /(?:A\.)?([A-Za-z0-9_$]+),"([A-Za-z0-9_$]+)",(-?\d+),/g;
+  while ((call = callRe.exec(source)) !== null) {
+    const start = source.indexOf("[", call.index);
+    if (start < 0) { continue; }
+    let i = start, depth = 0, inString = false, escaped = false;
+    for (; i < source.length; i++) {
+      const c = source[i];
+      if (inString) { if (escaped) { escaped = false; } else if (c === "\\") { escaped = true; } else if (c === '"') { inString = false; } continue; }
+      if (c === '"') { inString = true; }
+      else if (c === "[") { depth++; }
+      else if (c === "]") { depth--; if (depth === 0) { break; } }
+    }
+    const slice = source.slice(start, i + 1);
+    entryRe.lastIndex = 0;
+    const found = [];
+    let entry;
+    while ((entry = entryRe.exec(slice)) !== null) {
+      const rest = slice.slice(entry.index + entry[0].length, entry.index + entry[0].length + 12);
+      if (Number(entry[3]) < 0 || /^\s*-/.test(rest)) { continue; }
+      found.push(entry);
+    }
+    for (let index = 0; index < found.length; index++) {
+      const from = found[index].index;
+      const to = index + 1 < found.length ? found[index + 1].index : slice.length;
+      const body = slice.slice(from, to);
+      const pairs = [];
+      const pairRe = /"([A-Za-z0-9_$]{1,6})",\s*(?:(?:L|K|V|Bg|Bo|Cm2)\(A\.([A-Za-z0-9_$]+)\)|function\([^)]*\)\s*\{\s*return\s+A\.([A-Za-z0-9_$]+)\()/g;
+      let pair;
+      while ((pair = pairRe.exec(body)) !== null) { pairs.push({ slot: pair[1], fn: pair[2] || pair[3] }); }
+      if (pairs.length && !rows.some((row) => row.ctor === found[index][1])) { rows.push({ ctor: found[index][1], name: found[index][2], slots: pairs }); }
+    }
+  }
+  return rows;
+}
+const slotsByClass = classSlots(text);
+console.log(`  ${slotsByClass.length} classes with virtual tables`);
+
+/** Compiled calls of a function, in textual order (which is the order TeaVM emitted them in). Direct
+ *  calls are `A.<fn>(…)`, virtual ones are `<object>.<slot>(…)` — and both are calls the Java bytecode
+ *  has an INVOKE for, so both belong in the sequence. Recognizing the virtual ones is what lets the
+ *  alignment name a method that is only ever called through an object's table. */
 function jsSites(sym) {
-  const list = js.calleesBySym.get(sym) || [];
+  const at = js.offsets.find((entry) => entry.sym === sym);
+  if (!at) { return []; }
+  const start = text.indexOf("{", at.at);
+  if (start < 0) { return []; }
+  let i = start, depth = 0, inString = false, escaped = false;
+  for (; i < text.length; i++) {
+    const c = text[i];
+    if (inString) { if (escaped) { escaped = false; } else if (c === "\\") { escaped = true; } else if (c === '"') { inString = false; } continue; }
+    if (c === '"') { inString = true; }
+    else if (c === "{") { depth++; }
+    else if (c === "}") { depth--; if (depth === 0) { break; } }
+  }
+  const body = text.slice(start, i + 1);
   const out = [];
-  for (const callee of list) {
-    const arity = js.arity.get(callee);
-    out.push({ fn: callee, arity: arity == null ? null : arity });
+  const callRe = /(?:\bA\.([A-Za-z0-9_$]+)|([A-Za-z0-9_$]+)\.([A-Za-z0-9_$]+))\s*\(/g;
+  let match;
+  while ((match = callRe.exec(body)) !== null) {
+    if (match[1]) {
+      const arity = js.arity.get(match[1]);
+      out.push({ fn: match[1], arity: arity == null ? null : arity, kind: "direct" });
+    } else if (SLOTS.has(match[3])) {
+      out.push({ slot: match[3], arity: null, kind: "virtual" });
+    }
   }
   return out;
 }
@@ -100,7 +176,7 @@ function alignSites(a, b) {
   const n = a.length, m = b.length;
   if (!n || !m) { return null; }
   if (n > 60 || m > 90) { return null; }
-  const known = (call, callee) => namedFn.get(String(call.owner).split("/").pop() + "::" + call.name) === callee.fn;
+  const known = (call, callee) => !!callee.fn && namedFn.get(String(call.owner).split("/").pop() + "::" + call.name) === callee.fn;
   const score = Array.from({ length: n + 1 }, () => new Float64Array(m + 1));
   const from = Array.from({ length: n + 1 }, () => new Int32Array(m + 1).fill(0));
   for (let i = n - 1; i >= 0; i--) {
@@ -108,7 +184,7 @@ function alignSites(a, b) {
       let best = Math.max(score[i + 1][j], score[i][j + 1]) - 0.35;
       let bestFrom = score[i + 1][j] >= score[i][j + 1] ? 1 : 2;
       const pair = (b[j].arity == null || a[i].argCount == null || b[j].arity === a[i].argCount || b[j].arity === a[i].argCount - 1)
-        ? (known(a[i], b[j]) ? 3 : 0.6)
+        ? (known(a[i], b[j]) ? 3 : (b[j].kind === "virtual" ? 0.9 : 0.6))
         : -0.5;
       const withPair = score[i + 1][j + 1] + pair;
       if (withPair > best) { best = withPair; bestFrom = 3; }
@@ -155,6 +231,7 @@ if (args.includes("--histogram")) {
 }
 
 const sites = {};
+const slotVotes = new Map();          // slot name -> Map("Owner::method" -> votes)
 let methodsWritten = 0, sitesWritten = 0, exact = 0, anchoredTotal = 0, skipped = 0, considered = 0;
 for (const method of java.methods) {
   if (!method.namedMethod) { continue; }
@@ -186,12 +263,22 @@ for (const method of java.methods) {
   const fullyExplained = explained >= 0.95 && aligned.jsTotal <= aligned.total;
   if (!anchored && !exactCount && !fullyExplained) { skipped++; continue; }
   if (aligned.jsTotal > aligned.total * 3 + 6) { skipped++; continue; }
-  const list = aligned.pairs.map((pair) => ({
-    callee: (pair.java.owner + "." + pair.java.name).replace(/\//g, "."),
-    descriptor: pair.java.descriptor,
-    fn: pair.js.fn,
-    args: pair.java.argCount
-  }));
+  const list = [];
+  for (const pair of aligned.pairs) {
+    const calleeName = (pair.java.owner + "." + pair.java.name).replace(/\//g, ".");
+    if (pair.js.fn) {
+      list.push({ callee: calleeName, descriptor: pair.java.descriptor, fn: pair.js.fn, args: pair.java.argCount });
+    } else if (pair.js.slot) {
+      // A virtual call: the token is a slot name, which is exactly what the class tables key on. That
+      // teaches `slot -> Java method`, and the pair is usable as a site too.
+      list.push({ callee: calleeName, descriptor: pair.java.descriptor, slot: pair.js.slot, args: pair.java.argCount });
+      const key = pair.js.slot;
+      const tally = slotVotes.get(key) || new Map();
+      const vote = String(pair.java.owner).split("/").pop() + "::" + pair.java.name;
+      tally.set(vote, (tally.get(vote) || 0) + 1);
+      slotVotes.set(key, tally);
+    }
+  }
   sites[method.simpleClass + "::" + method.namedMethod] = list;
   methodsWritten++;
   sitesWritten += list.length;
@@ -199,6 +286,46 @@ for (const method of java.methods) {
   exact++;
   if (verbose && methodsWritten < 10) { console.log(`  ${method.simpleClass}.${method.namedMethod}: ${list.length} call site(s)`); }
 }
+
+/* The slot dictionary: which Java method a virtual-slot name stands for, learned from the aligned
+ * call sites. One vote is not evidence; two that agree are. */
+const slotMethod = {};
+for (const [slot, tally] of slotVotes) {
+  const ranked = Array.from(tally.entries()).sort((a, b) => b[1] - a[1]);
+  const total = ranked.reduce((sum, [, count]) => sum + count, 0);
+  if (!ranked.length) { continue; }
+  if (ranked.length === 1 && ranked[0][1] >= 2) { slotMethod[slot] = { where: ranked[0][0], votes: ranked[0][1], total }; }
+  else if (ranked[0][1] / total >= 0.75 && ranked[0][1] >= 2) { slotMethod[slot] = { where: ranked[0][0], votes: ranked[0][1], total }; }
+}
+console.log(`slot dictionary: ${Object.keys(slotMethod).length} slot names learned from ${slotVotes.size} seen`);
+
+/* And the resolution table: for every class the client registers, the compiled function of each of
+ * its methods whose slot is now known. This is what `resolve(class, method)` consults when the symbol
+ * map has nothing — the members mods actually name, in classes no naming pass reached. */
+const resolved = {};
+let resolvedCount = 0, alreadyNamed = 0;
+for (const row of slotsByClass) {
+  for (const entry of row.slots) {
+    const learned = slotMethod[entry.slot];
+    if (!learned) { continue; }
+    const [owner, method] = learned.where.split("::");
+    if (owner !== row.name) { continue; }
+    const existing = (anchors[row.name] || {})[method];
+    if (existing && existing.fn) { alreadyNamed++; continue; }
+    resolved[row.name] = resolved[row.name] || {};
+    if (resolved[row.name][method]) { continue; }
+    resolved[row.name][method] = { fn: entry.fn, slot: entry.slot, why: `virtual slot ${entry.slot} learned from ${learned.votes}/${learned.total} call site(s)` };
+    resolvedCount++;
+  }
+}
+console.log(`slot resolution: ${resolvedCount} class+method pairs the symbol map does not have (${alreadyNamed} it does)`);
+writeFileSync(slotOutFile, JSON.stringify({
+  note: "Built by tools/build-sites.mjs: `slots` maps a virtual-slot name to the Java method it stands for (learned from aligned call sites); `methods` maps Class.method to the compiled function, for members the symbol map does not name.",
+  stats: { slotsLearned: Object.keys(slotMethod).length, methods: resolvedCount, alreadyNamed },
+  slots: slotMethod,
+  methods: resolved
+}, null, 1) + "\n");
+console.log(`wrote ${slotOutFile}: ${resolvedCount} methods in ${Object.keys(resolved).length} classes`);
 
 writeFileSync(outFile, JSON.stringify({
   note: "Built by tools/build-sites.mjs: the compiled function of each call inside a named Java method, by aligning the Java INVOKE order with the compiled call order. `callee` is the Java name a mixin writes, `fn` is the compiled function it is.",

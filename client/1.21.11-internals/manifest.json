@@ -4,30 +4,30 @@
  "client": "Gaius-webmc.html",
  "gateway": null,
  "mods": [],
- "bytes": 112986848,
- "total": 112986848,
+ "bytes": 112986824,
+ "total": 112986824,
  "chunk_bytes": 33554432,
- "sha256": "84e99f7860ba303c9f29ce146fc0a81417829b07520a27cb7691213f6b01a997",
+ "sha256": "38d578e67e1ca7e77e0a4cfa387feee183b970c0206d308be4c4a85e85c1e7f4",
  "chunks": [
   {
    "path": "data/client.0000",
    "size": 33554432,
-   "sha256": "a04477072209c7006a73b311ca5241ac59788561e9c5daa129149903c8117d86"
+   "sha256": "6357234af2393c9a005eb69e7ad36a55f41308521383e000a8cb6648afd9ca6d"
   },
   {
    "path": "data/client.0001",
    "size": 33554432,
-   "sha256": "dcdee341a57c32096039890b34c53fa89efba7034815efa2a6e5289d6524c71e"
+   "sha256": "d89251d74b71ed4774ab416796f51dffd7b3ac23eeff319262fefde4651c04bd"
   },
   {
    "path": "data/client.0002",
    "size": 33554432,
-   "sha256": "f5d1cbb52ce9b00f2ce0bea1413307356feefc3abc21652a4b8bbf94d4e0759d"
+   "sha256": "e18bbb4dcf80a9e51a3fd5d3e53b099eebd791a755dc110327aaee8559a56d04"
   },
   {
    "path": "data/client.0003",
-   "size": 12323552,
-   "sha256": "fe285d7beeb9cf06d1a6cf5850133126c60d934769decbeeb6dfbce5cb1ad0a6"
+   "size": 12323528,
+   "sha256": "c78a2e505fc7a4f0ccbb830cd1b59e1ffd318e444367fa5f85adbb9a94c47e88"
   }
  ],
  "provenance": "Patched copy of the published client: `globalThis.__gaiusTeaVM` and `globalThis.__gaiusExports` are assigned at the end of the compiled module. The original whole-client sha256 was 63cba13499f969154e24ea3dbb220ba1a4967ce395fb1731043ad0b6b9d58106."
