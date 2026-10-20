@@ -80,6 +80,24 @@ propagation step — so a wrong entry can be argued with:
 "Minecraft": { "tick": { "fn": "AEEo", "arity": 1, "why": "19 literal(s) shared, rarest in 1 Java method(s), arity 1", "score": 2.35 } }
 ```
 
+## Virtual dispatch: why a patch could apply and never run
+
+Compiled virtual calls do not call `A.foo`. They call `object.<slot>(…)`, where the class table built
+the object's properties out of adapters:
+
+```js
+let L=f=>function(){return f(this);}, K=f=>function(p1){return f(this,p1);}, V=…, Bg=…, Bo=…
+```
+
+`K(A.foo)` captures the value of `A.foo` at class-registration time. Replacing `A.foo` later — how every
+patch is installed — therefore changes nothing for a call made through an object's table, which is how
+most client methods are called. `tools/patch-client.mjs` rewrites those five definitions to
+`globalThis.__webmcSlot(f, arity)`, which returns the same adapter shape over a mutable slot; the
+runtime refreshes the slot when a wrapper is installed or rolled back. The idle cost is one comparison
+per virtual call (`(w||f)(this,p1)`), and `selftest().internals.dispatchPatchable` says whether the
+client in front of you has the hook at all — a client patched by an older tool reports `false` and
+silently patches nothing.
+
 ## Fields, accessors and invokers
 
 The per-class pass also emits a **field map** (`fields` in `symbols.json`, 7,588 fields in 2,948

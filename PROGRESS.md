@@ -377,6 +377,60 @@ Honest list, because these are the parts a mod author will hit:
   lookup, so wrapping the function value does not intercept it. That is the next real piece of work.
 * Iris, Sodium, Lithium: render pipelines and native code. Unchanged, and will stay unchanged.
 
+## 2026-10-20 — patches that apply *and run*: the dispatch fix
+
+A plan could be applied and never do anything, and nothing said so. The compiled client dispatches
+virtual methods through the adapter closures its class tables are built from:
+
+```js
+let L=f=>function(){return f(this);}, K=f=>function(p1){return f(this,p1);}, V=…, Bg=…, Bo=…
+```
+
+Those capture the **function value** when a class registers itself, so replacing `A.foo` — which is how
+every patch is installed — never reached a method called through an object's table. Most of the methods
+a mixin patches are called that way. `tools/patch-client.mjs` now routes the five adapters through
+`globalThis.__webmcSlot`, which returns the same adapter shape with a mutable slot; the runtime
+refreshes that slot when a wrapper is installed or rolled back, so both dispatch paths see the wrapper.
+The cost when nothing is patched is one comparison per virtual call, and the rewrite is verified before
+the client is written (a client patched by an older tool looks healthy and silently cannot patch).
+
+Measured, live:
+
+| | |
+| --- | --- |
+| virtual-slot adapters routed through the hook | **51,577** |
+| adapters refreshed with a wrapper | 65 |
+| converted handlers that actually ran | **182** (local run; 25 in the shorter deployed run) |
+| plans applied, deployed heavy set | **153 / 240** (was 75) |
+| injections applied | 209 (local run: 475) |
+| rolled back | **0** · client at 60 fps · 8/8 checks |
+
+## 2026-10-20 — what is now *proven* to be the ceiling
+
+Written down with the evidence, because "we can try harder" is not an answer:
+
+1. **Naming the remaining ~63,000 methods.** Three hypotheses were tested and rejected rather than
+   assumed: TeaVM slot names are *not* the obfuscated method names (0.1% resolved, with
+   contradictions); the slot table order does *not* follow class-file order (32% agreement, i.e.
+   chance); and exact-call-count alignment holds for only ~20% of methods (TeaVM inlines small calls
+   and compiles methods to state machines, so compiled calls are 69% of Java calls). The alignment that
+   *does* hold — with the stability test — covers 2,355 of 12,531 named methods. Each further pass now
+   yields single-digit percentages: this is a wall, not a hill.
+2. **At-points that are not calls.** `@ModifyVariable`, `@ModifyConstant`, FIELD/STORE/LOAD: a field read
+   is a property access and a local variable is a register in a state machine. There is no call to
+   stand in front of. They are refused by name, never pretended.
+3. **Redirecting a virtual callee inside a target method** needs the call site rewritten in the
+   client's own compiled body. That is possible exactly where the alignment is exact (19% of methods)
+   and would mean rewriting unverifiable bytecode everywhere else.
+4. **Renderer and native mods** (Iris, Sodium, Lithium, Flashback's export): WebGL2's pipeline is not
+   Sodium's, and a native encoder cannot run in a tab. No amount of naming changes this.
+
+So the conversion route is taken as far as it goes: **partially running heavy mods, honestly
+reported**, with the platform's safety holding (0 rollbacks, 60 fps, every refusal named). The route
+that has no ceiling of this kind is the last resort: JavaScript mods written for this platform (the
+gallery), and for unconvertible jars a real JVM in the browser (the IKVM/wasm row), where the mods run
+unmodified.
+
 ## 2026-10-19 (deployed, measured) — the same set, before and after
 
 The heavy set (Meteor + Litematica + Jade + Zoomify) on the deployed site, two rounds apart:

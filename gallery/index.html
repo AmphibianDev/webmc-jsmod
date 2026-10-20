@@ -208,5 +208,15 @@
   });
 })();
 </script>
+  <section id="limits" style="max-width:1100px;margin:26px auto 0;padding:18px 20px;border:1px solid #2a3242;border-radius:14px;background:#12161c;color:#939eac;font-size:14px;line-height:1.6">
+    <strong style="color:#e9edf2">What converts, and what cannot</strong><br />
+    A converted Fabric jar keeps its events, keybinds, commands and modules, and its mixins are named
+    against the compiled client and applied inside the safety valves. Heavy mods land <em>partly</em>:
+    Meteor Client registers 240 plans of which ~150 apply and run (the rest are refused <em>by name</em>,
+    in the Mods panel). Two things will never convert, and it is better to say so:
+    <em>renderer and performance mods</em> (Iris, Sodium, Lithium — WebGL2 is not their pipeline, and
+    native code cannot run in a tab), and <em>native encoders</em> such as Flashback's video export.
+    For those, a JavaScript rewrite or a real JVM in the browser is the route, not a converter run.
+  </section>
 </body>
 </html>
